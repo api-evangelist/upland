@@ -1,0 +1,53 @@
+generated: '2026-09-02'
+method: searched
+source: >-
+  https://docs.developers.upland.me/upland-developers and every page in the developer documentation
+  sitemap, plus https://upland.me/ — probed 2026-09-02
+plan_count: 0
+pricing_page: null
+summary: >-
+  Upland publishes no pricing for the Developers API. There is no plans page, no tier table, no free
+  quota, no metering and no paid upgrade anywhere in the developer documentation or on upland.me.
+  Access is not sold; it is granted. This is an approval-gated developer program, not a commercial
+  API product, and recording plan_count 0 is the accurate measurement rather than an omission.
+access_model:
+  pricing: none-published
+  onboarding: approval-gated
+  gate: >-
+    Register a developer account, connect an Upland account and pass an Upland verification process
+    of up to five business days, create an application, then submit it for review through Upland's
+    published ClickUp form. Production use additionally requires a Dev Shop — an Upland property the
+    developer's connected account owns, with a qualifying construction on it.
+  gate_docs:
+  - https://docs.developers.upland.me/upland-developers/application-management/submitting-an-application
+  - https://docs.developers.upland.me/upland-developers/application-management/dev-shops
+  trial: sandbox environment, free, no card required
+  content_restrictions:
+  - No gambling.
+  - No nudity.
+  - No swearing or bad language.
+  - The application must already be working against some integration before submission.
+economics:
+  note: >-
+    Upland's developer economics are in-world rather than subscription-based. Money moves in UPX,
+    Upland's in-game currency, and the developer's revenue share is a parameter on the API itself.
+  developer_fee:
+    field: developerFeePercentage
+    range: 0-10%
+    meaning: The share of a Rumble tournament pot that goes to the application's developer.
+  stakeholder_fee:
+    field: stakeholderFeePercentage
+    range: 0-10%
+    meaning: An optional share for a third-party stakeholder, e.g. a licensed brand account.
+  registration_fee:
+    field: registrationFeeInUpx
+    meaning: What each player pays in UPX to join a tournament; settable on the tournament settings and overridable per tournament.
+  source: https://docs.developers.upland.me/upland-developers/api-definitions/tournament-apis
+  caveat: >-
+    These are configurable parameters an application sets, not prices Upland charges a developer. No
+    Upland platform fee, take rate or minimum is published.
+plans: []
+gaps:
+- No developer pricing page.
+- No published quota or included volume of any kind.
+- No published platform take rate on escrow or tournament settlement.

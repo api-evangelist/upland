@@ -1,0 +1,33 @@
+# Developers API
+
+## Upland Developers
+
+- [Get Started](https://docs.developers.upland.me/upland-developers/playing-the-sandbox/get-started.md)
+- [Sandbox - Upland Sign Up](https://docs.developers.upland.me/upland-developers/playing-the-sandbox/sandbox-upland-sign-up.md): Access the Sandbox using the provided credentials
+- [Buying Upx](https://docs.developers.upland.me/upland-developers/playing-the-sandbox/buying-upx.md)
+- [1. Developer's Sign Up](https://docs.developers.upland.me/upland-developers/sign-up-and-authentication/1.-developers-sign-up.md): This section will answer all questions regarding how to become a third-party developer on Upland.
+- [2. Connecting Upland Account](https://docs.developers.upland.me/upland-developers/sign-up-and-authentication/2.-connecting-upland-account.md): At this moment you must connect an Upland Account to your developer account.
+- [Third-Party Applications](https://docs.developers.upland.me/upland-developers/application-management/third-party-applications.md)
+- [Device Checking](https://docs.developers.upland.me/upland-developers/application-management/third-party-applications/device-checking.md): When an Upland developer creates an application, they must inform which devices or platforms their application has compatibility with.
+- [Inactivating an Application](https://docs.developers.upland.me/upland-developers/application-management/inactivating-an-application.md)
+- [Submitting an Application](https://docs.developers.upland.me/upland-developers/application-management/submitting-an-application.md): This process should be followed when a developer requests approval from the Upland team.
+- [Activating an Application](https://docs.developers.upland.me/upland-developers/application-management/activating-an-application.md): This process can be used when you want to reactivate your application. It can be used if you lose your access token and need a new one. So you can inactivate your application and reactivate it.
+- [Dev Shops](https://docs.developers.upland.me/upland-developers/application-management/dev-shops.md): Dev Shops are a store for third-party applications to be located inside Upland.
+- [Permission Delegation](https://docs.developers.upland.me/upland-developers/application-management/permission-delegation.md)
+- [API Information - Sandbox](https://docs.developers.upland.me/upland-developers/api-definitions/api-information-sandbox.md)
+- [API Information - Production](https://docs.developers.upland.me/upland-developers/api-definitions/api-information-production.md)
+- [Upland Users Authentication](https://docs.developers.upland.me/upland-developers/api-definitions/upland-users-authentication.md): An authenticated user on your application must authorize using of his upland data/assets by the following process.
+- [Upland User Information](https://docs.developers.upland.me/upland-developers/api-definitions/upland-user-information.md): Endpoints to retrieve Upland Users information.
+- [Escrow Container Management](https://docs.developers.upland.me/upland-developers/api-definitions/escrow-container-management.md)
+- [Tournament APIs](https://docs.developers.upland.me/upland-developers/api-definitions/tournament-apis.md)
+- [Generic Endpoints](https://docs.developers.upland.me/upland-developers/api-definitions/generic-endpoints.md)
+- [Webhooks Notifications](https://docs.developers.upland.me/upland-developers/api-definitions/webhooks-notifications.md): Description of the webhook notifications send by Upland Developers APIs
+- [Upland Appchain](https://docs.developers.upland.me/upland-developers/api-definitions/upland-appchain.md)
+- [September - 21st](https://docs.developers.upland.me/upland-developers/release-notes/september-21st.md)
+- [August - 23rd](https://docs.developers.upland.me/upland-developers/release-notes/august-23rd.md)
+- [August - 10th](https://docs.developers.upland.me/upland-developers/release-notes/august-10th.md)
+- [July - 10th](https://docs.developers.upland.me/upland-developers/release-notes/july-10th.md)
+- [July - 3rd](https://docs.developers.upland.me/upland-developers/release-notes/july-3rd.md)
+- [April - 27th](https://docs.developers.upland.me/upland-developers/release-notes/april-27th.md)
+- [April - 13th](https://docs.developers.upland.me/upland-developers/release-notes/april-13th.md)
+- [April - 6th](https://docs.developers.upland.me/upland-developers/release-notes/april-6th.md)

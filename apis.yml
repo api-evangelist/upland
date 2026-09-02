@@ -1,18 +1,135 @@
 aid: upland
 name: Upland
-description: 'Upland is a company surfaced via the API Evangelist harvest backlog (source: secondary-market)
-  and added to the network as a stub for full-pipeline profiling.'
+description: >-
+  Upland (Uplandme, Inc.) is a San Francisco-based Web3 metaverse company that maps virtual property
+  onto real-world addresses, letting players buy, sell, trade and build on tokenized parcels of real
+  cities using its in-world currency UPX and the SPARKLET token. Upland runs a public third-party
+  Developer Program: the Upland Developers API is a documented REST contract (OpenAPI 3.0, 46
+  operations across Authentication, Upland User, Escrow Containers, Tournaments, Dev Shops,
+  Application Usage and generic read-only endpoints) that lets an approved application map its own
+  users to Upland user IDs, read a player's profile, balances, properties and NFTs, place player
+  assets into an application-scoped escrow container, run Rumble tournaments with UPX entry fees and
+  prize distribution, and receive eighteen documented webhook notifications. A parallel sandbox
+  environment mirrors production. Upland also operates its own Antelope (Leap 5.0.3) appchain, whose
+  chain RPC and Hyperion full-history API are publicly callable and documented.
+image: https://www.upland.me/images/seo/graph.png?v=3
 url: https://raw.githubusercontent.com/api-evangelist/upland/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:secondary-market
-x-tier: stub
-x-tier-reason: harvest
 specificationVersion: '0.20'
 created: '2026-09-02'
 modified: '2026-09-02'
 tags:
-- Company
-apis: []
+- Metaverse
+- Web3
+- Gaming
+- Blockchain
+- NFT
+- Virtual Real Estate
+- Digital Assets
+- Escrow
+- Tournaments
+- Antelope
+- Webhooks
+- Developer Platform
+tags_raw:
+- metaverse
+- web3
+- gaming
+- blockchain
+- nft
+- virtual-real-estate
+- digital-assets
+- escrow
+- tournaments
+- antelope
+- webhooks
+- developer-platform
+apis:
+- name: Upland Developers API
+  description: >-
+    REST API for approved Upland third-party applications. Maps application users to Upland user IDs
+    through a connection-code flow, exposes read-only player data (profile, balances, properties,
+    NFTs, travels), manages an application-scoped escrow container (create, lock/unlock, refresh
+    expiration, resolve, refund, remove transaction), runs Rumble tournaments (settings, create,
+    join, scores, prize distribution, scoreboard, resolve, cancel), and queries Dev Shops, cities,
+    neighborhoods, collections, buildings, tracks and treasures history. Application-level calls use
+    HTTP Basic auth (App ID + Secret Key); calls acting on behalf of a player use a Bearer JWT
+    delivered to the application's webhook URL when the player authorizes the connection.
+  humanURL: https://docs.developers.upland.me/upland-developers
+  baseURL: https://api.prod.upland.me/developers-api
+  tags:
+  - Metaverse
+  - Web3
+  - Gaming
+  - NFT
+  - Escrow
+  - Tournaments
+  - Digital Assets
+  - Webhooks
+  tags_raw:
+  - metaverse
+  - web3
+  - gaming
+  - nft
+  - escrow
+  - tournaments
+  - digital-assets
+  - webhooks
+  properties:
+  - type: OpenAPI
+    url: openapi/upland-developers-api-openapi.json
+  - type: OpenAPI
+    url: openapi/upland-developers-api-sandbox-openapi.json
+  - type: Documentation
+    url: https://docs.developers.upland.me/upland-developers
+  - type: APIReference
+    url: https://api.prod.upland.me/developers-api/docs/
+  - type: Authentication
+    url: authentication/upland-authentication.yml
+  - type: Conventions
+    url: conventions/upland-conventions.yml
+  - type: ErrorCatalog
+    url: errors/upland-problem-types.yml
+  - type: DataModel
+    url: data-model/upland-data-model.yml
+  - type: Overlay
+    url: overlays/upland-developers-api-overlay.yaml
+  - type: Webhooks
+    url: asyncapi/upland-webhooks.yml
+  - type: Sandbox
+    url: sandbox/upland-sandbox.yml
+- name: Upland Appchain History & Chain API
+  description: >-
+    Public, unauthenticated Antelope (Leap 5.0.3) node and Hyperion 3.3.10 full-history API for
+    Upland's own appchain, which replaced Upland's EOS deployment on 2025-04-26. Exposes the standard
+    Antelope /v1/chain RPC (get_info, get_account, get_table_rows, get_abi, push_transaction and
+    friends) plus Hyperion V1 and V2 history, state and stats endpoints for indexed actions, deltas,
+    transactions, token holders, account creators, proposals and resource usage. Documented by Upland
+    on its own Upland Appchain developer page alongside the ledger.upland.me block explorer.
+  humanURL: https://docs.developers.upland.me/upland-developers/api-definitions/upland-appchain
+  baseURL: https://chain-history.upland.me
+  tags:
+  - Blockchain
+  - Antelope
+  - Web3
+  - Metaverse
+  - Digital Assets
+  tags_raw:
+  - blockchain
+  - antelope
+  - web3
+  - metaverse
+  - digital-assets
+  properties:
+  - type: OpenAPI
+    url: openapi/upland-appchain-history-swagger.json
+  - type: Documentation
+    url: https://docs.developers.upland.me/upland-developers/api-definitions/upland-appchain
+  - type: APIReference
+    url: https://chain-history.upland.me/v2/docs/
+  - type: Overlay
+    url: overlays/upland-appchain-history-overlay.yaml
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
@@ -20,4 +137,57 @@ maintainers:
   email: info@apis.io
 common:
 - type: Website
-  url: https://forgeglobal.com/upland_stock/
+  url: https://upland.me/
+- type: DeveloperPortal
+  url: https://developers.upland.me
+- type: Documentation
+  url: https://docs.developers.upland.me/upland-developers
+- type: APIReference
+  url: https://api.prod.upland.me/developers-api/docs/
+- type: GettingStarted
+  url: https://docs.developers.upland.me/upland-developers/playing-the-sandbox/get-started
+- type: SignUp
+  url: https://developers.upland.me
+- type: Support
+  url: https://support.upland.me/
+- type: Community
+  url: https://discord.com/invite/upland
+- type: TermsOfService
+  url: https://upland.me/documents/Upland_Terms_of_Service_June_8_2026.pdf
+- type: PrivacyPolicy
+  url: https://upland.me/privacy-policy
+- type: LLMsTxt
+  url: llms/upland-llms.txt
+- type: Authentication
+  url: authentication/upland-authentication.yml
+- type: Conventions
+  url: conventions/upland-conventions.yml
+- type: ErrorCatalog
+  url: errors/upland-problem-types.yml
+- type: DataModel
+  url: data-model/upland-data-model.yml
+- type: Lifecycle
+  url: lifecycle/upland-lifecycle.yml
+- type: ChangeLog
+  url: changelog/upland-changelog.yml
+- type: Conformance
+  url: conformance/upland-conformance.yml
+- type: DomainSecurity
+  url: security/upland-domain-security.yml
+- type: Sandbox
+  url: sandbox/upland-sandbox.yml
+- type: Webhooks
+  url: asyncapi/upland-webhooks.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: Packages
+  url: packages/upland-packages.yml
+- type: Plans
+  url: plans/upland-plans-pricing.yml
+- type: RateLimits
+  url: rate-limits/upland-rate-limits.yml
+x-enrichment:
+  date: '2026-09-02'
+  status: enriched
+  artifacts_added: 28
+  pass: local-v1

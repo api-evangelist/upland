@@ -1,0 +1,104 @@
+generated: '2026-09-02'
+method: searched
+source: >-
+  https://docs.developers.upland.me/upland-developers plus the release-notes section, and derived
+  from openapi/upland-developers-api-openapi.json
+docs:
+- https://docs.developers.upland.me/upland-developers/release-notes/september-21st
+- https://docs.developers.upland.me/upland-developers/application-management/inactivating-an-application
+- https://docs.developers.upland.me/upland-developers/api-definitions/upland-appchain
+summary: >-
+  Upland ships dated release notes and one genuinely deprecated operation, and it executed a full
+  blockchain migration with published cut-over block and timestamp. It publishes no versioning
+  policy, no deprecation policy, no Sunset/Deprecation headers, no SLA and no status page.
+versioning:
+  scheme: path-prefix, applied to a single resource
+  spec_version: 1.0.0
+  docs_bundle_version: 1.0.6
+  note: >-
+    info.version in the live contract reads 1.0.0 while the copy embedded in the GitBook docs is
+    named developers-api-v.1.0.6.json — the two disagree, and neither is dated. /v2/properties is
+    the only versioned path. There is no version header, no version query parameter and no media
+    type versioning.
+  policy_published: false
+deprecation:
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  deprecated_operations:
+  - operationId: PropertiesController_getProperties
+    method: GET
+    path: /properties
+    summary: List properties (Deprecated)
+    replacement: GET /v2/properties (PropertiesController_getPropertiesWithNextPagePagination)
+    sunset_date: null
+    note: >-
+      Flagged `deprecated: true` in the OpenAPI and labelled "(Deprecated)" in its summary. No sunset
+      date, no removal notice and no Deprecation/Sunset response header. The replacement changes the
+      pagination contract from currentPage/pageSize to nextPageToken, so it is a breaking migration
+      for any consumer.
+    source: openapi/upland-developers-api-openapi.json
+  withdrawn_capabilities:
+  - what: Structure Ornaments, Outdoor Decors and Cars removed from escrow containers in production
+    when: April 27 release note
+    reason: The crates mechanism.
+    restored: Partially — the August 10 release note reinstates 3D assets (vehicles, map assets, ornaments) for escrow transactions via Impound Grounds.
+    source: https://docs.developers.upland.me/upland-developers/release-notes/april-27th
+platform_migration:
+  event: Upland moved off EOS onto its own Antelope appchain.
+  eos_stopped_at_block: 433146270
+  eos_stopped_at: '2025-04-28T08:55:14.500Z'
+  eos_final_block_id: 19d1499e8d4eec7c909b774be5eb8fa923b1834e5bf3a1701b4b3a31c1e2716c
+  appchain_started_at: '2025-04-26T17:30:00.000Z'
+  appchain_chain_id: 8982d76ae37e82825c90a10fde98e2f8155c4ad99477a5bb051975916475f4a9
+  node_software: Antelope Leap 5.0.3
+  history_software: Hyperion 3.3.10
+  note: >-
+    A published, block-precise cut-over is a stronger lifecycle signal than most providers manage,
+    and it is the only place Upland states an exact effective time for a breaking change.
+  source: https://docs.developers.upland.me/upland-developers/api-definitions/upland-appchain
+status_page:
+  published: false
+  probes:
+  - url: https://status.upland.me/
+    status: '<no response>'
+    note: Host does not resolve.
+  note: >-
+    No status page, no uptime history and no incident feed was found on any Upland host. NO
+    StatusPage pointer is wired in apis.yml. The nearest live health signal is third-party in
+    nature — the Hyperion node's own /v2/health endpoint at https://chain-history.upland.me/v2/health,
+    which returned 200 with service-level OK entries on 2026-09-02, and the ledger.upland.me block
+    explorer.
+sla:
+  published: false
+  uptime_commitment: null
+support:
+  channels:
+  - type: HelpCenter
+    url: https://support.upland.me/
+  - type: Community
+    url: https://discord.com/invite/upland
+  developer_review_sla: >-
+    "Please allow up to 5 business days" for the Upland verification process that connects a
+    developer's Upland account to their developer account.
+  source: https://docs.developers.upland.me/upland-developers/release-notes/april-6th
+application_lifecycle:
+  states: [created, submitted, approved/active, inactivated, reactivated]
+  note: >-
+    Applications have their own lifecycle independent of the API. Inactivating and reactivating an
+    application is the only credential-rotation path, and it issues a new access token, breaking
+    live integrations. A Dev Shop registration is required before an application may run in
+    production.
+  docs:
+  - https://docs.developers.upland.me/upland-developers/application-management/inactivating-an-application
+  - https://docs.developers.upland.me/upland-developers/application-management/activating-an-application
+  - https://docs.developers.upland.me/upland-developers/application-management/dev-shops
+changelog:
+  published: true
+  detail: changelog/upland-changelog.yml
+  url: https://docs.developers.upland.me/upland-developers/release-notes/september-21st
+gaps:
+- No versioning policy and no deprecation policy document.
+- No Deprecation or Sunset response headers (RFC 8594) on the deprecated operation.
+- No status page and no published SLA.
+- Release notes carry a month and day but no year.

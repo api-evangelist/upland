@@ -1,0 +1,43 @@
+generated: '2026-09-02'
+method: probed
+source: >-
+  Documentation search across every page in the developer sitemap, plus live response-header
+  inspection of GET https://api.prod.upland.me/developers-api/cities on 2026-09-02
+limit_count: 0
+summary: >-
+  Upland publishes no rate limits and returns no rate-limit headers. Both halves were checked: the
+  developer documentation contains no limits, quotas, throttling or fair-use section on any page,
+  and a live unauthenticated request to the production API returned a full header set with no
+  X-RateLimit-*, no RateLimit-*, no Retry-After and no 429-related signalling. An agent calling this
+  API has no runtime way to learn it is approaching a limit.
+limits: []
+response_headers:
+  ratelimit_limit: absent
+  ratelimit_remaining: absent
+  ratelimit_reset: absent
+  retry_after: absent
+  draft_ratelimit_header: absent
+  observed_headers_of_note:
+  - etag
+  - strict-transport-security
+  - x-envoy-upstream-service-time
+  - cf-ray
+  - 'set-cookie: sticky-session-1'
+  probe:
+    url: https://api.prod.upland.me/developers-api/cities
+    method: GET
+    credentials: none
+    status: 401
+    date: '2026-09-02'
+exhaustion_status_code: not published
+throttling_evidence: none observed
+practical_ceilings:
+  note: >-
+    The real pacing constraints on this API are not request-rate limits at all; they are settlement
+    windows an integrator must design around. Blockchain ownership changes are documented as taking
+    up to three minutes, and an unsigned escrow request expires after ten minutes.
+  source: https://docs.developers.upland.me/upland-developers/api-definitions/escrow-container-management
+gaps:
+- No published rate limit, quota or fair-use policy.
+- No rate-limit response headers of any kind.
+- No documented status code or body for exhaustion.

@@ -1,0 +1,231 @@
+generated: '2026-09-02'
+method: derived
+source: openapi/upland-developers-api-openapi.json
+summary: >-
+  Derived from the 67 component schemas of the Upland Developers API by following $ref links and
+  id-reference fields. The graph has three clusters that barely touch: a WORLD cluster (city,
+  neighborhood, collection, property, building, track) that is pure reference data, a PLAYER cluster
+  (user, profile, balances, NFTs, properties, travels) reachable only with a player token, and an
+  APPLICATION cluster (application, escrow container, asset transfer, tournament, participant,
+  score) where every write lives. The Escrow Container is the hinge: it is the only entity that
+  holds assets belonging to players on behalf of an application.
+identifier_conventions:
+  uuid: userId, transactionId, participantId, tournamentId, settingsId, registrationTransactionId, resolutionTransactionId
+  numeric: containerId, appId, propertyId, id
+  chain_account: eosId, ownerEosId, userEosId, targetEosId, stakeholderEosId
+  note: >-
+    `eosId` naming survives the migration off EOS onto Upland's own Antelope appchain. It is the
+    on-chain account name that owns an asset, and it is the join key between this REST API and the
+    chain/history APIs at chain-api.upland.me and chain-history.upland.me.
+entities:
+- name: Application
+  schema: implicit (not a response schema; identified by appId)
+  key: appId
+  note: The developer's registered third-party application. Its credentials are the Basic username/password pair.
+- name: UplandUser
+  schema: UserProfileResponseDto
+  key: userId (uuid), eosId (chain account)
+  reachable_via: GET /user/profile with a player Bearer token
+- name: HomeAddress
+  schema: HomeAddressResponseDto
+- name: UserBalances
+  schema: UserBalancesResponseDto
+  note: UPX and related in-world balances for the authenticated player.
+- name: UserNft
+  schema: UserNftResponseDto
+- name: LandVehicleMetadata
+  schema: LandVehicleMetadataResponseDto
+  note: Car metadata carrying levels of detail and attributes; expanded in the August 23 release.
+- name: Property
+  schema: PropertyResponseDto / UserPropertyResponseDto
+  key: propertyId
+- name: City
+  schema: CityResponseDto
+  key: cityId
+- name: Neighborhood
+  schema: NeighborhoodResponseDto
+- name: Collection
+  schema: CollectionResponseDto
+- name: Building
+  schema: BuildingResponseDto
+- name: Track
+  schema: TrackResponseDto / TrackWithDetailsResponseDto
+- name: TreasureHistory
+  schema: TreasureHistoryResponseDto
+- name: UserTravel
+  schema: UserTravelResponseDto
+- name: EscrowContainer
+  schema: ContainerResponseDto / ContainerWithAssetsResponseDto
+  key: containerId
+  note: The hinge entity. Created by an application, holds player assets, resolves once and irreversibly.
+- name: AssetTransferRequest
+  schema: AssetTransferRequestResponseDto
+  key: transactionId
+  status_values: [expired, rejected, user_signature_requested, changing_ownership, in_escrow, refunded, removed]
+- name: ContainerResolution
+  schema: ContainerResolutionRequestDto / ContainerResolutionResponseDto
+  key: resolutionTransactionId
+- name: DevShop
+  schema: DevShopResponseDto
+  key: devShopId
+- name: DevShopLocation
+  schema: DevShopLocationResponseDto
+- name: Coordinates
+  schema: CoordinatesResponseDto
+- name: RumbleTournamentSettings
+  schema: RumbleTournamentSettingsResponseDto
+  key: settingsId
+- name: RumbleTournament
+  schema: RumbleTournamentResponseDto
+  key: tournamentId
+  status_values: [WAITING_FOR_PARTICIPANTS, WAITING_PAYMENT, REGISTRATION_CLOSED, IN_PROGRESS, DISTRIBUTING_PRIZES, CLOSED, FAILED]
+- name: RumbleTournamentParticipant
+  schema: RumbleTournamentParticipantResponseDto
+  key: participantId
+  status_values: [WAITING_PAYMENT, PROCESSING_PAYMENT, ACTIVE, REMOVED]
+- name: PrizeDistributionRule
+  schema: PrizeDistributionRuleResponseDto
+- name: FeeDistribution
+  schema: FeeDistributionDto
+- name: Score
+  schema: ScoreDto
+- name: Scoreboard
+  schema: ScoreboardResponseDto
+- name: AppWebhookCall
+  schema: AppWebhookCallDto
+  note: The delivery record for a webhook Upland sent to the application.
+relationships:
+- from: UplandUser
+  to: HomeAddress
+  type: has_one
+  via: UserProfileResponseDto.homeAddress
+- from: UplandUser
+  to: UserNft
+  type: has_many
+  via: GET /user/assets/nfts -> UserNftsListResponseDto.results
+- from: UplandUser
+  to: Property
+  type: has_many
+  via: GET /user/assets/properties -> UserPropertiesListResponseDto.results
+- from: UplandUser
+  to: UserTravel
+  type: has_many
+  via: UserTravelsListResponseDto.results
+- from: UserNft
+  to: LandVehicleMetadata
+  type: has_one
+  via: UserNftResponseDto.metadata
+- from: LandVehicleMetadata
+  to: LandVehicleLOD
+  type: has_many
+  via: LandVehicleMetadataResponseDto.lods
+- from: LandVehicleMetadata
+  to: LandVehicleAttribute
+  type: has_many
+  via: LandVehicleMetadataResponseDto.attributes
+- from: Property
+  to: City
+  type: belongs_to
+  via: PropertyResponseDto.city
+- from: Property
+  to: Neighborhood
+  type: belongs_to
+  via: PropertyResponseDto.neighborhood
+- from: Property
+  to: Collection
+  type: belongs_to
+  via: PropertyResponseDto.collection
+- from: Track
+  to: City
+  type: belongs_to
+  via: TrackResponseDto.city
+- from: Track
+  to: Building
+  type: has_many
+  via: GET /tracks/{id}/buildings -> BuildingsListResponseDto.buildings
+- from: EscrowContainer
+  to: AssetTransferRequest
+  type: has_many
+  via: ContainerWithAssetsResponseDto.assets
+- from: AssetTransferRequest
+  to: UplandUser
+  type: belongs_to
+  via: ownerEosId
+- from: EscrowContainer
+  to: Application
+  type: belongs_to
+  via: created under the calling application's Basic credentials
+- from: ContainerResolution
+  to: ContainerResolutionTransfer
+  type: has_many
+  via: ContainerResolutionRequestDto.actions
+- from: DevShop
+  to: DevShopLocation
+  type: has_one
+  via: DevShopResponseDto.location
+- from: DevShopLocation
+  to: City
+  type: belongs_to
+  via: DevShopLocationResponseDto.city
+- from: DevShopLocation
+  to: Neighborhood
+  type: belongs_to
+  via: DevShopLocationResponseDto.neighborhood
+- from: DevShopLocation
+  to: Coordinates
+  type: has_one
+  via: DevShopLocationResponseDto.coordinates
+- from: RumbleTournament
+  to: RumbleTournamentSettings
+  type: has_one
+  via: RumbleTournamentResponseDto.baseSettingsSnapshot
+  note: >-
+    A SNAPSHOT, not a live reference. Editing settings affects only new tournaments; existing ones
+    keep the settings they were created with.
+- from: RumbleTournamentSettings
+  to: PrizeDistributionRule
+  type: has_many
+  via: RumbleTournamentSettingsResponseDto.prizeDistributionRules
+- from: RumbleTournamentSettings
+  to: FeeDistribution
+  type: has_one
+  via: RumbleTournamentSettingsResponseDto.developerFee
+- from: RumbleTournament
+  to: RumbleTournamentParticipant
+  type: has_many
+  via: FindRumbleTournamentParticipantsListResponseDto.results
+- from: RumbleTournamentParticipant
+  to: UplandUser
+  type: belongs_to
+  via: userId
+- from: RumbleTournament
+  to: Score
+  type: has_many
+  via: RegisterRumbleTournamentScoresRequestDto.scores
+- from: RumbleTournament
+  to: Scoreboard
+  type: has_one
+  via: GET /rumble-tournaments/{id}/scoreboard
+- from: Application
+  to: AppWebhookCall
+  type: has_many
+  via: GET /app-usage/webhook-calls -> AppWebhookCallsResponseDto.results
+- from: Application
+  to: DevShop
+  type: has_many
+  via: GET /devshops
+cross_api_join:
+  note: >-
+    The REST API and the appchain APIs share one join key. An `eosId` from
+    UserProfileResponseDto or AssetTransferRequestResponseDto can be looked up directly against
+    https://chain-history.upland.me/v2/state/get_account and /v2/history/get_actions, and against
+    https://chain-api.upland.me/v1/chain/get_account. This is the only documented path from an
+    application-level asset movement to its on-chain record.
+counts:
+  schemas: 67
+  entities: 27
+  ref_relationships: 44
+gaps:
+- No id-prefix convention (no obj_ / cus_ style prefixes) to identify an object type from its id alone.
+- Application is not modelled as a response schema; it exists only as appId on webhook payloads.
+- The chain join key is named eosId although Upland no longer runs on EOS.

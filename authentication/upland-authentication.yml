@@ -1,0 +1,112 @@
+generated: '2026-09-02'
+method: searched
+source: https://docs.developers.upland.me/upland-developers/api-definitions/upland-users-authentication
+docs:
+- https://docs.developers.upland.me/upland-developers/api-definitions/upland-users-authentication
+- https://docs.developers.upland.me/upland-developers/sign-up-and-authentication/1.-developers-sign-up
+- https://docs.developers.upland.me/upland-developers/application-management/third-party-applications
+- https://docs.developers.upland.me/upland-developers/api-definitions/api-information-production
+derived_from:
+- openapi/upland-developers-api-openapi.json
+- openapi/upland-developers-api-sandbox-openapi.json
+summary:
+  types:
+  - http
+  models: 2
+  note: >-
+    Two distinct credentials, both declared in the OpenAPI securitySchemes and both documented.
+    Application identity is HTTP Basic (App ID as username, App Secret Key as password). Player
+    identity is an HTTP Bearer JWT that the application never requests directly — it is PUSHED to
+    the application's registered webhook URL after the player pastes a connection code into their
+    Upland account. There is no OAuth 2.0 authorization server, no OIDC discovery document and no
+    scope endpoint anywhere on Upland's hosts (all /.well-known/* probes returned 404 or an SPA
+    shell), so no scopes/ artifact is emitted.
+schemes:
+- name: basic
+  type: http
+  scheme: basic
+  in: header
+  header: Authorization
+  credential_username: Application ID (shown on the Developers Portal home screen)
+  credential_password: Application Secret Key (issued once, when the application is created)
+  applies_to: >-
+    Every application-level operation: /auth/otp/init, all /containers*, /tracks, /buildings,
+    /cities, /properties, /v2/properties, /neighborhoods, /collections, /treasures-history,
+    /devshops*, /app-usage/webhook-calls, and all /rumble-tournament* operations except
+    /rumble-tournaments/{id}/join.
+  rotation: >-
+    The secret key cannot be retrieved after issue. To rotate, the developer must inactivate and
+    then reactivate the application, which issues a new access token and has downstream impact on
+    live integrations.
+  docs: https://docs.developers.upland.me/upland-developers/application-management/activating-an-application
+  source: openapi/upland-developers-api-openapi.json
+- name: bearer
+  type: http
+  scheme: bearer
+  bearer_format: JWT
+  in: header
+  header: Authorization
+  applies_to: >-
+    Player-scoped operations: GET /user/profile, GET /user/balances, GET /user/assets/nfts,
+    GET /user/assets/properties, GET /user/travels, POST /user/join, and
+    POST /rumble-tournaments/{id}/join.
+  delivery: webhook
+  docs: https://docs.developers.upland.me/upland-developers/api-definitions/upland-users-authentication
+  source: openapi/upland-developers-api-openapi.json
+flows:
+- id: player-connection-code
+  name: Upland User connection code (OTP)
+  style: out-of-band one-time code, token delivered by webhook
+  steps:
+  - Application calls POST /auth/otp/init with HTTP Basic (App ID + Secret Key). Operation id AuthController_otpInit.
+  - Upland returns a short connection code; the application displays, texts or emails it to the player.
+  - The player enters that code inside their own Upland account to grant the application access.
+  - >-
+      Upland POSTs an AuthenticationSuccess notification to the application's registered webhook URL
+      carrying code, userId (uuid) and accessToken (JWT). On failure or expiry it POSTs
+      AuthenticationFailure with code and message instead.
+  - The application uses that accessToken as an HTTP Bearer token on player-scoped operations.
+  revocation: >-
+    When a player disconnects the application from their Upland account, Upland POSTs a
+    UserDisconnectedApplication notification carrying appId and userId. The application is expected
+    to discard the player's token on that event.
+  docs: https://docs.developers.upland.me/upland-developers/api-definitions/upland-users-authentication
+application_registration:
+  gate: approval
+  steps:
+  - Register a developer account and connect an Upland account; Upland runs a verification process taking up to 5 business days.
+  - Create an application supplying name, logo, description, container expiration time in hours, webhook URL, webhook access token and scope.
+  - Submit the application for review via the published ClickUp form; approval is required before production use.
+  - Register a Dev Shop (an owned Upland property with a qualifying construction) for production applications.
+  application_scopes:
+    note: >-
+      The application creation form exposes a fixed "Scope" field. Upland's documentation states the
+      only options are "Read" and "Assets Transfer". These are product-level application permissions
+      set in the Developers Portal, NOT OAuth scopes — they are not requested per token, not present
+      in the OpenAPI, and have no scope parameter on any operation.
+    values:
+    - Read
+    - Assets Transfer
+    source: https://docs.developers.upland.me/upland-developers/application-management/third-party-applications
+  docs: https://docs.developers.upland.me/upland-developers/application-management/submitting-an-application
+webhook_authentication:
+  direction: Upland -> application
+  mechanism: >-
+    The developer supplies a Webhook URL and a Webhook Access Token when creating the application.
+    Upland presents that token on the notifications it POSTs, so the application can authenticate
+    inbound calls. Upland does not publish a signature scheme (no HMAC header is documented).
+  source: https://docs.developers.upland.me/upland-developers/application-management/third-party-applications
+delegation:
+  name: Permission Delegation
+  status: alpha, opt-in by request
+  effect: >-
+    When enabled for a developer account, Upland can sign asset transfers on the developer's behalf,
+    removing the per-transaction manual signature. It enables the alternate operation
+    POST /containers/{containerId}/join (EscrowController_putAssetsInEscrowContainerWithPermissionDelegation),
+    which takes App ID + Secret Key only and does not require the developer's EOS ID.
+  docs: https://docs.developers.upland.me/upland-developers/application-management/permission-delegation
+gaps:
+- No OAuth 2.0 or OpenID Connect. /.well-known/oauth-authorization-server, /.well-known/oauth-protected-resource and /.well-known/openid-configuration all miss on every Upland host.
+- No published token lifetime, expiry or refresh mechanism for the player Bearer JWT.
+- No documented webhook signature (HMAC/JWS); inbound authenticity rests on a shared bearer token the developer chooses.
+- No mTLS, no API-key header scheme, no key-prefix convention.

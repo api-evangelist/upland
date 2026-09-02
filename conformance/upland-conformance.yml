@@ -1,0 +1,141 @@
+generated: '2026-09-02'
+method: derived
+source: >-
+  openapi/upland-developers-api-openapi.json, openapi/upland-appchain-history-swagger.json,
+  docs.developers.upland.me, and live probes of Upland hosts on 2026-09-02
+summary: >-
+  Upland conforms to OpenAPI 3.0 on its developer API and Swagger 2.0 on its appchain history API,
+  and its chain surface is a faithful implementation of a real domain standard — the Antelope
+  (formerly EOSIO) chain API plus the Hyperion V1/V2 full-history API. It conforms to nothing else:
+  no OAuth 2.0, no OIDC, no RFC 9457 problem details, no RFC 8594 deprecation headers, no RFC 9116
+  security.txt, no IETF rate-limit headers, no published compliance certifications. NO Compliance
+  pointer is wired in apis.yml — no certification of any kind was found.
+standards:
+- id: openapi-3.0
+  conforms: true
+  evidence: >-
+    openapi/upland-developers-api-openapi.json declares openapi 3.0.0 with 44 paths, 46 operations
+    and 67 component schemas, served live from
+    https://api.prod.upland.me/developers-api/docs-json (HTTP 200, application/json).
+- id: swagger-2.0
+  conforms: true
+  evidence: >-
+    openapi/upland-appchain-history-swagger.json declares swagger 2.0 with 53 paths, served live
+    from https://chain-history.upland.me/v2/docs/json (HTTP 200).
+- id: llms-txt
+  conforms: true
+  evidence: >-
+    https://docs.developers.upland.me/llms.txt returns HTTP 200, text/markdown, 4,415 bytes, listing
+    29 documentation pages. Every page is additionally retrievable as Markdown by appending .md.
+- id: http-basic-auth
+  conforms: true
+  evidence: 'securitySchemes.basic in openapi/upland-developers-api-openapi.json: type http, scheme basic.'
+- id: http-bearer-jwt
+  conforms: true
+  evidence: 'securitySchemes.bearer in openapi/upland-developers-api-openapi.json: type http, scheme bearer; the token is a JWT delivered on the AuthenticationSuccess webhook.'
+- id: oauth2
+  conforms: false
+  evidence: >-
+    No oauth2 securityScheme in either spec. /.well-known/oauth-authorization-server and
+    /.well-known/oauth-protected-resource returned 404 on upland.me, www.upland.me,
+    api.prod.upland.me and docs.developers.upland.me, and an SPA shell on developers.upland.me.
+- id: oidc
+  conforms: false
+  evidence: '/.well-known/openid-configuration returned 404 or an SPA shell on all five hosts probed.'
+- id: rfc9457
+  conforms: false
+  evidence: >-
+    The runtime error envelope is the NestJS default {"statusCode","message","error"}, observed live
+    on 2026-09-02. No application/problem+json media type appears in either spec.
+- id: rfc8594
+  conforms: false
+  evidence: >-
+    GET /properties is flagged deprecated:true in the spec but no Deprecation or Sunset response
+    header is declared or returned.
+- id: rfc9116
+  conforms: false
+  evidence: '/.well-known/security.txt returned 404 or an SPA shell on all five Upland hosts.'
+- id: ietf-ratelimit-headers
+  conforms: false
+  evidence: >-
+    Live response headers on GET https://api.prod.upland.me/developers-api/cities carry no
+    RateLimit-* or X-RateLimit-* fields and no Retry-After.
+- id: pagination
+  conforms: partial
+  evidence: >-
+    Two coexisting schemes: page-number (currentPage + pageSize) on nine operations, and token
+    (nextPageToken) on GET /v2/properties. No single convention.
+- id: idempotency
+  conforms: false
+  evidence: 'No Idempotency-Key header and no idempotency wording in 46 operations or in any documentation page.'
+- id: json-api
+  conforms: false
+  evidence: Plain JSON resource bodies; no JSON:API media type, document structure or link objects.
+- id: asyncapi
+  conforms: false
+  evidence: >-
+    Eighteen webhook event types are documented in prose at
+    https://docs.developers.upland.me/upland-developers/api-definitions/webhooks-notifications
+    but no AsyncAPI document is published.
+- id: webhook-signatures
+  conforms: false
+  evidence: >-
+    Inbound authenticity rests on a developer-chosen Webhook Access Token. No HMAC signature header,
+    timestamp or replay window is documented.
+- id: hsts
+  conforms: partial
+  evidence: >-
+    api.prod.upland.me returns strict-transport-security max-age=15552000; includeSubDomains and
+    docs.developers.upland.me returns max-age=31536000, but upland.me returns no HSTS header.
+- id: dnssec
+  conforms: false
+  evidence: 'security/upland-domain-security.yml probe: dnssec false on upland.me.'
+- id: dmarc
+  conforms: true
+  evidence: 'security/upland-domain-security.yml probe: SPF present, DMARC present with policy quarantine on upland.me.'
+domain_standard:
+  claimed: true
+  standards_declared:
+  - antelope-chain-api
+  - hyperion-history-api
+  standard: antelope-chain-api
+  aliases: [eosio-chain-api, antelope, leap]
+  conforms: true
+  market: blockchain / Web3 asset custody
+  evidence: >-
+    openapi/upland-appchain-history-swagger.json declares the canonical Antelope chain API surface
+    verbatim — /v1/chain/get_info, /v1/chain/get_account, /v1/chain/get_abi, /v1/chain/get_raw_abi,
+    /v1/chain/get_table_rows, /v1/chain/get_table_by_scope, /v1/chain/get_currency_balance,
+    /v1/chain/get_currency_stats, /v1/chain/get_producers, /v1/chain/abi_json_to_bin,
+    /v1/chain/abi_bin_to_json, /v1/chain/push_transaction, /v1/chain/send_transaction,
+    /v1/chain/get_block, /v1/chain/get_block_header_state, /v1/history/get_actions,
+    /v1/history/get_transaction, /v1/history/get_key_accounts,
+    /v1/history/get_controlled_accounts and /v1/node/get_supported_apis. A live call to
+    https://chain-api.upland.me/v1/chain/get_info on 2026-09-02 returned
+    server_version_string v5.0.3 and chain_id
+    8982d76ae37e82825c90a10fde98e2f8155c4ad99477a5bb051975916475f4a9.
+  why_it_matters: >-
+    Any existing Antelope client, wallet or indexer speaks this surface with no bespoke connector.
+    Upland did not invent a proprietary chain API for its appchain; it shipped the standard one.
+  secondary:
+    standard: hyperion-history-api
+    conforms: true
+    version: 3.3.10
+    evidence: >-
+      info.title "Hyperion History API for UPLAND Chain", version 3.3.10, exposing the full V2
+      surface (/v2/history/*, /v2/state/*, /v2/stats/*, /v2/health, /v2/get_filters). Upland's own
+      developer documentation names both the V1 and V2 endpoints and points readers at EOS Rio's
+      Hyperion API reference at https://hyperion.docs.eosrio.io/api/v2/.
+    note: >-
+      Hyperion is EOS Rio's open-source software; this is Upland's own deployment for Upland's own
+      chain, named on Upland's Upland Appchain documentation page.
+compliance:
+  certifications_published: []
+  trust_center: null
+  soc2: not published
+  iso27001: not published
+  pci: not published
+  note: >-
+    probe-security-programs.py found no bug bounty, no disclosure policy and no trust center on any
+    Upland host. Upland's public legal surface is a Terms of Service PDF and a privacy policy page,
+    with a Termly consent blocker on the marketing site — no certification claims of any kind.

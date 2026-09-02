@@ -1,0 +1,67 @@
+generated: '2026-09-02'
+method: searched
+source: >-
+  registry.npmjs.org search + docs.developers.upland.me. No first-party client library is published
+  by Uplandme, Inc. on any registry, and none is linked from the developer documentation.
+summary:
+  official_count: 0
+  community_count: 1
+  note: >-
+    Upland ships NO official SDK. The documentation teaches raw HTTP with Basic auth (a Postman
+    screenshot is the only client shown) and links no client library, no GitHub organization and no
+    package. Because official_count is 0, NO `SDKs` pointer is wired in apis.yml — sdk_count must
+    not be credited here.
+registries_searched:
+- registry: npm
+  query: upland
+  result: no first-party package
+  note: >-
+    Matches for "upland" on npm are either the third-party wrapper below or packages belonging to
+    Upland Software, Inc. (uplandsoftware.com, NASDAQ UPLD) under the @objectif-lune scope. Upland
+    Software is a DIFFERENT company from Uplandme, Inc. and its packages are deliberately excluded.
+- registry: pypi
+  query: upland-api
+  result: 404
+- registry: pkg.go.dev
+  result: no first-party module found
+- registry: rubygems
+  result: no first-party gem found
+- registry: nuget
+  result: no first-party package found
+- registry: maven-central
+  result: no first-party artifact found
+- registry: crates.io
+  result: no first-party crate found
+packages:
+- name: '@ikris/upland-api-wrapper'
+  registry: npm
+  official: false
+  language: javascript
+  url: https://www.npmjs.com/package/@ikris/upland-api-wrapper
+  repository: https://github.com/IIKris/upland-api-wrapper
+  description: An npm package for the Upland Developer API.
+  version: 0.0.1
+  published: '2023-03-23'
+  covers: openapi/upland-developers-api-openapi.json
+  note: >-
+    Community-maintained, not published by Uplandme, Inc. Single 0.0.1 release from March 2023,
+    predating the escrow-container-limit, tournament, webhook-call-query and 3D-asset work Upland
+    shipped in its own release notes, so it does not describe the current API. Recorded as an
+    abandonment signal on the community wrapper, not on Upland.
+- name: upland.me-api
+  registry: github
+  official: false
+  language: markdown
+  url: https://github.com/henrydatei/upland.me-api
+  description: >-
+    A community reverse-engineering project documenting calls observed against the upland.me
+    application. Not a package and not an Upland product.
+  version: null
+  published: null
+  note: >-
+    No registry release exists, so version and published are null by measurement rather than by
+    omission. Listed for completeness because it is the most-cited third-party Upland API resource.
+gaps:
+- No first-party SDK in any language.
+- No official GitHub organization located for Uplandme, Inc.
+- No published Postman collection or workspace.

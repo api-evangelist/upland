@@ -1,0 +1,28 @@
+generated: '2026-09-02'
+method: probed
+source: live DNS/TLS/HTTP probes of apis.yml + OpenAPI hosts
+hosts:
+- host: upland.me
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Nov 16 15:33:01 2026 GMT
+  hsts: false
+- host: docs.developers.upland.me
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Oct 29 11:02:09 2026 GMT
+  hsts: true
+  hsts_max_age: 31536000
+- host: api.prod.upland.me
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Nov  2 16:49:13 2026 GMT
+  hsts: null
+domains:
+- domain: upland.me
+  dnssec: false
+  caa:
+  - ;; connection timed out; no servers could be reached
+  spf: true
+  dmarc: true
+  dmarc_policy: quarantine

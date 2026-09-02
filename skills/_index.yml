@@ -1,0 +1,29 @@
+generated: '2026-09-02'
+method: generated
+source: >-
+  openapi/upland-developers-api-openapi.json plus docs.developers.upland.me. Upland publishes no
+  AGENTS.md and no skills of its own; these are API Evangelist-authored packaged skills grounded in
+  operationIds verified present in the harvested contract.
+api: Upland Developers API
+skills:
+- name: upland-connect-player
+  file: upland-connect-player.md
+  description: Connect an Upland player and obtain the Bearer token, including the webhook-delivered token and the disconnect event.
+  operations: 3
+- name: upland-escrow-container
+  file: upland-escrow-container.md
+  description: The full escrow container lifecycle with asynchronous settlement, reversal windows and the irreversibility of resolve.
+  operations: 10
+- name: upland-rumble-tournament
+  file: upland-rumble-tournament.md
+  description: Create, fill, score and settle a Rumble tournament including UPX fees and prize distribution.
+  operations: 16
+coverage:
+  openapi_operations: 46
+  operations_covered: 29
+  uncovered: >-
+    The read-only world endpoints (cities, neighborhoods, collections, properties, buildings, tracks,
+    treasures history), Dev Shop lookups and GET /app-usage/webhook-calls are plain parameterised
+    GETs that need no packaged flow.
+verification:
+  note: Every operationId named in these skills was grepped against openapi/upland-developers-api-openapi.json before the skill was written.

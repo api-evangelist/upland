@@ -1,0 +1,45 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the Upland Appchain History API
+  version: 1.0.0
+x-provenance:
+  generated: '2026-09-02'
+  method: generated
+  source: openapi/upland-appchain-history-swagger.json
+  extends: openapi/upland-appchain-history-swagger.json
+  note: >-
+    The harvested document at openapi/_original/upland-appchain-hyperion-swagger.json is preserved
+    verbatim. Its `host` self-reports the node's internal cluster address, 10.0.3.200:7000, which is
+    an unroutable RFC 1918 placeholder no consumer can call. The registered copy in openapi/ carries
+    the real public host Upland documents, chain-history.upland.me. That repair is recorded here.
+actions:
+- target: $.info
+  update:
+    x-operator: Uplandme, Inc.
+    x-software: Hyperion 3.3.10 by EOS Rio
+    x-documentation: https://docs.developers.upland.me/upland-developers/api-definitions/upland-appchain
+    x-upstream-reference: https://hyperion.docs.eosrio.io/api/v2/
+    x-block-explorer: https://ledger.upland.me/
+- target: $.host
+  update: chain-history.upland.me
+- target: $.schemes
+  update:
+  - https
+x-repairs:
+- field: host
+  was: 10.0.3.200:7000
+  now: chain-history.upland.me
+  basis: >-
+    Upland's own Upland Appchain documentation page publishes
+    https://chain-history.upland.me/v1 and https://chain-history.upland.me/v2 as the History API
+    endpoints, and a live GET https://chain-history.upland.me/v2/health returned HTTP 200 with
+    version 3.3.10 on 2026-09-02.
+x-related-hosts:
+- host: https://chain-api.upland.me
+  role: Antelope node RPC
+  evidence: >-
+    Live GET /v1/chain/get_info returned HTTP 200 on 2026-09-02 with server_version_string v5.0.3
+    and chain_id 8982d76ae37e82825c90a10fde98e2f8155c4ad99477a5bb051975916475f4a9.
+- host: chain-p2p.upland.me:15001
+  role: P2P endpoint
+  evidence: Published on the Upland Appchain documentation page.

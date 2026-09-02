@@ -1,0 +1,91 @@
+generated: '2026-09-02'
+method: searched
+source: https://docs.developers.upland.me/upland-developers/release-notes/september-21st
+docs: https://docs.developers.upland.me/upland-developers
+summary: >-
+  Upland maintains a Release Notes section in its developer documentation with eight dated entries.
+  Entries are titled by month and day only — no year is printed on any of them and no publication
+  date is exposed in the page metadata — so `date` is recorded as null and the label is preserved
+  verbatim rather than a year being inferred.
+scheme: dated release notes, no semantic version tags
+current_version: 1.0.0
+current_version_source: info.version in openapi/upland-developers-api-openapi.json
+version_disagreement: >-
+  The GitBook docs embed a spec file named developers-api-v.1.0.6.json whose own info.version is
+  also 1.0.0. The 1.0.6 in the filename is not reflected anywhere machine-readable.
+entry_count: 8
+window: The eight most recent published entries, April through September.
+entries:
+- label: September - 21st
+  date: null
+  url: https://docs.developers.upland.me/upland-developers/release-notes/september-21st
+  breaking: false
+  additions:
+  - Tournament APIs released.
+  - Escrow containers gained a player limit; developers can now define how many players may join a container.
+  highlights: >-
+    The largest addition in the window. Sixteen Tournament operations are visible in the live
+    OpenAPI, matching this note.
+- label: August - 23rd
+  date: null
+  url: https://docs.developers.upland.me/upland-developers/release-notes/august-23rd
+  breaking: false
+  additions:
+  - Car records now return all LODs and stats for the searched car.
+  - New endpoint to query all sent webhooks.
+  highlights: 'The webhook-query endpoint is GET /app-usage/webhook-calls (AppUsageController_findWebhookCalls).'
+- label: August - 10th
+  date: null
+  url: https://docs.developers.upland.me/upland-developers/release-notes/august-10th
+  breaking: false
+  additions:
+  - Impound Grounds introduced, where players collect 3D assets received from third-party app transactions.
+  - Third-party developers may again use 3D assets (vehicles, map assets, ornaments) in escrow transactions.
+  highlights: Reverses part of the April 27 withdrawal of 3D asset categories from escrow.
+- label: July - 10th
+  date: null
+  url: https://docs.developers.upland.me/upland-developers/release-notes/july-10th
+  breaking: false
+  additions:
+  - Player home addresses now returned on GET /user/profile.
+  - Resolution messages to players carry a hyperlink to the NFT.
+  changes:
+  - 'Webhook system improvements.'
+  - '"Endpoints were standardized" — no detail given on what changed or whether any consumer had to adapt.'
+- label: July - 3rd
+  date: null
+  url: https://docs.developers.upland.me/upland-developers/release-notes/july-3rd
+  breaking: false
+  additions:
+  - FIFA legits made available for escrow transactions (FIFA passes excluded).
+  fixes:
+  - Duplicate properties returned by the user properties endpoint fixed.
+- label: April - 27th
+  date: null
+  url: https://docs.developers.upland.me/upland-developers/release-notes/april-27th
+  breaking: true
+  removals:
+  - Structure Ornaments, Outdoor Decors and Cars removed from production escrow containers because of the crates mechanism.
+  additions:
+  - All users involved in a container resolution now receive a message center notification describing what they received.
+  highlights: >-
+    The one clearly breaking entry in the window — asset categories an integration may have depended
+    on stopped working, with no sunset period stated.
+- label: April - 13th
+  date: null
+  url: https://docs.developers.upland.me/upland-developers/release-notes/april-13th
+  breaking: false
+  additions:
+  - Permission Delegation released, letting Upland sign escrow transactions on a developer's behalf.
+- label: April - 6th
+  date: null
+  url: https://docs.developers.upland.me/upland-developers/release-notes/april-6th
+  breaking: false
+  additions:
+  - Upland verification process email on connecting a developer's Upland account, with a stated 5-business-day turnaround.
+  - Container resolutions may be assigned to any user associated with the application, not only users inside the container.
+gaps:
+- No year on any entry.
+- No RSS or Atom feed for the release notes.
+- No mapping from a release note to a spec version.
+- Breaking changes are not labelled as such and carry no migration window.

@@ -1,0 +1,202 @@
+generated: '2026-09-02'
+method: derived
+source: >-
+  openapi/upland-developers-api-openapi.json plus docs.developers.upland.me and live probes of
+  https://api.prod.upland.me/developers-api on 2026-09-02
+docs:
+- https://docs.developers.upland.me/upland-developers
+- https://docs.developers.upland.me/upland-developers/api-definitions/escrow-container-management
+- https://docs.developers.upland.me/upland-developers/api-definitions/webhooks-notifications
+- https://docs.developers.upland.me/upland-developers/application-management/permission-delegation
+summary: >-
+  A conventional NestJS REST API. Resource-plural paths, JSON in and out, two HTTP auth schemes,
+  two different pagination styles, no idempotency, no request-id echo, no rate-limit signalling and
+  no in-band API version. The genuinely distinctive convention is that consequential work is
+  asynchronous and settles on a blockchain: an escrow or tournament call returns 2xx immediately and
+  the real outcome arrives on the application's webhook minutes later.
+auth_style:
+  application: HTTP Basic (App ID + App Secret Key)
+  player: HTTP Bearer JWT, delivered to the application's webhook on AuthenticationSuccess
+  header: Authorization
+  detail: authentication/upland-authentication.yml
+idempotency:
+  supported: false
+  header: null
+  scope: null
+  retention: null
+  evidence: >-
+    No Idempotency-Key, no idempotency_key, and no idempotency wording appears anywhere in the
+    46-operation OpenAPI or in the developer documentation. Retrying POST /containers,
+    POST /rumble-tournaments or POST /rumble-tournaments/{id}/scores after a timeout has no
+    documented deduplication.
+  consequence: >-
+    Every consequential write in this API moves player-owned assets. Without an idempotency key an
+    agent that retries a timed-out escrow or tournament call may create a duplicate container,
+    tournament or score submission. NO Idempotency pointer is wired in apis.yml — the support does
+    not exist.
+pagination:
+  styles: 2
+  note: The API mixes two schemes; which one applies depends on the endpoint, and this is not documented in prose.
+  schemes:
+  - style: page-number
+    params:
+      page: currentPage
+      size: pageSize
+    used_by: >-
+      Nine operations including GET /properties (deprecated), GET /neighborhoods, GET /collections,
+      GET /treasures-history, GET /app-usage/webhook-calls and the rumble-tournament listings.
+  - style: token
+    params:
+      cursor: nextPageToken
+    used_by: GET /v2/properties (PropertiesController_getPropertiesWithNextPagePagination)
+    note: >-
+      /v2/properties is the token-paginated successor to the deprecated page-numbered
+      GET /properties. The v2 prefix is on the PATH, not a header or a media type, and it is the
+      only versioned path in the API.
+field_expansion:
+  supported: false
+sparse_fieldsets:
+  supported: false
+filtering:
+  supported: true
+  params: [textSearch, cityId, cityName, status, categories, startDate, endDate, notificationType, isSuccess, containerId, minParticipants, maxParticipants]
+  note: Per-endpoint query parameters; there is no generic filter grammar.
+metadata:
+  supported: false
+  note: No customer-defined metadata bag on any resource.
+request_tracing:
+  request_id_header: null
+  supported: false
+  evidence: >-
+    Live probe of GET /developers-api/cities returned no X-Request-Id, no correlation header and no
+    trace header. The only per-request identifiers on the wire are Cloudflare's cf-ray and Envoy's
+    x-envoy-upstream-service-time, neither of which is documented or supported for support tickets.
+versioning:
+  scheme: path-prefix, partial
+  current: >-
+    The spec declares info.version 1.0.0; the copy embedded in the GitBook docs is labelled
+    developers-api-v.1.0.6.json. Only one path carries a version segment (/v2/properties).
+  header: null
+  detail: lifecycle/upland-lifecycle.yml
+error_envelope:
+  shape: '{"statusCode": <int>, "message": <string|string[]>, "error": <string?>}'
+  rfc9457: false
+  detail: errors/upland-problem-types.yml
+rate_limit_signalling:
+  headers: none
+  evidence: >-
+    Live response headers on GET /developers-api/cities carry no X-RateLimit-*, no RateLimit-* and
+    no Retry-After. Upland publishes no limits.
+  detail: rate-limits/upland-rate-limits.yml
+caching:
+  etag: true
+  evidence: 'Live probe returned ETag: W/"2b-hGShxOkieaAVDloBubJVM+h58D8" on a 401 response.'
+  cache_control: not published
+transport_security:
+  tls: TLSv1.3
+  hsts: 'max-age=15552000; includeSubDomains on api.prod.upland.me'
+  cors: 'access-control-allow-origin: *'
+  hardening: >-
+    Helmet-style headers present on the API host: strict Content-Security-Policy, X-Content-Type-Options
+    nosniff, X-Frame-Options SAMEORIGIN, Cross-Origin-Opener-Policy same-origin, Referrer-Policy
+    same-origin, X-XSS-Protection, X-DNS-Prefetch-Control off, Origin-Agent-Cluster.
+  session: 'Sets a sticky-session-1 cookie (Path=/, HttpOnly) for load-balancer affinity.'
+  detail: security/upland-domain-security.yml
+async_semantics:
+  model: request-acknowledge-then-webhook
+  note: >-
+    THIS IS THE CONVENTION AN INTEGRATOR MUST INTERNALISE. A 2xx on an escrow or tournament call
+    means Upland accepted the instruction, not that anything moved. Asset movement is confirmed only
+    by a later webhook, and the docs are explicit: after TransactionToEscrowSigned "you can not
+    assume that the transaction is yet completed on the blockchain level". Blockchain registration
+    is documented as taking up to three minutes.
+  terminal_events: [TransactionToEscrowFinal, TransactionFromEscrowFinal, ContainerExpired, RumbleTournamentClosed, RumbleTournamentCanceled]
+  detail: asyncapi/upland-webhooks.yml
+dry_run_mode:
+  supported: false
+  substitute: >-
+    Upland provides no dry-run or simulation parameter. It provides something coarser but real: a
+    full parallel sandbox environment (api.sandbox.upland.me plus play.sandbox.upland.me) with its
+    own accounts and assets. See sandbox/upland-sandbox.yml.
+reversibility:
+  grade: documented
+  applicable: true
+  summary: >-
+    Upland ships real reversal operations for escrow and tournaments, and it publishes exactly one
+    time window — the ten-minute player signature window. It does NOT state how long a funded
+    container may be refunded, and it states plainly that resolution is irreversible once final.
+    Graded `documented` rather than `verified` because the window on the marquee reversal (refund)
+    is not published.
+  surfaces:
+  - write_operation: POST /containers/{containerId}/resolve (EscrowController_resolve)
+    reversal: none
+    window: null
+    grade: irreversible
+    note: >-
+      Documented as terminal: "Whenever the container resolution transaction is final and
+      irreversible, the container is set to resolve, and no further transactions will be allowed."
+      An agent must treat resolve as a point of no return.
+    docs: https://docs.developers.upland.me/upland-developers/api-definitions/webhooks-notifications
+  - write_operation: POST /user/join, POST /containers/{containerId}/join
+    reversal: implicit expiry, plus explicit player rejection
+    reversal_operation: null
+    window: 10 minutes
+    grade: verified
+    note: >-
+      "This event is triggered when the request to include assets in escrow has not been signed by
+      the user after a 10-minute period" (TransactionToEscrowExpired). Before signature the player
+      may also reject outright (TransactionToEscrowRejected). Both return the assets.
+    docs: https://docs.developers.upland.me/upland-developers/api-definitions/webhooks-notifications
+  - write_operation: POST /containers (funded container)
+    reversal: refund
+    reversal_operation: EscrowController_refund (POST /containers/{containerId}/refund)
+    window: null
+    grade: documented
+    note: >-
+      A refund operation exists and the escrow status vocabulary includes `refunded`, but no time
+      limit is published. Do not assume one.
+    docs: https://docs.developers.upland.me/upland-developers/api-definitions/escrow-container-management
+  - write_operation: POST /containers (unresolved container)
+    reversal: automatic expiry
+    reversal_operation: null
+    window: developer-configured, set as "Expiration Time in Hours" when the application is created; extendable with POST /containers/{containerId}/refresh-expiration-time
+    grade: documented
+    note: >-
+      "It is triggered whenever a container expires before the resolution. The container will be
+      closed (expired status) for further transactions, and the assets will be transferred back to
+      the original owners without any charges." The window is real but its value is chosen per
+      application, so no single figure can be asserted here.
+    docs: https://docs.developers.upland.me/upland-developers/application-management/third-party-applications
+  - write_operation: escrow transaction awaiting player acceptance
+    reversal: remove
+    reversal_operation: EscrowController_removeTransaction (DELETE /containers/{containerId}/transactions/{transactionId})
+    window: before the player accepts or rejects
+    grade: documented
+    note: 'The `removed` status is defined as "Transactions that were deleted from the container before players'' acceptance or rejection".'
+    docs: https://docs.developers.upland.me/upland-developers/api-definitions/escrow-container-management
+  - write_operation: POST /rumble-tournaments
+    reversal: cancel
+    reversal_operation: RumbleTournamentsController_cancelTournament (POST /rumble-tournaments/{id}/cancel)
+    window: null
+    grade: documented
+    note: >-
+      "You can not cancel a tournament with some payment in progress on the blockchain level. After
+      the tournament cancellation, all amount of UPX will be refunded to the original owner." The
+      blocking condition is stated; the deadline is not.
+    docs: https://docs.developers.upland.me/upland-developers/api-definitions/tournament-apis
+  - write_operation: POST /containers/{containerId}/lock
+    reversal: unlock
+    reversal_operation: EscrowController_unlockContainer (POST /containers/{containerId}/unlock)
+    window: while the container is unresolved
+    grade: documented
+  gaps:
+  - No stated refund window on a funded escrow container.
+  - No stated deadline for cancelling a tournament, only a blocking condition.
+  - No reversal at all after container resolution, by design and clearly documented.
+cross_links:
+  errors: errors/upland-problem-types.yml
+  lifecycle: lifecycle/upland-lifecycle.yml
+  authentication: authentication/upland-authentication.yml
+  rate_limits: rate-limits/upland-rate-limits.yml
+  webhooks: asyncapi/upland-webhooks.yml
+  sandbox: sandbox/upland-sandbox.yml

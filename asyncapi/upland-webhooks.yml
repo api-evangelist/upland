@@ -1,0 +1,111 @@
+generated: '2026-09-02'
+method: searched
+source: https://docs.developers.upland.me/upland-developers/api-definitions/webhooks-notifications
+docs:
+- https://docs.developers.upland.me/upland-developers/api-definitions/webhooks-notifications
+- https://docs.developers.upland.me/upland-developers/application-management/third-party-applications
+asyncapi_spec_published: false
+summary: >-
+  Upland publishes no AsyncAPI document, but it does publish a complete, exhaustive webhook catalog:
+  eighteen notification types across five families, each with its documented JSON payload. This is
+  the load-bearing half of the Upland integration — authentication tokens and every asset-movement
+  outcome arrive here, not in an HTTP response. Captured as a Webhooks surface; nothing is
+  fabricated into AsyncAPI form.
+transport:
+  protocol: HTTPS
+  method: POST
+  direction: Upland -> application
+  destination: The Webhook URL the developer registers when creating the application.
+  envelope: '{"type": "<EventName>", "data": { ... }}'
+  content_type: application/json
+  authentication: >-
+    A Webhook Access Token supplied by the developer at application creation. No HMAC signature, no
+    timestamp header and no replay protection are documented.
+  retries: not published
+  ordering: not published
+  delivery_guarantee: not published
+  observability: >-
+    GET /app-usage/webhook-calls (AppUsageController_findWebhookCalls) lets an application query the
+    webhook calls Upland sent it, filtered by notificationType, isSuccess, containerId and a
+    startDate/endDate range. This is the only delivery-audit surface and it is a genuine one.
+event_count: 18
+channels:
+- family: Authentication
+  events:
+  - type: AuthenticationSuccess
+    payload: {code: string, userId: uuid, accessToken: jwt}
+    meaning: The player completed authorization. This is how the application receives the player Bearer token; there is no other delivery path.
+  - type: AuthenticationFailure
+    payload: {code: string, message: string}
+    meaning: The authorization flow failed or the connection code expired.
+  - type: UserDisconnectedApplication
+    payload: {appId: number, userId: uuid}
+    meaning: The player disconnected the application. Discard the stored token.
+- family: Transaction to Escrow
+  events:
+  - type: TransactionToEscrowCreated
+    payload: {containerId: number, transactionId: uuid, ownerEosId: string}
+    meaning: Transaction created and awaiting the player's signature.
+  - type: TransactionToEscrowSigned
+    payload: {containerId: number, transactionId: uuid, ownerEosId: string}
+    meaning: The player signed. Explicitly NOT a completion signal — the docs warn not to assume blockchain finality here.
+  - type: TransactionToEscrowFinal
+    payload: {containerId: number, transactionId: uuid, ownerEosId: string}
+    meaning: Terminal success. Assets have moved from the players to the container on-chain.
+    terminal: true
+  - type: TransactionToEscrowFailure
+    payload: {containerId: number, transactionId: uuid, ownerEosId: string, message: string}
+    meaning: Terminal failure at finalization.
+    terminal: true
+  - type: TransactionToEscrowExpired
+    payload: {containerId: number, transactionId: uuid, ownerEosId: string}
+    meaning: The player did not sign within ten minutes.
+    terminal: true
+    window: 10 minutes
+  - type: TransactionToEscrowRejected
+    payload: {containerId: number, transactionId: uuid, ownerEosId: string}
+    meaning: The player rejected the request.
+    terminal: true
+- family: Transaction from Escrow
+  events:
+  - type: TransactionFromEscrowCreated
+    payload: {containerId: number, transactionId: uuid}
+    meaning: The application requested final resolution and Upland is handling it. Not yet final.
+  - type: TransactionFromEscrowFinal
+    payload: {containerId: number, transactionId: uuid}
+    meaning: Terminal and irreversible. The container is resolved and accepts no further transactions.
+    terminal: true
+    irreversible: true
+  - type: TransactionFromEscrowFailure
+    payload: {containerId: number, transactionId: uuid}
+    meaning: The resolution transaction failed.
+    terminal: true
+- family: Escrow Container
+  events:
+  - type: ContainerExpired
+    payload: {containerId: number}
+    meaning: The container expired before resolution; it is closed and assets return to their original owners without charge.
+    terminal: true
+- family: Tournament
+  events:
+  - type: RumbleTournamentNewParticipantAdded
+    payload: {appId: number, participantId: uuid, tournamentId: uuid, transactionId: uuid, userId: uuid, status: string}
+  - type: RumbleTournamentParticipantStatusUpdated
+    payload: {appId: number, participantId: uuid, tournamentId: uuid, transactionId: uuid, userId: uuid, status: string}
+    status_values: [WAITING_PAYMENT, PROCESSING_PAYMENT, ACTIVE, REMOVED]
+  - type: RumbleTournamentStatusUpdated
+    payload: {appId: number, tournamentId: uuid, transactionId: uuid, status: string, error: "string (optional)"}
+    status_values: [WAITING_FOR_PARTICIPANTS, WAITING_PAYMENT, REGISTRATION_CLOSED, IN_PROGRESS, DISTRIBUTING_PRIZES, CLOSED, FAILED]
+    note: The optional `error` string is the tournament-level failure channel.
+  - type: RumbleTournamentClosed
+    payload: {appId: number, tournamentId: uuid, transactionId: uuid, status: CLOSED}
+    terminal: true
+  - type: RumbleTournamentCanceled
+    payload: {appId: number, tournamentId: uuid, transactionId: uuid, status: CANCELED}
+    terminal: true
+gaps:
+- No AsyncAPI document.
+- No webhook signature scheme (HMAC/JWS) and no replay protection.
+- No published retry policy, backoff or dead-letter behaviour.
+- No delivery-order or at-least-once/at-most-once guarantee stated.
+- Payload types are documented as inline placeholder annotations, not as a schema.

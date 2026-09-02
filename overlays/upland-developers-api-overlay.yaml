@@ -1,0 +1,95 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the Upland Developers API
+  version: 1.0.0
+x-provenance:
+  generated: '2026-09-02'
+  method: generated
+  source: openapi/upland-developers-api-openapi.json
+  extends: openapi/upland-developers-api-openapi.json
+  note: >-
+    Captures API Evangelist's enhancements to the harvested Upland contract without mutating it. The
+    original spec is preserved verbatim at openapi/_original/upland-developers-api-openapi.json.
+    Every action below records something the provider's own documentation states but the contract
+    does not declare — an undeclared 401, the asynchronous settlement semantics of the escrow and
+    tournament writes, the reversal windows, and the sandbox server.
+actions:
+- target: $.info
+  update:
+    contact:
+      name: Upland Developer Support
+      url: https://support.upland.me/
+    x-documentation: https://docs.developers.upland.me/upland-developers
+    x-release-notes: https://docs.developers.upland.me/upland-developers/release-notes/september-21st
+    x-webhooks: https://docs.developers.upland.me/upland-developers/api-definitions/webhooks-notifications
+- target: $.servers
+  update:
+  - url: https://api.prod.upland.me/developers-api
+    description: Production
+  - url: https://api.sandbox.upland.me/developers-api
+    description: Sandbox. Requires separate sandbox developer and player accounts; production credentials do not work here.
+- target: $.paths['/properties'].get
+  update:
+    x-sunset: null
+    x-replaced-by: PropertiesController_getPropertiesWithNextPagePagination
+    x-migration-note: >-
+      The replacement GET /v2/properties changes pagination from currentPage/pageSize to
+      nextPageToken. Upland publishes no sunset date for this operation.
+- target: $.paths['/containers/{containerId}/resolve'].post
+  update:
+    x-consequence: irreversible
+    x-settlement: asynchronous
+    x-terminal-event: TransactionFromEscrowFinal
+    x-reversal: none
+    x-note: >-
+      Documented as final and irreversible. Once the container resolves it accepts no further
+      transactions. A 2xx here confirms acceptance of the instruction, not settlement.
+- target: $.paths['/containers/{containerId}/refund'].post
+  update:
+    x-reversal-for: EscrowController_resolve
+    x-reversal-window: null
+    x-note: A refund path exists but no time limit is published.
+- target: $.paths['/user/join'].post
+  update:
+    x-settlement: asynchronous
+    x-signature-window: PT10M
+    x-events: [TransactionToEscrowCreated, TransactionToEscrowSigned, TransactionToEscrowFinal, TransactionToEscrowFailure, TransactionToEscrowExpired, TransactionToEscrowRejected]
+    x-note: >-
+      The player must sign within ten minutes or the request expires and the assets stay put.
+      Blockchain ownership change is documented as taking up to three minutes after signature.
+- target: $.paths['/containers/{containerId}/join'].post
+  update:
+    x-requires: permission-delegation
+    x-note: >-
+      Enabled only for developer accounts approved for the alpha Permission Delegation feature. It
+      transfers assets from the developer's own account to their container and does not take an EOS ID.
+- target: $.paths['/rumble-tournaments/{id}/resolve'].post
+  update:
+    x-consequence: irreversible
+    x-settlement: asynchronous
+    x-terminal-event: RumbleTournamentClosed
+- target: $.paths['/rumble-tournaments/{id}/cancel'].post
+  update:
+    x-reversal-for: RumbleTournamentsController_create
+    x-blocked-when: a participant payment is in progress on the blockchain
+    x-effect: All UPX is refunded to the original owner.
+- target: $.paths['/v2/properties'].get
+  update:
+    x-pagination: token
+    x-pagination-param: nextPageToken
+- target: $.components.securitySchemes.basic
+  update:
+    x-credential-username: Application ID
+    x-credential-password: Application Secret Key
+    x-rotation: Inactivate then reactivate the application; this issues a new token and breaks live integrations.
+- target: $.components.securitySchemes.bearer
+  update:
+    bearerFormat: JWT
+    x-delivery: Pushed to the application's webhook URL on the AuthenticationSuccess notification.
+    x-revocation-event: UserDisconnectedApplication
+x-undeclared-responses:
+  note: >-
+    Recorded here rather than as overlay actions because adding responses to a provider's contract
+    would change what the contract claims. Every one of the 46 operations requires credentials and
+    none declares a 401; a live unauthenticated GET /developers-api/cities returned
+    401 {"statusCode":401,"message":"Unauthorized"} on 2026-09-02. No operation declares any 5xx.

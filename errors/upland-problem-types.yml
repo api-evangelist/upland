@@ -1,0 +1,132 @@
+generated: '2026-09-02'
+method: derived
+source: >-
+  openapi/upland-developers-api-openapi.json (4xx/5xx responses) plus live unauthenticated probes of
+  https://api.prod.upland.me/developers-api on 2026-09-02
+format: nest-http-exception
+rfc9457: false
+summary: >-
+  Upland does not publish an error reference and its OpenAPI declares 4xx responses on only four of
+  46 operations. The runtime envelope is the NestJS default HttpException body, confirmed by live
+  probe, not RFC 9457 application/problem+json. There is no error code namespace, no error id, no
+  documentation link and no retry hint anywhere in the contract or the docs.
+envelope:
+  content_type: application/json
+  shape:
+    statusCode: integer, mirrors the HTTP status
+    message: string, human-readable; occasionally an array of validation strings on 400
+    error: string, the HTTP reason phrase; present on framework-generated errors, absent on some handler-generated ones
+  observed_examples:
+  - request: GET https://api.prod.upland.me/developers-api/cities (no credentials)
+    status: 401
+    body: '{"statusCode":401,"message":"Unauthorized"}'
+    note: '`error` key absent.'
+  - request: GET https://api.prod.upland.me/developers-api/nope
+    status: 404
+    body: '{"statusCode":404,"message":"Cannot GET /nope","error":"Not Found"}'
+  schema_in_spec: '#/components/schemas/HttpErrorDto'
+problem_types:
+- status: 400
+  title: Bad request or invalid query parameters
+  declared_on:
+  - GET /tracks/{id} (TracksController_getTrackById)
+  remediation: Validate path and query parameters against the OpenAPI before retrying; the response message carries the failing field.
+  source: openapi/upland-developers-api-openapi.json
+- status: 401
+  title: Unauthorized
+  declared_on: []
+  observed: true
+  remediation: >-
+    Application-level operations need HTTP Basic with App ID as username and App Secret Key as
+    password. Player-scoped operations need the Bearer JWT delivered to the application's webhook
+    on AuthenticationSuccess. A 401 is also what an inactivated application receives.
+  note: >-
+    UNDECLARED. Every operation in the spec carries a security requirement, but not one declares a
+    401 response. This is the single largest gap in the contract's error surface.
+  source: live probe 2026-09-02
+- status: 404
+  title: Application not found
+  declared_on:
+  - POST /auth/otp/init (AuthController_otpInit)
+  schema: HttpErrorDto
+  remediation: Confirm the App ID in the Basic credential matches an active application in the Developers Portal.
+  source: openapi/upland-developers-api-openapi.json
+- status: 404
+  title: Tracks not found.
+  declared_on:
+  - GET /tracks (TracksController_getTracks)
+  source: openapi/upland-developers-api-openapi.json
+- status: 404
+  title: Track not found.
+  declared_on:
+  - GET /tracks/{id} (TracksController_getTrackById)
+  source: openapi/upland-developers-api-openapi.json
+- status: 404
+  title: Buildings not found.
+  declared_on:
+  - GET /tracks/{id}/buildings (TracksController_getTrackBuildingsById)
+  source: openapi/upland-developers-api-openapi.json
+- status: 404
+  title: Route not found
+  declared_on: []
+  observed: true
+  body: '{"statusCode":404,"message":"Cannot <METHOD> <path>","error":"Not Found"}'
+  source: live probe 2026-09-02
+asynchronous_failures:
+  note: >-
+    Upland's real failure semantics for asset movement are NOT carried in HTTP status codes. An
+    escrow or tournament call returns 2xx and the outcome arrives later as a webhook notification.
+    An integrator that only handles HTTP errors will miss every asset-level failure.
+  events:
+  - type: AuthenticationFailure
+    carries: code, message
+    meaning: The player's connection code expired or the authorization flow failed.
+  - type: TransactionToEscrowFailure
+    carries: containerId, transactionId, ownerEosId, message
+    meaning: The asset transfer into escrow failed at finalization.
+  - type: TransactionToEscrowExpired
+    carries: containerId, transactionId, ownerEosId
+    meaning: The player did not sign within the 10-minute window.
+  - type: TransactionToEscrowRejected
+    carries: containerId, transactionId, ownerEosId
+    meaning: The player explicitly rejected the request.
+  - type: TransactionFromEscrowFailure
+    carries: containerId, transactionId
+    meaning: The container resolution transaction failed.
+  - type: ContainerExpired
+    carries: containerId
+    meaning: The container expired before resolution; assets are returned to their original owners.
+  - type: RumbleTournamentStatusUpdated
+    carries: appId, tournamentId, transactionId, status, error
+    meaning: 'Status FAILED with an optional `error` string is the tournament-level failure channel.'
+  source: https://docs.developers.upland.me/upland-developers/api-definitions/webhooks-notifications
+status_vocabularies:
+  escrow_transaction_status:
+    source: https://docs.developers.upland.me/upland-developers/api-definitions/escrow-container-management
+    values:
+    - value: expired
+      meaning: Transaction not accepted or rejected in time.
+    - value: rejected
+      meaning: Transaction the player rejected.
+    - value: user_signature_requested
+      meaning: The application has sent the request to the player.
+    - value: changing_ownership
+      meaning: The transaction is being registered on the blockchain; can take up to three minutes.
+    - value: in_escrow
+      meaning: Assets are inside the container and ready for resolution.
+    - value: refunded
+      meaning: Assets were given back to the players.
+    - value: removed
+      meaning: Transaction deleted from the container before the player accepted or rejected it.
+  tournament_status:
+    source: https://docs.developers.upland.me/upland-developers/api-definitions/webhooks-notifications
+    values: [WAITING_FOR_PARTICIPANTS, WAITING_PAYMENT, REGISTRATION_CLOSED, IN_PROGRESS, DISTRIBUTING_PRIZES, CLOSED, FAILED]
+  participant_status:
+    source: https://docs.developers.upland.me/upland-developers/api-definitions/webhooks-notifications
+    values: [WAITING_PAYMENT, PROCESSING_PAYMENT, ACTIVE, REMOVED]
+gaps:
+- No published error-code reference page anywhere in the developer documentation.
+- 401 is undeclared on all 46 operations despite every operation requiring credentials.
+- No 5xx response is declared on any operation.
+- No RFC 9457 application/problem+json, no type URI, no instance, no machine-readable error code.
+- No Retry-After or retry guidance on any failure.

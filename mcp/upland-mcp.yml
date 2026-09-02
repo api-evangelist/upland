@@ -1,0 +1,137 @@
+generated: '2026-09-02'
+method: derived
+source: openapi/upland-developers-api-openapi.json
+status: candidate
+summary: >-
+  Upland publishes no MCP server. This is a DERIVED candidate tool surface, computed from the 46
+  operations in the Upland Developers API OpenAPI so a builder can see what an MCP wrapper would
+  expose. It is not a product, no pointer of type MCPServer is wired in apis.yml, and nothing here
+  should be read as an agent-callable Upland surface.
+deployment:
+  mode: none
+  endpoint: null
+  install: null
+  package: null
+  auth: unknown
+  verified: probed
+probes:
+- url: https://mcp.upland.me/mcp
+  method: POST tools/list
+  status: '<no response>'
+  note: Host does not resolve; connection failed with no HTTP status.
+- url: https://api.prod.upland.me/mcp
+  method: POST tools/list
+  status: 404
+  note: nginx 404.
+- url: https://api.prod.upland.me/developers-api/mcp
+  method: POST tools/list
+  status: 404
+  note: 'NestJS 404: {"statusCode":404,"message":"Cannot POST /mcp"}.'
+- url: https://developers.upland.me/.well-known/agent-card.json
+  status: 200
+  note: SPA shell, not a document. No agent card pointing at an MCP endpoint.
+candidate_tools:
+- tool: upland_create_connection_code
+  rest: [AuthController_otpInit]
+  auth: basic
+  category: authentication
+  consequence: write
+- tool: upland_get_user_profile
+  rest: [UserController_getUserProfile]
+  auth: bearer
+  category: user
+  consequence: read
+- tool: upland_get_user_balances
+  rest: [UserController_getBalances]
+  auth: bearer
+  category: user
+  consequence: read
+- tool: upland_list_user_nfts
+  rest: [UserController_getNfts]
+  auth: bearer
+  category: user
+  consequence: read
+- tool: upland_list_user_properties
+  rest: [UserController_getProperties]
+  auth: bearer
+  category: user
+  consequence: read
+- tool: upland_list_user_travels
+  rest: [UserController_getTravels]
+  auth: bearer
+  category: user
+  consequence: read
+- tool: upland_create_escrow_container
+  rest: [EscrowController_create]
+  auth: basic
+  category: escrow
+  consequence: write
+- tool: upland_get_escrow_container
+  rest: [EscrowController_getContainer]
+  auth: basic
+  category: escrow
+  consequence: read
+- tool: upland_join_escrow_container
+  rest: [UserController_putAssetsInEscrowContainer, EscrowController_putAssetsInEscrowContainerWithPermissionDelegation]
+  auth: bearer|basic
+  category: escrow
+  consequence: irreversible-asset-transfer
+- tool: upland_resolve_escrow_container
+  rest: [EscrowController_resolve]
+  auth: basic
+  category: escrow
+  consequence: irreversible-asset-transfer
+- tool: upland_refund_escrow_container
+  rest: [EscrowController_refund]
+  auth: basic
+  category: escrow
+  consequence: reversal
+- tool: upland_lock_escrow_container
+  rest: [EscrowController_lockContainer, EscrowController_unlockContainer]
+  auth: basic
+  category: escrow
+  consequence: write
+- tool: upland_list_cities
+  rest: [CitiesController_getCities]
+  auth: basic
+  category: reference
+  consequence: read
+- tool: upland_list_properties
+  rest: [PropertiesController_getPropertiesWithNextPagePagination, PropertiesController_getPropertyById]
+  auth: basic
+  category: reference
+  consequence: read
+- tool: upland_search_buildings
+  rest: [BuildingsController_getBuildingsByBoundaries]
+  auth: basic
+  category: reference
+  consequence: read
+- tool: upland_list_neighborhoods
+  rest: [NeighborhoodsController_getNeighborhoods]
+  auth: basic
+  category: reference
+  consequence: read
+- tool: upland_list_collections
+  rest: [CollectionsController_getCollections]
+  auth: basic
+  category: reference
+  consequence: read
+- tool: upland_list_tracks
+  rest: [TracksController_getTracks, TracksController_getTrackById, TracksController_getTrackBuildingsById]
+  auth: basic
+  category: reference
+  consequence: read
+- tool: upland_create_rumble_tournament
+  rest: [RumbleTournamentsController_create, RumbleTournamentSettingsController_createRumbleTournamentSettings]
+  auth: basic
+  category: tournaments
+  consequence: write
+- tool: upland_resolve_rumble_tournament
+  rest: [RumbleTournamentsController_resolveTournament, RumbleTournamentsController_cancelTournament]
+  auth: basic
+  category: tournaments
+  consequence: irreversible-asset-transfer
+coverage:
+  openapi_operations: 46
+  candidate_tools: 20
+  published_tools: 0

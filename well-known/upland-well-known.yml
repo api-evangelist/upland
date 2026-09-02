@@ -1,0 +1,156 @@
+generated: '2026-09-02'
+method: probed
+source: live probes of /.well-known/ on every Upland host in apis.yml and every OpenAPI servers[] host
+summary: >-
+  Nothing is served. Every named /.well-known/ path was probed on five Upland hosts and not one
+  returned a real document. No security.txt, no api-catalog, no OIDC discovery, no RFC 8414 / RFC
+  9728 OAuth metadata, no ai-plugin.json, no A2A agent card, no aauth-resource.json.
+pointer_basis: >-
+  NO WellKnown pointer and NO SecurityTxt pointer emitted. This file records a measured absence, not
+  a presence. Emitting a pointer here would assert that Upland serves a surface it does not serve.
+false_positive_watch: >-
+  developers.upland.me is a Create-React-App single-page app whose catch-all answers HTTP 200 with
+  the same 1,037-byte HTML shell for EVERY /.well-known/* path, including paths that cannot exist.
+  Those 200s are recorded below as misses (body_kind: spa-shell), not hits. Any future round that
+  reads a developers.upland.me /.well-known/ 200 as a served document is wrong. upland.me and
+  docs.developers.upland.me return their framework 404 pages (Next.js and GitBook respectively) with
+  a real 404 status, and api.prod.upland.me returns an nginx 404.
+hosts:
+- host: https://upland.me
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+  - path: /.well-known/aauth-resource.json
+    status: 404
+- host: https://www.upland.me
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+  - path: /.well-known/openid-configuration
+    status: 404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+  - path: /.well-known/api-catalog
+    status: 404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+  - path: /.well-known/agent-card.json
+    status: 404
+  - path: /.well-known/agent.json
+    status: 404
+  - path: /.well-known/aauth-resource.json
+    status: 404
+- host: https://api.prod.upland.me
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+    body_kind: nginx-404
+  - path: /.well-known/openid-configuration
+    status: 404
+    body_kind: nginx-404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+    body_kind: nginx-404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+    body_kind: nginx-404
+  - path: /.well-known/api-catalog
+    status: 404
+    body_kind: nginx-404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+    body_kind: nginx-404
+  - path: /.well-known/agent-card.json
+    status: 404
+    body_kind: nginx-404
+  - path: /.well-known/agent.json
+    status: 404
+    body_kind: nginx-404
+  - path: /.well-known/aauth-resource.json
+    status: 404
+    body_kind: nginx-404
+- host: https://developers.upland.me
+  documents:
+  - path: /.well-known/security.txt
+    status: 200
+    body_kind: spa-shell
+    hit: false
+    note: 1037-byte React app shell, not a document.
+  - path: /.well-known/openid-configuration
+    status: 200
+    body_kind: spa-shell
+    hit: false
+  - path: /.well-known/oauth-authorization-server
+    status: 200
+    body_kind: spa-shell
+    hit: false
+  - path: /.well-known/oauth-protected-resource
+    status: 200
+    body_kind: spa-shell
+    hit: false
+  - path: /.well-known/api-catalog
+    status: 200
+    body_kind: spa-shell
+    hit: false
+  - path: /.well-known/ai-plugin.json
+    status: 200
+    body_kind: spa-shell
+    hit: false
+  - path: /.well-known/agent-card.json
+    status: 200
+    body_kind: spa-shell
+    hit: false
+  - path: /.well-known/agent.json
+    status: 200
+    body_kind: spa-shell
+    hit: false
+  - path: /.well-known/aauth-resource.json
+    status: 200
+    body_kind: spa-shell
+    hit: false
+- host: https://docs.developers.upland.me
+  documents:
+  - path: /.well-known/security.txt
+    status: 404
+    body_kind: gitbook-404
+  - path: /.well-known/openid-configuration
+    status: 404
+    body_kind: gitbook-404
+  - path: /.well-known/oauth-authorization-server
+    status: 404
+    body_kind: gitbook-404
+  - path: /.well-known/oauth-protected-resource
+    status: 404
+    body_kind: gitbook-404
+  - path: /.well-known/api-catalog
+    status: 404
+    body_kind: gitbook-404
+  - path: /.well-known/ai-plugin.json
+    status: 404
+    body_kind: gitbook-404
+  - path: /.well-known/agent-card.json
+    status: 404
+    body_kind: gitbook-404
+  - path: /.well-known/agent.json
+    status: 404
+    body_kind: gitbook-404
+  - path: /.well-known/aauth-resource.json
+    status: 404
+    body_kind: gitbook-404
+checked: '2026-09-02'

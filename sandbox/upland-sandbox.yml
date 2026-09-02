@@ -1,0 +1,71 @@
+generated: '2026-09-02'
+method: searched
+source: https://docs.developers.upland.me/upland-developers/playing-the-sandbox/get-started
+docs:
+- https://docs.developers.upland.me/upland-developers/playing-the-sandbox/get-started
+- https://docs.developers.upland.me/upland-developers/playing-the-sandbox/sandbox-upland-sign-up
+- https://docs.developers.upland.me/upland-developers/playing-the-sandbox/buying-upx
+- https://docs.developers.upland.me/upland-developers/api-definitions/api-information-sandbox
+summary: >-
+  Upland runs a complete parallel universe, not a mocked endpoint. The sandbox has its own API host,
+  its own developer portal accounts, its own player accounts and its own playable client, and it is
+  the same interface as production — a developer can explore, buy, sell and trade assets there to
+  manufacture exactly the players and holdings their application needs to test against. Sandbox and
+  production accounts are strictly separate and neither works in the other.
+environments:
+- name: sandbox
+  api_base: https://api.sandbox.upland.me/developers-api
+  api_docs: https://api.sandbox.upland.me/developers-api/docs/
+  spec: openapi/upland-developers-api-sandbox-openapi.json
+  client: https://play.sandbox.upland.me/
+  developer_portal: https://developers.upland.me
+  note: >-
+    The sandbox contract is not identical to production. It carries 45 paths to production's 44 —
+    the extra one is /sends, present only in the sandbox spec. Everything else matches.
+- name: production
+  api_base: https://api.prod.upland.me/developers-api
+  api_docs: https://api.prod.upland.me/developers-api/docs/
+  spec: openapi/upland-developers-api-openapi.json
+  image_cdn: https://static.upland.me/
+credentials:
+  model: per-environment application credentials
+  username: Application ID, shown on the Developers Portal home screen
+  password: Application Secret Key, issued once when the application is created
+  key_prefixes: none published
+  isolation: >-
+    "You can not use your Production Upland or Developers accounts in Sandbox and vice-versa."
+    Separate developer account AND separate player account required for each environment.
+  source: https://docs.developers.upland.me/upland-developers/playing-the-sandbox/get-started
+test_data:
+  test_credit_card:
+    number: '4111 1111 1111 1111'
+    expiration: 07/27
+    cvv: '960'
+    note: >-
+      Published verbatim by Upland for sandbox UPX purchases; 4111 1111 1111 1111 is the standard
+      Visa test PAN. Upland's own instruction is emphatic: "Please do NOT use your actual credit
+      card." Recorded exactly as published, not invented.
+    source: https://docs.developers.upland.me/upland-developers/playing-the-sandbox/get-started
+  test_accounts:
+    note: Sandbox player and developer credentials are shown inside the Developer Portal, not published in the docs.
+  magic_identifiers: none published
+  fixtures: >-
+    None. There is no fixture loader and no trigger API. Test state is created by playing the
+    sandbox client: acquire the assets, then exercise the API against them.
+time_simulation:
+  supported: false
+  note: >-
+    No test clocks. This matters here because container expiration is measured in hours and the
+    unsigned-transaction window is ten minutes; both must be waited out in real time.
+data_retention:
+  policy: >-
+    "All transactions in the Sandbox environment will be taken down after the hackathon is
+    complete." and "the assets you acquire/use will not persist beyond the hackathon."
+  note: >-
+    The retention language is written against a hackathon, which reads as leftover event framing on
+    an otherwise permanent environment. An integrator should not treat sandbox state as durable.
+  source: https://docs.developers.upland.me/upland-developers/playing-the-sandbox/get-started
+gaps:
+- No documented way to reset or seed a sandbox account programmatically.
+- No test clock or time simulation.
+- Sandbox retention is described in hackathon terms rather than as a stated policy.
