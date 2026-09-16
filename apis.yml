@@ -30,7 +30,7 @@ tags:
 - Escrow
 - Tournaments
 - Antelope
-- Webhooks
+- Webhook
 - Developer Platform
 tags_raw:
 - metaverse
@@ -46,41 +46,16 @@ tags_raw:
 - webhooks
 - developer-platform
 apis:
-- name: Upland Developers API
-  description: >-
-    REST API for approved Upland third-party applications. Maps application users to Upland user IDs
-    through a connection-code flow, exposes read-only player data (profile, balances, properties,
-    NFTs, travels), manages an application-scoped escrow container (create, lock/unlock, refresh
-    expiration, resolve, refund, remove transaction), runs Rumble tournaments (settings, create,
-    join, scores, prize distribution, scoreboard, resolve, cancel), and queries Dev Shops, cities,
-    neighborhoods, collections, buildings, tracks and treasures history. Application-level calls use
-    HTTP Basic auth (App ID + Secret Key); calls acting on behalf of a player use a Bearer JWT
-    delivered to the application's webhook URL when the player authorizes the connection.
+- aid: upland:upland-accounts-api
+  name: Upland Accounts API
+  description: The accounts API from Upland — 9 operation(s) for accounts.
   humanURL: https://docs.developers.upland.me/upland-developers
   baseURL: https://api.prod.upland.me/developers-api
   tags:
-  - Metaverse
-  - Web3
-  - Gaming
-  - NFT
-  - Escrow
-  - Tournaments
-  - Digital Assets
-  - Webhooks
-  tags_raw:
-  - metaverse
-  - web3
-  - gaming
-  - nft
-  - escrow
-  - tournaments
-  - digital-assets
-  - webhooks
+  - accounts
   properties:
   - type: OpenAPI
-    url: openapi/upland-developers-api-openapi.json
-  - type: OpenAPI
-    url: openapi/upland-developers-api-sandbox-openapi.json
+    url: openapi/upland-accounts-api-openapi.yml
   - type: Documentation
     url: https://docs.developers.upland.me/upland-developers
   - type: APIReference
@@ -93,49 +68,506 @@ apis:
     url: errors/upland-problem-types.yml
   - type: DataModel
     url: data-model/upland-data-model.yml
-  - type: Overlay
-    url: overlays/upland-developers-api-overlay.yaml
   - type: Webhooks
     url: asyncapi/upland-webhooks.yml
   - type: Sandbox
     url: sandbox/upland-sandbox.yml
-- name: Upland Appchain History & Chain API
-  description: >-
-    Public, unauthenticated Antelope (Leap 5.0.3) node and Hyperion 3.3.10 full-history API for
-    Upland's own appchain, which replaced Upland's EOS deployment on 2025-04-26. Exposes the standard
-    Antelope /v1/chain RPC (get_info, get_account, get_table_rows, get_abi, push_transaction and
-    friends) plus Hyperion V1 and V2 history, state and stats endpoints for indexed actions, deltas,
-    transactions, token holders, account creators, proposals and resource usage. Documented by Upland
-    on its own Upland Appchain developer page alongside the ledger.upland.me block explorer.
-  humanURL: https://docs.developers.upland.me/upland-developers/api-definitions/upland-appchain
-  baseURL: https://chain-history.upland.me
-  tags:
-  - Blockchain
-  - Antelope
-  - Web3
-  - Metaverse
-  - Digital Assets
-  tags_raw:
-  - blockchain
-  - antelope
-  - web3
-  - metaverse
-  - digital-assets
-  properties:
-  - type: OpenAPI
-    url: openapi/upland-appchain-history-swagger.json
   - type: Documentation
     url: https://docs.developers.upland.me/upland-developers/api-definitions/upland-appchain
   - type: APIReference
     url: https://chain-history.upland.me/v2/docs/
-  - type: Overlay
-    url: overlays/upland-appchain-history-overlay.yaml
+- aid: upland:upland-application-usage-api
+  name: Upland Application Usage API
+  description: The Application Usage API from Upland — 1 operation(s) for application usage.
+  humanURL: https://docs.developers.upland.me/upland-developers
+  baseURL: https://api.prod.upland.me/developers-api
+  tags:
+  - Application Usage
+  properties:
+  - type: OpenAPI
+    url: openapi/upland-application-usage-api-openapi.yml
+  - type: Documentation
+    url: https://docs.developers.upland.me/upland-developers
+  - type: APIReference
+    url: https://api.prod.upland.me/developers-api/docs/
+  - type: Authentication
+    url: authentication/upland-authentication.yml
+  - type: Conventions
+    url: conventions/upland-conventions.yml
+  - type: ErrorCatalog
+    url: errors/upland-problem-types.yml
+  - type: DataModel
+    url: data-model/upland-data-model.yml
+  - type: Webhooks
+    url: asyncapi/upland-webhooks.yml
+  - type: Sandbox
+    url: sandbox/upland-sandbox.yml
+  - type: Documentation
+    url: https://docs.developers.upland.me/upland-developers/api-definitions/upland-appchain
+  - type: APIReference
+    url: https://chain-history.upland.me/v2/docs/
+- aid: upland:upland-authentication-api
+  name: Upland Authentication API
+  description: The Authentication API from Upland — 1 operation(s) for authentication.
+  humanURL: https://docs.developers.upland.me/upland-developers
+  baseURL: https://api.prod.upland.me/developers-api
+  tags:
+  - Authentication
+  properties:
+  - type: OpenAPI
+    url: openapi/upland-authentication-api-openapi.yml
+  - type: Documentation
+    url: https://docs.developers.upland.me/upland-developers
+  - type: APIReference
+    url: https://api.prod.upland.me/developers-api/docs/
+  - type: Authentication
+    url: authentication/upland-authentication.yml
+  - type: Conventions
+    url: conventions/upland-conventions.yml
+  - type: ErrorCatalog
+    url: errors/upland-problem-types.yml
+  - type: DataModel
+    url: data-model/upland-data-model.yml
+  - type: Webhooks
+    url: asyncapi/upland-webhooks.yml
+  - type: Sandbox
+    url: sandbox/upland-sandbox.yml
+  - type: Documentation
+    url: https://docs.developers.upland.me/upland-developers/api-definitions/upland-appchain
+  - type: APIReference
+    url: https://chain-history.upland.me/v2/docs/
+- aid: upland:upland-chain-api
+  name: Upland Chain API
+  description: The chain API from Upland — 21 operation(s) for chain.
+  humanURL: https://docs.developers.upland.me/upland-developers
+  baseURL: https://api.prod.upland.me/developers-api
+  tags:
+  - chain
+  properties:
+  - type: OpenAPI
+    url: openapi/upland-chain-api-openapi.yml
+  - type: Documentation
+    url: https://docs.developers.upland.me/upland-developers
+  - type: APIReference
+    url: https://api.prod.upland.me/developers-api/docs/
+  - type: Authentication
+    url: authentication/upland-authentication.yml
+  - type: Conventions
+    url: conventions/upland-conventions.yml
+  - type: ErrorCatalog
+    url: errors/upland-problem-types.yml
+  - type: DataModel
+    url: data-model/upland-data-model.yml
+  - type: Webhooks
+    url: asyncapi/upland-webhooks.yml
+  - type: Sandbox
+    url: sandbox/upland-sandbox.yml
+  - type: Documentation
+    url: https://docs.developers.upland.me/upland-developers/api-definitions/upland-appchain
+  - type: APIReference
+    url: https://chain-history.upland.me/v2/docs/
+- aid: upland:upland-dev-shops-api
+  name: Upland Dev Shops API
+  description: The Dev Shops API from Upland — 2 operation(s) for dev shops.
+  humanURL: https://docs.developers.upland.me/upland-developers
+  baseURL: https://api.prod.upland.me/developers-api
+  tags:
+  - Dev Shops
+  properties:
+  - type: OpenAPI
+    url: openapi/upland-dev-shops-api-openapi.yml
+  - type: Documentation
+    url: https://docs.developers.upland.me/upland-developers
+  - type: APIReference
+    url: https://api.prod.upland.me/developers-api/docs/
+  - type: Authentication
+    url: authentication/upland-authentication.yml
+  - type: Conventions
+    url: conventions/upland-conventions.yml
+  - type: ErrorCatalog
+    url: errors/upland-problem-types.yml
+  - type: DataModel
+    url: data-model/upland-data-model.yml
+  - type: Webhooks
+    url: asyncapi/upland-webhooks.yml
+  - type: Sandbox
+    url: sandbox/upland-sandbox.yml
+  - type: Documentation
+    url: https://docs.developers.upland.me/upland-developers/api-definitions/upland-appchain
+  - type: APIReference
+    url: https://chain-history.upland.me/v2/docs/
+- aid: upland:upland-escrow-containers-api
+  name: Upland Escrow Containers API
+  description: The Escrow Containers API from Upland — 9 operation(s) for escrow containers.
+  humanURL: https://docs.developers.upland.me/upland-developers
+  baseURL: https://api.prod.upland.me/developers-api
+  tags:
+  - Escrow Containers
+  properties:
+  - type: OpenAPI
+    url: openapi/upland-escrow-containers-api-openapi.yml
+  - type: Documentation
+    url: https://docs.developers.upland.me/upland-developers
+  - type: APIReference
+    url: https://api.prod.upland.me/developers-api/docs/
+  - type: Authentication
+    url: authentication/upland-authentication.yml
+  - type: Conventions
+    url: conventions/upland-conventions.yml
+  - type: ErrorCatalog
+    url: errors/upland-problem-types.yml
+  - type: DataModel
+    url: data-model/upland-data-model.yml
+  - type: Webhooks
+    url: asyncapi/upland-webhooks.yml
+  - type: Sandbox
+    url: sandbox/upland-sandbox.yml
+  - type: Documentation
+    url: https://docs.developers.upland.me/upland-developers/api-definitions/upland-appchain
+  - type: APIReference
+    url: https://chain-history.upland.me/v2/docs/
+- aid: upland:upland-generic-api
+  name: Upland Generic API
+  description: The Generic API from Upland — 12 operation(s) for generic.
+  humanURL: https://docs.developers.upland.me/upland-developers
+  baseURL: https://api.prod.upland.me/developers-api
+  tags:
+  - Generic
+  properties:
+  - type: OpenAPI
+    url: openapi/upland-generic-api-openapi.yml
+  - type: Documentation
+    url: https://docs.developers.upland.me/upland-developers
+  - type: APIReference
+    url: https://api.prod.upland.me/developers-api/docs/
+  - type: Authentication
+    url: authentication/upland-authentication.yml
+  - type: Conventions
+    url: conventions/upland-conventions.yml
+  - type: ErrorCatalog
+    url: errors/upland-problem-types.yml
+  - type: DataModel
+    url: data-model/upland-data-model.yml
+  - type: Webhooks
+    url: asyncapi/upland-webhooks.yml
+  - type: Sandbox
+    url: sandbox/upland-sandbox.yml
+  - type: Documentation
+    url: https://docs.developers.upland.me/upland-developers/api-definitions/upland-appchain
+  - type: APIReference
+    url: https://chain-history.upland.me/v2/docs/
+- aid: upland:upland-history-api
+  name: Upland History API
+  description: The history API from Upland — 12 operation(s) for history.
+  humanURL: https://docs.developers.upland.me/upland-developers
+  baseURL: https://api.prod.upland.me/developers-api
+  tags:
+  - history
+  properties:
+  - type: OpenAPI
+    url: openapi/upland-history-api-openapi.yml
+  - type: Documentation
+    url: https://docs.developers.upland.me/upland-developers
+  - type: APIReference
+    url: https://api.prod.upland.me/developers-api/docs/
+  - type: Authentication
+    url: authentication/upland-authentication.yml
+  - type: Conventions
+    url: conventions/upland-conventions.yml
+  - type: ErrorCatalog
+    url: errors/upland-problem-types.yml
+  - type: DataModel
+    url: data-model/upland-data-model.yml
+  - type: Webhooks
+    url: asyncapi/upland-webhooks.yml
+  - type: Sandbox
+    url: sandbox/upland-sandbox.yml
+  - type: Documentation
+    url: https://docs.developers.upland.me/upland-developers/api-definitions/upland-appchain
+  - type: APIReference
+    url: https://chain-history.upland.me/v2/docs/
+- aid: upland:upland-hyperion-history-api-for-upland-chain-api
+  name: Upland Hyperion History API For UPLAND Chain API
+  description: >-
+    The Hyperion History API For UPLAND Chain API from Upland — 1 operation(s) for hyperion history api
+    for upland chain.
+  humanURL: https://docs.developers.upland.me/upland-developers
+  baseURL: https://api.prod.upland.me/developers-api
+  tags:
+  - Hyperion History API For UPLAND Chain
+  properties:
+  - type: OpenAPI
+    url: openapi/upland-hyperion-history-api-for-upland-chain-api-openapi.yml
+  - type: Documentation
+    url: https://docs.developers.upland.me/upland-developers
+  - type: APIReference
+    url: https://api.prod.upland.me/developers-api/docs/
+  - type: Authentication
+    url: authentication/upland-authentication.yml
+  - type: Conventions
+    url: conventions/upland-conventions.yml
+  - type: ErrorCatalog
+    url: errors/upland-problem-types.yml
+  - type: DataModel
+    url: data-model/upland-data-model.yml
+  - type: Webhooks
+    url: asyncapi/upland-webhooks.yml
+  - type: Sandbox
+    url: sandbox/upland-sandbox.yml
+  - type: Documentation
+    url: https://docs.developers.upland.me/upland-developers/api-definitions/upland-appchain
+  - type: APIReference
+    url: https://chain-history.upland.me/v2/docs/
+- aid: upland:upland-internal-api
+  name: Upland Internal API
+  description: The internal API from Upland — 1 operation(s) for internal.
+  humanURL: https://docs.developers.upland.me/upland-developers
+  baseURL: https://api.prod.upland.me/developers-api
+  tags:
+  - internal
+  properties:
+  - type: OpenAPI
+    url: openapi/upland-internal-api-openapi.yml
+  - type: Documentation
+    url: https://docs.developers.upland.me/upland-developers
+  - type: APIReference
+    url: https://api.prod.upland.me/developers-api/docs/
+  - type: Authentication
+    url: authentication/upland-authentication.yml
+  - type: Conventions
+    url: conventions/upland-conventions.yml
+  - type: ErrorCatalog
+    url: errors/upland-problem-types.yml
+  - type: DataModel
+    url: data-model/upland-data-model.yml
+  - type: Webhooks
+    url: asyncapi/upland-webhooks.yml
+  - type: Sandbox
+    url: sandbox/upland-sandbox.yml
+  - type: Documentation
+    url: https://docs.developers.upland.me/upland-developers/api-definitions/upland-appchain
+  - type: APIReference
+    url: https://chain-history.upland.me/v2/docs/
+- aid: upland:upland-node-api
+  name: Upland Node API
+  description: The node API from Upland — 1 operation(s) for node.
+  humanURL: https://docs.developers.upland.me/upland-developers
+  baseURL: https://api.prod.upland.me/developers-api
+  tags:
+  - node
+  properties:
+  - type: OpenAPI
+    url: openapi/upland-node-api-openapi.yml
+  - type: Documentation
+    url: https://docs.developers.upland.me/upland-developers
+  - type: APIReference
+    url: https://api.prod.upland.me/developers-api/docs/
+  - type: Authentication
+    url: authentication/upland-authentication.yml
+  - type: Conventions
+    url: conventions/upland-conventions.yml
+  - type: ErrorCatalog
+    url: errors/upland-problem-types.yml
+  - type: DataModel
+    url: data-model/upland-data-model.yml
+  - type: Webhooks
+    url: asyncapi/upland-webhooks.yml
+  - type: Sandbox
+    url: sandbox/upland-sandbox.yml
+  - type: Documentation
+    url: https://docs.developers.upland.me/upland-developers/api-definitions/upland-appchain
+  - type: APIReference
+    url: https://chain-history.upland.me/v2/docs/
+- aid: upland:upland-state-api
+  name: Upland State API
+  description: The state API from Upland — 1 operation(s) for state.
+  humanURL: https://docs.developers.upland.me/upland-developers
+  baseURL: https://api.prod.upland.me/developers-api
+  tags:
+  - state
+  properties:
+  - type: OpenAPI
+    url: openapi/upland-state-api-openapi.yml
+  - type: Documentation
+    url: https://docs.developers.upland.me/upland-developers
+  - type: APIReference
+    url: https://api.prod.upland.me/developers-api/docs/
+  - type: Authentication
+    url: authentication/upland-authentication.yml
+  - type: Conventions
+    url: conventions/upland-conventions.yml
+  - type: ErrorCatalog
+    url: errors/upland-problem-types.yml
+  - type: DataModel
+    url: data-model/upland-data-model.yml
+  - type: Webhooks
+    url: asyncapi/upland-webhooks.yml
+  - type: Sandbox
+    url: sandbox/upland-sandbox.yml
+  - type: Documentation
+    url: https://docs.developers.upland.me/upland-developers/api-definitions/upland-appchain
+  - type: APIReference
+    url: https://chain-history.upland.me/v2/docs/
+- aid: upland:upland-stats-api
+  name: Upland Stats API
+  description: The stats API from Upland — 4 operation(s) for stats.
+  humanURL: https://docs.developers.upland.me/upland-developers
+  baseURL: https://api.prod.upland.me/developers-api
+  tags:
+  - stats
+  properties:
+  - type: OpenAPI
+    url: openapi/upland-stats-api-openapi.yml
+  - type: Documentation
+    url: https://docs.developers.upland.me/upland-developers
+  - type: APIReference
+    url: https://api.prod.upland.me/developers-api/docs/
+  - type: Authentication
+    url: authentication/upland-authentication.yml
+  - type: Conventions
+    url: conventions/upland-conventions.yml
+  - type: ErrorCatalog
+    url: errors/upland-problem-types.yml
+  - type: DataModel
+    url: data-model/upland-data-model.yml
+  - type: Webhooks
+    url: asyncapi/upland-webhooks.yml
+  - type: Sandbox
+    url: sandbox/upland-sandbox.yml
+  - type: Documentation
+    url: https://docs.developers.upland.me/upland-developers/api-definitions/upland-appchain
+  - type: APIReference
+    url: https://chain-history.upland.me/v2/docs/
+- aid: upland:upland-status-api
+  name: Upland Status API
+  description: The status API from Upland — 2 operation(s) for status.
+  humanURL: https://docs.developers.upland.me/upland-developers
+  baseURL: https://api.prod.upland.me/developers-api
+  tags:
+  - status
+  properties:
+  - type: OpenAPI
+    url: openapi/upland-status-api-openapi.yml
+  - type: Documentation
+    url: https://docs.developers.upland.me/upland-developers
+  - type: APIReference
+    url: https://api.prod.upland.me/developers-api/docs/
+  - type: Authentication
+    url: authentication/upland-authentication.yml
+  - type: Conventions
+    url: conventions/upland-conventions.yml
+  - type: ErrorCatalog
+    url: errors/upland-problem-types.yml
+  - type: DataModel
+    url: data-model/upland-data-model.yml
+  - type: Webhooks
+    url: asyncapi/upland-webhooks.yml
+  - type: Sandbox
+    url: sandbox/upland-sandbox.yml
+  - type: Documentation
+    url: https://docs.developers.upland.me/upland-developers/api-definitions/upland-appchain
+  - type: APIReference
+    url: https://chain-history.upland.me/v2/docs/
+- aid: upland:upland-system-api
+  name: Upland System API
+  description: The system API from Upland — 2 operation(s) for system.
+  humanURL: https://docs.developers.upland.me/upland-developers
+  baseURL: https://api.prod.upland.me/developers-api
+  tags:
+  - system
+  properties:
+  - type: OpenAPI
+    url: openapi/upland-system-api-openapi.yml
+  - type: Documentation
+    url: https://docs.developers.upland.me/upland-developers
+  - type: APIReference
+    url: https://api.prod.upland.me/developers-api/docs/
+  - type: Authentication
+    url: authentication/upland-authentication.yml
+  - type: Conventions
+    url: conventions/upland-conventions.yml
+  - type: ErrorCatalog
+    url: errors/upland-problem-types.yml
+  - type: DataModel
+    url: data-model/upland-data-model.yml
+  - type: Webhooks
+    url: asyncapi/upland-webhooks.yml
+  - type: Sandbox
+    url: sandbox/upland-sandbox.yml
+  - type: Documentation
+    url: https://docs.developers.upland.me/upland-developers/api-definitions/upland-appchain
+  - type: APIReference
+    url: https://chain-history.upland.me/v2/docs/
+- aid: upland:upland-tournaments-api
+  name: Upland Tournaments API
+  description: The Tournaments API from Upland — 14 operation(s) for tournaments.
+  humanURL: https://docs.developers.upland.me/upland-developers
+  baseURL: https://api.prod.upland.me/developers-api
+  tags:
+  - Tournaments
+  properties:
+  - type: OpenAPI
+    url: openapi/upland-tournaments-api-openapi.yml
+  - type: Documentation
+    url: https://docs.developers.upland.me/upland-developers
+  - type: APIReference
+    url: https://api.prod.upland.me/developers-api/docs/
+  - type: Authentication
+    url: authentication/upland-authentication.yml
+  - type: Conventions
+    url: conventions/upland-conventions.yml
+  - type: ErrorCatalog
+    url: errors/upland-problem-types.yml
+  - type: DataModel
+    url: data-model/upland-data-model.yml
+  - type: Webhooks
+    url: asyncapi/upland-webhooks.yml
+  - type: Sandbox
+    url: sandbox/upland-sandbox.yml
+  - type: Documentation
+    url: https://docs.developers.upland.me/upland-developers/api-definitions/upland-appchain
+  - type: APIReference
+    url: https://chain-history.upland.me/v2/docs/
+- aid: upland:upland-upland-user-api
+  name: Upland Upland User API
+  description: The Upland User API from Upland — 6 operation(s) for upland user.
+  humanURL: https://docs.developers.upland.me/upland-developers
+  baseURL: https://api.prod.upland.me/developers-api
+  tags:
+  - Upland User
+  properties:
+  - type: OpenAPI
+    url: openapi/upland-upland-user-api-openapi.yml
+  - type: Documentation
+    url: https://docs.developers.upland.me/upland-developers
+  - type: APIReference
+    url: https://api.prod.upland.me/developers-api/docs/
+  - type: Authentication
+    url: authentication/upland-authentication.yml
+  - type: Conventions
+    url: conventions/upland-conventions.yml
+  - type: ErrorCatalog
+    url: errors/upland-problem-types.yml
+  - type: DataModel
+    url: data-model/upland-data-model.yml
+  - type: Webhooks
+    url: asyncapi/upland-webhooks.yml
+  - type: Sandbox
+    url: sandbox/upland-sandbox.yml
+  - type: Documentation
+    url: https://docs.developers.upland.me/upland-developers/api-definitions/upland-appchain
+  - type: APIReference
+    url: https://chain-history.upland.me/v2/docs/
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: Overlay
+  url: overlays/upland-developers-api-overlay.yaml
+- type: Overlay
+  url: overlays/upland-appchain-history-overlay.yaml
 - type: Website
   url: https://upland.me/
 - type: DeveloperPortal
