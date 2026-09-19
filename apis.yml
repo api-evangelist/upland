@@ -52,6 +52,8 @@ apis:
   humanURL: https://docs.developers.upland.me/upland-developers
   baseURL: https://api.prod.upland.me/developers-api
   tags:
+  - Account
+  tags_raw:
   - accounts
   properties:
   - type: OpenAPI
@@ -142,6 +144,8 @@ apis:
   humanURL: https://docs.developers.upland.me/upland-developers
   baseURL: https://api.prod.upland.me/developers-api
   tags:
+  - Chain
+  tags_raw:
   - chain
   properties:
   - type: OpenAPI
@@ -262,6 +266,8 @@ apis:
   humanURL: https://docs.developers.upland.me/upland-developers
   baseURL: https://api.prod.upland.me/developers-api
   tags:
+  - History
+  tags_raw:
   - history
   properties:
   - type: OpenAPI
@@ -324,6 +330,8 @@ apis:
   humanURL: https://docs.developers.upland.me/upland-developers
   baseURL: https://api.prod.upland.me/developers-api
   tags:
+  - Internal
+  tags_raw:
   - internal
   properties:
   - type: OpenAPI
@@ -354,6 +362,8 @@ apis:
   humanURL: https://docs.developers.upland.me/upland-developers
   baseURL: https://api.prod.upland.me/developers-api
   tags:
+  - Node
+  tags_raw:
   - node
   properties:
   - type: OpenAPI
@@ -384,6 +394,8 @@ apis:
   humanURL: https://docs.developers.upland.me/upland-developers
   baseURL: https://api.prod.upland.me/developers-api
   tags:
+  - States
+  tags_raw:
   - state
   properties:
   - type: OpenAPI
@@ -414,6 +426,8 @@ apis:
   humanURL: https://docs.developers.upland.me/upland-developers
   baseURL: https://api.prod.upland.me/developers-api
   tags:
+  - Stats
+  tags_raw:
   - stats
   properties:
   - type: OpenAPI
@@ -444,6 +458,8 @@ apis:
   humanURL: https://docs.developers.upland.me/upland-developers
   baseURL: https://api.prod.upland.me/developers-api
   tags:
+  - Status
+  tags_raw:
   - status
   properties:
   - type: OpenAPI
@@ -474,6 +490,8 @@ apis:
   humanURL: https://docs.developers.upland.me/upland-developers
   baseURL: https://api.prod.upland.me/developers-api
   tags:
+  - System
+  tags_raw:
   - system
   properties:
   - type: OpenAPI
