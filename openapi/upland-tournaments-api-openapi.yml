@@ -1,0 +1,1017 @@
+openapi: 3.2.0
+info:
+  title: Upland Developers Tournaments API
+  description: You can use the developer API to map user IDs, read information, and manage your app escrow container.
+  version: 1.0.0
+  contact: {}
+servers:
+- url: https://api.sandbox.upland.me/developers-api
+tags:
+- name: Tournaments
+paths:
+  /rumble-tournament-settings:
+    get:
+      operationId: RumbleTournamentSettingsController_findRumbleTournamentSettings
+      summary: List rumble tournament settings
+      description: Retrieves a list of rumble tournament settings by filtering query params.
+      parameters:
+      - name: currentPage
+        required: true
+        in: query
+        schema:
+          type: number
+      - name: pageSize
+        required: true
+        in: query
+        schema:
+          type: number
+      - name: maxParticipants
+        required: false
+        in: query
+        schema:
+          type: number
+      - name: minParticipants
+        required: false
+        in: query
+        schema:
+          type: number
+      - name: status
+        required: false
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FindRumbleTournamentSettingsListResponseDto'
+      tags:
+      - Tournaments
+      security:
+      - basic: []
+    post:
+      operationId: RumbleTournamentSettingsController_createRumbleTournamentSettings
+      summary: Create rumble tournament settings
+      description: Creates a new rumble tournament settings.
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRumbleTournamentSettingsRequestDto'
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RumbleTournamentSettingsResponseDto'
+      tags:
+      - Tournaments
+      security:
+      - basic: []
+  /rumble-tournament-settings/{id}:
+    get:
+      operationId: RumbleTournamentSettingsController_getRumbleTournamentSettings
+      summary: Get rumble tournament settings
+      description: Retrieves the rumble tournament settings informations.
+      parameters:
+      - name: id
+        required: true
+        in: path
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RumbleTournamentSettingsResponseDto'
+      tags:
+      - Tournaments
+      security:
+      - basic: []
+    patch:
+      operationId: RumbleTournamentSettingsController_editRumbleTournamentSettings
+      summary: Edit rumble tournament settings
+      description: Edits a rumble tournament settings instance.
+      parameters:
+      - name: id
+        required: true
+        in: path
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EditRumbleTournamentSettingsRequestDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RumbleTournamentSettingsResponseDto'
+      tags:
+      - Tournaments
+      security:
+      - basic: []
+  /rumble-tournaments:
+    post:
+      operationId: RumbleTournamentsController_create
+      summary: Create new rumble tournament
+      description: Creates a new rumble tournament for the application. It is required to have an active rumble tournament settings in place.
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateRumbleTournamentRequestDto'
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RumbleTournamentResponseDto'
+      tags:
+      - Tournaments
+      security:
+      - basic: []
+  /rumble-tournaments/{id}/start:
+    patch:
+      operationId: RumbleTournamentsController_startTournament
+      summary: Start a rumble tournament
+      description: Start a rumble tournament for the application. Requires the minimum configuration participants.
+      parameters:
+      - name: id
+        required: true
+        in: path
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ''
+      tags:
+      - Tournaments
+      security:
+      - basic: []
+  /rumble-tournaments/{id}/scores:
+    post:
+      operationId: RumbleTournamentsController_registerScores
+      summary: Register participant scores for a rumble tournament
+      description: Register the scores of a list of participants. It is not required to send all the participant's scores at once.
+      parameters:
+      - name: id
+        required: true
+        in: path
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRumbleTournamentScoresRequestDto'
+      responses:
+        '204':
+          description: ''
+      tags:
+      - Tournaments
+      security:
+      - basic: []
+  /rumble-tournaments/{id}/resolve:
+    post:
+      operationId: RumbleTournamentsController_resolveTournament
+      summary: Resolve rumble tournament
+      description: Finish the tournament and start the resolution process. You must provide all scores before it or use the forceResolutionWithNullScore flag to force the resolution process.
+      parameters:
+      - name: id
+        required: true
+        in: path
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResolveRumbleTournamentRequestDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScoreboardResponseDto'
+      tags:
+      - Tournaments
+      security:
+      - basic: []
+  /rumble-tournaments/{id}/cancel:
+    post:
+      operationId: RumbleTournamentsController_cancelTournament
+      summary: Cancel rumble tournament
+      description: Cancel the tournament and return the assets to each original owner.
+      parameters:
+      - name: id
+        required: true
+        in: path
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+      tags:
+      - Tournaments
+      security:
+      - basic: []
+  /rumble-tournaments/{id}:
+    get:
+      operationId: RumbleTournamentsController_findRumbleTournament
+      summary: Find rumble tournament
+      description: Find a rumble tournament for the application.
+      parameters:
+      - name: id
+        required: true
+        in: path
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RumbleTournamentResponseDto'
+      tags:
+      - Tournaments
+      security:
+      - basic: []
+  /rumble-tournaments/{id}/join:
+    post:
+      operationId: RumbleTournamentsController_join
+      summary: Join a rumble tournament
+      description: Join a specific user into a rumble tournament.
+      parameters:
+      - name: id
+        required: true
+        in: path
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ''
+      tags:
+      - Tournaments
+      security:
+      - bearer: []
+  /rumble-tournaments/{id}/close-registration:
+    patch:
+      operationId: RumbleTournamentsController_closeRumbleTournamentRegistration
+      summary: Close a rumble tournament registration
+      description: Closes a rumble tournament registration, blocking new users to join into it.
+      parameters:
+      - name: id
+        required: true
+        in: path
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ''
+      tags:
+      - Tournaments
+      security:
+      - basic: []
+  /rumble-tournaments/{id}/prize-distribution:
+    get:
+      operationId: RumbleTournamentsController_getRumbleTournamentCurrentPrizeDistribution
+      summary: Find rumble tournament current prize distribution
+      description: Find the current prize distribution of a rumble tournament.
+      parameters:
+      - name: id
+        required: true
+        in: path
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetRumbleTournamentCurrentPrizeDistributionResponseDto'
+      tags:
+      - Tournaments
+      security:
+      - basic: []
+  /rumble-tournaments/{id}/participants:
+    get:
+      operationId: RumbleTournamentsController_findRumbleTournamentParticipants
+      summary: Get rumble tournament participants list
+      description: Gets the rumble tournament participants list.
+      parameters:
+      - name: id
+        required: true
+        in: path
+        schema:
+          type: string
+      - name: currentPage
+        required: true
+        in: query
+        schema:
+          type: number
+      - name: pageSize
+        required: true
+        in: query
+        schema:
+          type: number
+      - name: status
+        required: false
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FindRumbleTournamentParticipantsListResponseDto'
+      tags:
+      - Tournaments
+      security:
+      - basic: []
+  /rumble-tournaments/{id}/participants/{userId}:
+    get:
+      operationId: RumbleTournamentsController_getRumbleTournamentParticipantInfo
+      summary: Find rumble tournament participant information
+      description: Find the rumble tournament participant information.
+      parameters:
+      - name: id
+        required: true
+        in: path
+        schema:
+          type: string
+      - name: userId
+        required: true
+        in: path
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RumbleTournamentParticipantResponseDto'
+      tags:
+      - Tournaments
+      security:
+      - basic: []
+  /rumble-tournaments/{id}/scoreboard:
+    get:
+      operationId: RumbleTournamentsController_getRumbleTournamentScoreboard
+      summary: Find rumble tournament scoreboard
+      description: Find the rumble tournament result with the prize distribution.
+      parameters:
+      - name: id
+        required: true
+        in: path
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScoreboardResponseDto'
+      tags:
+      - Tournaments
+      security:
+      - basic: []
+components:
+  schemas:
+    RumbleTournamentSettingsSnapshotResponseDto:
+      type: object
+      properties:
+        minParticipants:
+          type: number
+          description: Rumble tournament minimum participants amount
+          example: 1
+          title: Min Participants
+        maxParticipants:
+          type: number
+          description: Rumble tournament maximum participants amount
+          example: 1
+          title: Max Participants
+        prizeDistributionRules:
+          description: Rumble tournament prize distribution rules
+          title: Prize Distribution Rules
+          type: array
+          items:
+            $ref: '#/components/schemas/PrizeDistributionRuleResponseDto'
+        registrationFeeInUpx:
+          type: number
+          description: Rumble tournament registration fee (UPX)
+          example: 100
+          title: Registration Fee in UPX
+        developerFeePercentage:
+          type: number
+          description: Rumble tournament developer fee percentage
+          example: 0
+          title: Developer Fee Percentage
+        stakeholderFeePercentage:
+          type: number
+          description: Rumble tournament stakeholder fee percentage
+          example: 0
+          title: Stakeholder Fee Percentage
+      required:
+      - minParticipants
+      - maxParticipants
+      - prizeDistributionRules
+      - registrationFeeInUpx
+      - developerFeePercentage
+      - stakeholderFeePercentage
+    FindRumbleTournamentParticipantsListResponseDto:
+      type: object
+      properties:
+        currentPage:
+          type: number
+          description: Current page
+          example: 1
+          title: Current page
+        pageSize:
+          type: number
+          description: Total results per page
+          example: 10
+          title: Page size
+        totalResults:
+          type: number
+          description: (Optional) Total of results
+          example: 200
+          title: Total results
+        results:
+          description: List of rumble tournament participants
+          title: Results
+          type: array
+          items:
+            $ref: '#/components/schemas/RumbleTournamentParticipantResponseDto'
+      required:
+      - currentPage
+      - pageSize
+      - results
+    ResolveRumbleTournamentRequestDto:
+      type: object
+      properties:
+        forceResolutionWithNullScore:
+          type: boolean
+          description: (Optional) Force tournament resolution with null score participants
+          example: false
+          default: false
+          title: Force resolution with null score
+    FindRumbleTournamentSettingsListResponseDto:
+      type: object
+      properties:
+        currentPage:
+          type: number
+          description: Current page
+          example: 1
+          title: Current page
+        pageSize:
+          type: number
+          description: Total results per page
+          example: 10
+          title: Page size
+        totalResults:
+          type: number
+          description: (Optional) Total of results
+          example: 200
+          title: Total results
+        results:
+          description: List of rumble tournament participants
+          title: Results
+          type: array
+          items:
+            $ref: '#/components/schemas/RumbleTournamentSettingsResponseDto'
+      required:
+      - currentPage
+      - pageSize
+      - results
+    RumbleTournamentSettingsResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Rumble tournament settings ID
+          example: 3aefaaca-4f86-4aeb-a516-d4114c36f813
+          title: ID
+        createdAt:
+          format: date-time
+          type: string
+          description: Rumble tournament settings creation date
+          example: '2026-09-02T19:03:11.386Z'
+          title: Created At
+        description:
+          type: string
+          description: Rumble tournament description
+          example: My description
+          title: Description
+        maxParticipants:
+          type: number
+          description: Rumble tournament maximum participants amount
+          example: 1
+          title: Max Participants
+        minParticipants:
+          type: number
+          description: Rumble tournament minimum participants amount
+          example: 1
+          title: Min Participants
+        name:
+          type: string
+          description: Rumble tournament name
+          example: My rumble tournament
+          title: Name
+        prizeDistributionRules:
+          description: Rumble tournament prize distribution rules
+          title: Prize Distribution Rules
+          type: array
+          items:
+            $ref: '#/components/schemas/PrizeDistributionRuleResponseDto'
+        registrationFeeInUpx:
+          type: number
+          description: Rumble tournament registration fee (UPX)
+          example: 100
+          title: Registration Fee in UPX
+        status:
+          type: string
+          description: Rumble tournament settings status
+          enum:
+          - ACTIVE
+          - INACTIVE
+          example: ACTIVE
+          title: Status
+        updatedAt:
+          format: date-time
+          type: string
+          description: Rumble tournament settings update date
+          example: '2026-09-02T19:03:11.386Z'
+          title: Updated At
+        developerFee:
+          description: (Optional) Rumble tournament developer fee
+          title: Developer Fee
+          allOf:
+          - $ref: '#/components/schemas/FeeDistributionDto'
+        stakeholderFeePercentage:
+          type: number
+          description: (Optional) Rumble tournament stakeholder fee percentage
+          example: 0
+          title: Stakeholder Fee Percentage
+      required:
+      - id
+      - createdAt
+      - description
+      - maxParticipants
+      - minParticipants
+      - name
+      - prizeDistributionRules
+      - registrationFeeInUpx
+      - status
+      - updatedAt
+    RegisterRumbleTournamentScoresRequestDto:
+      type: object
+      properties:
+        scores:
+          description: List of rumble tournament participant scores. The list should not be empty.
+          title: Scores
+          type: array
+          items:
+            $ref: '#/components/schemas/ScoreDto'
+      required:
+      - scores
+    RumbleTournamentParticipantResponseDto:
+      type: object
+      properties:
+        createdAt:
+          format: date-time
+          type: string
+          description: Rumble tournament participant creation date
+          example: '2026-09-02T19:03:11.511Z'
+          title: Created At
+        id:
+          type: string
+          description: Rumble tournament participant ID
+          example: 3aefaaca-4f86-4aeb-a516-d4114c36f813
+          title: ID
+        joinedAt:
+          format: date-time
+          type: string
+          description: (Optional) Rumble tournament participant join date
+          example: '2026-09-02T19:03:11.511Z'
+          title: Joined At
+        registrationTransactionId:
+          type: string
+          description: (Optional) Rumble tournament participant registration transaction ID
+          example: 3aefaaca-4f86-4aeb-a516-d4114c36f813
+          title: Registration Transaction ID
+        score:
+          type: number
+          description: (Optional) Rumble tournament participant score
+          example: 10
+          title: Score
+        scoredAt:
+          format: date-time
+          type: string
+          description: (Optional) Rumble tournament participant score date
+          example: '2026-09-02T19:03:11.511Z'
+          title: Scored At
+        status:
+          type: string
+          description: Rumble tournament participant status
+          enum:
+          - WAITING_PAYMENT
+          - PROCESSING_PAYMENT
+          - ACTIVE
+          - REMOVED
+          example: ACTIVE
+          title: Status
+        updatedAt:
+          format: date-time
+          type: string
+          description: Rumble tournament participant update date
+          example: '2026-09-02T19:03:11.511Z'
+          title: Updated At
+        userId:
+          type: string
+          description: Rumble tournament participant Upland user ID
+          example: 3aefaaca-4f86-4aeb-a516-d4114c36f813
+          title: User ID
+      required:
+      - createdAt
+      - id
+      - status
+      - updatedAt
+      - userId
+    CreateRumbleTournamentSettingsRequestDto:
+      type: object
+      properties:
+        description:
+          type: string
+          description: Rumble tournament description
+          example: My description
+          title: Description
+        maxParticipants:
+          type: number
+          description: Rumble tournament maximum participants amount
+          example: 1
+          title: Max Participants
+        minParticipants:
+          type: number
+          description: Rumble tournament minimum participants amount
+          example: 2
+          title: Min Participants
+        name:
+          type: string
+          description: Rumble tournament name
+          example: My rumble tournament
+          title: Name
+        prizeDistributionRules:
+          description: Rumble tournament prize distribution rules
+          title: Prize Distribution Rules
+          type: array
+          items:
+            $ref: '#/components/schemas/PrizeDistributionRuleResponseDto'
+        registrationFeeInUpx:
+          type: number
+          description: Rumble tournament registration fee (UPX)
+          example: 100
+          title: Registration Fee in UPX
+        developerFeePercentage:
+          type: number
+          description: (Optional) Rumble tournament developer fee percentage
+          example: 0
+          title: Developer Fee Percentage
+        stakeholderFeePercentage:
+          type: number
+          description: (Optional) Rumble tournament stakeholder fee percentage
+          example: 0
+          title: Stakeholder Fee Percentage
+      required:
+      - description
+      - maxParticipants
+      - minParticipants
+      - name
+      - prizeDistributionRules
+      - registrationFeeInUpx
+    FeeDistributionDto:
+      type: object
+      properties:
+        percentage:
+          type: number
+          description: Fee distribution percentage
+          example: 1
+          title: Percentage
+        targetEosId:
+          type: number
+          description: Fee target EOS ID
+          example: 1
+          title: Target EOS ID
+      required:
+      - percentage
+      - targetEosId
+    ScoreboardResponseDto:
+      type: object
+      properties:
+        participantsAmount:
+          type: number
+          description: Total amount of valid tournament participants
+          example: 5
+          title: Participants amount
+        developerFeeInUpx:
+          type: number
+          description: Rumble tournament developer fee in UPX
+          example: 100
+          title: Developer fee in UPX
+        totalPrizePoolInUpx:
+          type: number
+          description: Total UPX distributed to the winners
+          example: 1000
+          title: Total prize pool in UPX
+        stakeholderFeeInUpx:
+          type: number
+          description: (Optional) Rumble tournament stakeholder fee in UPX
+          example: 100
+          title: Stakeholder fee in UPX
+        prizeDistributions:
+          description: Details of prize distribution for each awarded participant
+          title: Prize distributions
+          allOf:
+          - $ref: '#/components/schemas/PrizeDistributionByPlaceDto'
+      required:
+      - participantsAmount
+      - developerFeeInUpx
+      - totalPrizePoolInUpx
+      - prizeDistributions
+    GetRumbleTournamentCurrentPrizeDistributionResponseDto:
+      type: object
+      properties:
+        developerFeeInUpx:
+          type: number
+          description: Developer Fee in UPX
+          example: 200
+          title: Developer Fee in UPX
+        distribution:
+          description: List of prize distribution
+          title: Distribution
+          type: array
+          items:
+            $ref: '#/components/schemas/DistributionResponseDto'
+        stakeholderFeeInUpx:
+          type: number
+          description: Stakeholder Fee in UPX
+          example: 0
+          title: Stakeholder Fee in UPX
+      required:
+      - developerFeeInUpx
+      - distribution
+      - stakeholderFeeInUpx
+    DistributionResponseDto:
+      type: object
+      properties:
+        place:
+          type: number
+          description: Place in the tournament ranking
+          example: 1
+          title: Place
+        prize:
+          type: number
+          description: Calculated prize in UPX
+          example: 500
+          title: Prize
+      required:
+      - place
+      - prize
+    CreateRumbleTournamentRequestDto:
+      type: object
+      properties:
+        settingsId:
+          type: string
+          description: Rumble tournament settings ID
+          example: 3aefaaca-4f86-4aeb-a516-d4114c36f813
+          title: Settings ID
+        registrationFeeInUpx:
+          type: number
+          description: (Optional) Rumble tournament registration fee in UPX
+          example: 200
+          title: Registration Fee in UPX
+        stakeholderEosId:
+          type: string
+          description: (Optional) Rumble tournament stakeholder EOS ID
+          example: emhwlbbifea5
+          title: Stakeholder EOS ID
+      required:
+      - settingsId
+    PrizeDistributionRuleResponseDto:
+      type: object
+      properties:
+        minParticipants:
+          type: number
+          description: Prize distribution rule minimum participants amount
+          example: 1
+          title: Min Participants
+        distribution:
+          description: List of prize distribution percentage - it should always sum up to 100
+          example:
+          - 100
+          title: Distribution
+          type: array
+          items:
+            type: number
+      required:
+      - minParticipants
+      - distribution
+    RumbleTournamentResponseDto:
+      type: object
+      properties:
+        appId:
+          type: number
+          description: Application ID
+          example: 1
+          title: App ID
+        baseSettingsSnapshot:
+          description: Rumble tournament base settings snapshot
+          title: Base Settings Snapshot
+          allOf:
+          - $ref: '#/components/schemas/RumbleTournamentSettingsSnapshotResponseDto'
+        containerId:
+          type: number
+          description: Rumble tournament escrow container ID
+          example: 1
+          title: Container ID
+        createdAt:
+          format: date-time
+          type: string
+          description: Rumble tournament creation date
+          example: '2026-09-02T19:03:11.655Z'
+          title: Created At
+        endedAt:
+          format: date-time
+          type: string
+          description: (Optional) Rumble tournament finish date
+          example: '2026-09-02T19:03:11.655Z'
+          title: Ended At
+        id:
+          type: string
+          description: Rumble tournament ID
+          example: 3aefaaca-4f86-4aeb-a516-d4114c36f813
+          title: ID
+        resolutionTransactionId:
+          type: string
+          description: (Optional) Rumble tournament resolution transaction ID
+          example: 3aefaaca-4f86-4aeb-a516-d4114c36f813
+          title: Resolution Transaction ID
+        startedAt:
+          format: date-time
+          type: string
+          description: (Optional) Rumble tournament start date
+          example: '2026-09-02T19:03:11.656Z'
+          title: Started At
+        status:
+          type: string
+          description: Rumble tournament status
+          enum:
+          - WAITING_FOR_PARTICIPANTS
+          - WAITING_PAYMENT
+          - REGISTRATION_CLOSED
+          - IN_PROGRESS
+          - DISTRIBUTING_PRIZES
+          - CLOSED
+          - FAILED
+          example: WAITING_FOR_PARTICIPANTS
+          title: Status
+        updatedAt:
+          format: date-time
+          type: string
+          description: Rumble tournament update date
+          example: '2026-09-02T19:03:11.656Z'
+          title: Updated At
+      required:
+      - appId
+      - baseSettingsSnapshot
+      - containerId
+      - createdAt
+      - id
+      - status
+      - updatedAt
+    ScoreDto:
+      type: object
+      properties:
+        userId:
+          type: string
+          description: Rumble tournament participant Upland user ID
+          example: 3aefaaca-4f86-4aeb-a516-d4114c36f813
+          title: User ID
+        value:
+          type: number
+          description: Rumble tournament participant score. Minimum value is 0
+          example: 10
+          title: Score
+      required:
+      - userId
+      - value
+    PrizeDistributionByPlaceDto:
+      type: object
+      properties:
+        userId:
+          type: string
+          description: Upland user ID
+          example: 76d678fe-5a64-4764-8250-e594527ea0f8
+          title: User ID
+        userEosId:
+          type: string
+          description: Upland user EOS ID
+          example: emhwlbbifea5
+          title: User EOS ID
+        score:
+          type: number
+          description: Participant score
+          example: 500
+          title: Score
+        prizeInUpx:
+          type: number
+          description: Total UPX received by the winner
+          example: 500
+          title: Prize in UPX
+        place:
+          type: number
+          description: Participant's position in the tournament result.
+          example: 5
+          title: Place
+      required:
+      - userId
+      - userEosId
+      - score
+      - prizeInUpx
+      - place
+    EditRumbleTournamentSettingsRequestDto:
+      type: object
+      properties:
+        description:
+          type: string
+          description: (Optional) Rumble tournament description
+          example: My description
+          title: Description
+        developerFeePercentage:
+          type: number
+          description: (Optional) Rumble tournament developer fee percentage
+          example: 0
+          title: Developer Fee Percentage
+        maxParticipants:
+          type: number
+          description: (Optional) Rumble tournament maximum participants amount
+          example: 6
+          title: Max Participants
+        minParticipants:
+          type: number
+          description: (Optinal) Rumble tournament minimum participants amount
+          example: 2
+          title: Min Participants
+        name:
+          type: string
+          description: (Optional) Rumble tournament name
+          example: My rumble tournament
+          title: Name
+        prizeDistributionRules:
+          description: (Optional) Rumble tournament prize distribution rules
+          title: Prize Distribution Rules
+          type: array
+          items:
+            $ref: '#/components/schemas/PrizeDistributionRuleResponseDto'
+        registrationFeeInUpx:
+          type: number
+          description: (Optional) Rumble tournament registration fee (UPX)
+          example: 100
+          title: Registration Fee in UPX
+        stakeholderFeePercentage:
+          type: number
+          description: (Optional) Rumble tournament stakeholder fee percentage
+          example: 0
+          title: Stakeholder Fee Percentage
+  securitySchemes:
+    basic:
+      type: http
+      scheme: basic
+      description: 'Basic access authentication is a method to provide a username and password when making a request. In basic HTTP authentication, a request contains a header field in the form of (Authorization: Basic [credential]), where credentials is the Base64 encoding of ID and password joined by a single colon :. For our case, you must consider Username as app ID and password as secret key (this information can be generated in endpoint to create application).'
+    bearer:
+      type: http
+      scheme: bearer
+      description: You must provide a Code to your users generated across the endpoint /auth/opt/init. When Upland User grants access for the developer App, a webhook will be sent with a valid access token.

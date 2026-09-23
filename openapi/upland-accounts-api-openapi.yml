@@ -1,0 +1,624 @@
+openapi: 3.2.0
+info:
+  title: Hyperion History API for UPLAND Chain Accounts API
+  description: '### Scalable Full History API Solution for EOSIO based blockchains
+
+    *Made with ♥️ by EOS Rio*
+
+    ***
+
+    #### Current Chain: UPLAND Chain
+
+    #### Provided by UPLAND
+
+    #### Health API: https://10.0.3.200:7000/v2/health'
+  version: 3.3.10
+servers:
+- url: https://chain-history.upland.me
+tags:
+- name: Accounts
+paths:
+  /v2/history/get_created_accounts:
+    get:
+      summary: get created accounts
+      description: get all accounts created by one creator
+      tags:
+      - Accounts
+      parameters:
+      - description: limit of [n] results per page
+        required: false
+        in: query
+        name: limit
+        schema:
+          type: integer
+          minimum: 1
+      - description: skip [n] results
+        required: false
+        in: query
+        name: skip
+        schema:
+          type: integer
+          minimum: 0
+      - description: creator account
+        required: true
+        in: query
+        name: account
+        schema:
+          type: string
+          maxLength: 12
+          minLength: 1
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  query_time_ms:
+                    type: number
+                  cached:
+                    type: boolean
+                  hot_only:
+                    type: boolean
+                  lib:
+                    type: number
+                  last_indexed_block:
+                    type: number
+                  last_indexed_block_time:
+                    type: string
+                  total:
+                    type: object
+                    properties:
+                      value:
+                        type: number
+                      relation:
+                        type: string
+                  query_time:
+                    type: number
+                  accounts:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                        timestamp:
+                          type: string
+                        trx_id:
+                          type: string
+      operationId: getV2HistoryGetCreatedAccounts
+      x-operation-id-source: derived
+  /v2/history/get_creator:
+    get:
+      summary: get account creator
+      tags:
+      - Accounts
+      parameters:
+      - description: created account
+        required: true
+        in: query
+        name: account
+        schema:
+          type: string
+          maxLength: 12
+          minLength: 1
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  query_time_ms:
+                    type: number
+                  cached:
+                    type: boolean
+                  hot_only:
+                    type: boolean
+                  lib:
+                    type: number
+                  last_indexed_block:
+                    type: number
+                  last_indexed_block_time:
+                    type: string
+                  total:
+                    type: object
+                    properties:
+                      value:
+                        type: number
+                      relation:
+                        type: string
+                  account:
+                    type: string
+                  creator:
+                    type: string
+                  timestamp:
+                    type: string
+                  block_num:
+                    type: integer
+                  trx_id:
+                    type: string
+                  indirect_creator:
+                    type: string
+      operationId: getV2HistoryGetCreator
+      x-operation-id-source: derived
+  /v2/state/get_account:
+    get:
+      summary: get account summary
+      description: get account data
+      tags:
+      - Accounts
+      parameters:
+      - description: limit of [n] results per page
+        required: false
+        in: query
+        name: limit
+        schema:
+          type: integer
+          minimum: 1
+      - description: skip [n] results
+        required: false
+        in: query
+        name: skip
+        schema:
+          type: integer
+          minimum: 0
+      - description: account name
+        required: true
+        in: query
+        name: account
+        schema:
+          type: string
+          maxLength: 12
+          minLength: 1
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  query_time_ms:
+                    type: number
+                  cached:
+                    type: boolean
+                  hot_only:
+                    type: boolean
+                  lib:
+                    type: number
+                  last_indexed_block:
+                    type: number
+                  last_indexed_block_time:
+                    type: string
+                  total:
+                    type: object
+                    properties:
+                      value:
+                        type: number
+                      relation:
+                        type: string
+                  account:
+                    additionalProperties: true
+                    type: object
+                  links:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        timestamp:
+                          type: string
+                        permission:
+                          type: string
+                        code:
+                          type: string
+                        action:
+                          type: string
+                  tokens:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        symbol:
+                          type: string
+                        precision:
+                          type: integer
+                        amount:
+                          type: number
+                        contract:
+                          type: string
+                  total_actions:
+                    type: number
+                  actions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        '@timestamp':
+                          type: string
+                        timestamp:
+                          type: string
+                        block_num:
+                          type: number
+                        block_id:
+                          type: string
+                        trx_id:
+                          type: string
+                        act:
+                          type: object
+                          properties:
+                            account:
+                              type: string
+                            name:
+                              type: string
+                            authorization:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  actor:
+                                    type: string
+                                  permission:
+                                    type: string
+                          additionalProperties: true
+                        receipts:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              receiver:
+                                type: string
+                              global_sequence:
+                                type: number
+                              recv_sequence:
+                                type: number
+                              auth_sequence:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    account:
+                                      type: string
+                                    sequence:
+                                      type: number
+                        cpu_usage_us:
+                          type: number
+                        net_usage_words:
+                          type: number
+                        account_ram_deltas:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              account:
+                                type: string
+                              delta:
+                                type: number
+                            additionalProperties: true
+                        global_sequence:
+                          type: number
+                        producer:
+                          type: string
+                        parent:
+                          type: number
+                        action_ordinal:
+                          type: number
+                        creator_action_ordinal:
+                          type: number
+                        signatures:
+                          type: array
+                          items:
+                            type: string
+      operationId: getV2StateGetAccount
+      x-operation-id-source: derived
+  /v2/state/get_key_accounts:
+    get:
+      summary: get accounts by public key
+      tags:
+      - Accounts
+      parameters:
+      - description: limit of [n] results per page
+        required: false
+        in: query
+        name: limit
+        schema:
+          type: integer
+          minimum: 1
+      - description: skip [n] results
+        required: false
+        in: query
+        name: skip
+        schema:
+          type: integer
+          minimum: 0
+      - description: public key
+        required: true
+        in: query
+        name: public_key
+        schema:
+          type: string
+      - description: include permission details
+        required: false
+        in: query
+        name: details
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  account_names:
+                    type: array
+                    items:
+                      type: string
+                  permissions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        owner:
+                          type: string
+                        block_num:
+                          type: integer
+                        parent:
+                          type: string
+                        last_updated:
+                          type: string
+                        auth: {}
+                        name:
+                          type: string
+                        present:
+                          type: number
+      operationId: getV2StateGetKeyAccounts
+      x-operation-id-source: derived
+    post:
+      summary: get accounts by public key
+      tags:
+      - Accounts
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  account_names:
+                    type: array
+                    items:
+                      type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                public_key:
+                  description: public key
+                  type: string
+              required:
+              - public_key
+      operationId: postV2StateGetKeyAccounts
+      x-operation-id-source: derived
+  /v2/state/get_links:
+    get:
+      summary: get permission links
+      tags:
+      - Accounts
+      parameters:
+      - description: account name
+        required: false
+        in: query
+        name: account
+        schema:
+          type: string
+      - description: contract name
+        required: false
+        in: query
+        name: code
+        schema:
+          type: string
+      - description: method name
+        required: false
+        in: query
+        name: action
+        schema:
+          type: string
+      - description: permission name
+        required: false
+        in: query
+        name: permission
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  query_time_ms:
+                    type: number
+                  cached:
+                    type: boolean
+                  hot_only:
+                    type: boolean
+                  lib:
+                    type: number
+                  last_indexed_block:
+                    type: number
+                  last_indexed_block_time:
+                    type: string
+                  total:
+                    type: object
+                    properties:
+                      value:
+                        type: number
+                      relation:
+                        type: string
+                  links:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        block_num:
+                          type: number
+                        timestamp:
+                          type: string
+                        account:
+                          type: string
+                        permission:
+                          type: string
+                        code:
+                          type: string
+                        action:
+                          type: string
+                        irreversible:
+                          type: boolean
+      operationId: getV2StateGetLinks
+      x-operation-id-source: derived
+  /v2/state/get_tokens:
+    get:
+      summary: get all tokens
+      description: get tokens from an account
+      tags:
+      - Accounts
+      parameters:
+      - description: limit of [n] results per page
+        required: false
+        in: query
+        name: limit
+        schema:
+          type: integer
+          minimum: 1
+      - description: skip [n] results
+        required: false
+        in: query
+        name: skip
+        schema:
+          type: integer
+          minimum: 0
+      - description: account name
+        required: true
+        in: query
+        name: account
+        schema:
+          type: string
+          maxLength: 12
+          minLength: 1
+      responses:
+        '200':
+          description: Default Response
+      operationId: getV2StateGetTokens
+      x-operation-id-source: derived
+  /v2/state/get_top_holders:
+    get:
+      summary: get top token holders
+      description: get the list of top holders for a given token
+      tags:
+      - Accounts
+      parameters:
+      - description: limit of [n] results per page
+        required: false
+        in: query
+        name: limit
+        schema:
+          type: integer
+          minimum: 1
+      - description: skip [n] results
+        required: false
+        in: query
+        name: skip
+        schema:
+          type: integer
+          minimum: 0
+      - description: token contract account name
+        required: true
+        in: query
+        name: contract
+        schema:
+          type: string
+          maxLength: 12
+          minLength: 1
+      - description: filter by token symbol
+        required: false
+        in: query
+        name: symbol
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Default Response
+      operationId: getV2StateGetTopHolders
+      x-operation-id-source: derived
+  /v1/history/get_controlled_accounts:
+    post:
+      summary: get controlled accounts by controlling accounts
+      tags:
+      - Accounts
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  controlled_accounts:
+                    type: array
+                    items:
+                      type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type:
+              - object
+              - string
+              properties:
+                controlling_account:
+                  description: controlling account
+                  type: string
+              required:
+              - controlling_account
+      operationId: postV1HistoryGetControlledAccounts
+      x-operation-id-source: derived
+  /v1/history/get_key_accounts:
+    post:
+      summary: get accounts by public key
+      tags:
+      - Accounts
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  account_names:
+                    type: array
+                    items:
+                      type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type:
+              - object
+              - string
+              properties:
+                public_key:
+                  description: public key
+                  type: string
+              required:
+              - public_key
+      operationId: postV1HistoryGetKeyAccounts
+      x-operation-id-source: derived

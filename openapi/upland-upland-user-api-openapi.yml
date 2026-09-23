@@ -1,0 +1,729 @@
+openapi: 3.2.0
+info:
+  title: Upland Developers Upland User API
+  description: You can use the developer API to map user IDs, read information, and manage your app escrow container.
+  version: 1.0.0
+  contact: {}
+servers:
+- url: https://api.sandbox.upland.me/developers-api
+tags:
+- name: Upland User
+paths:
+  /user/assets/nfts:
+    get:
+      operationId: UserController_getNfts
+      summary: List user's NFTs
+      description: Retrieves a paginated list of user's NFTs.
+      parameters:
+      - name: currentPage
+        required: true
+        in: query
+        schema:
+          type: number
+      - name: pageSize
+        required: true
+        in: query
+        schema:
+          type: number
+      - name: categories
+        required: false
+        in: query
+        description: Filter by NFT Categories (structure, blkexplorer, essential, memento, structornmt, landvehicle, spirithlwn, outdoordecor, jacktsai)
+        schema:
+          type: array
+          items:
+            type: array
+            items:
+              type: a
+      - name: textSearch
+        required: false
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserNftsListResponseDto'
+      tags:
+      - Upland User
+      security:
+      - bearer: []
+  /user/assets/properties:
+    get:
+      operationId: UserController_getProperties
+      summary: List user's properties
+      description: Retrieves a paginated list of user's properties.
+      parameters:
+      - name: currentPage
+        required: true
+        in: query
+        schema:
+          type: number
+      - name: pageSize
+        required: true
+        in: query
+        schema:
+          type: number
+      - name: cityId
+        required: false
+        in: query
+        schema:
+          type: number
+      - name: textSearch
+        required: false
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserPropertiesListResponseDto'
+      tags:
+      - Upland User
+      security:
+      - bearer: []
+  /user/balances:
+    get:
+      operationId: UserController_getBalances
+      summary: Get user's balances
+      description: Retrieves user's balances information.
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserBalancesResponseDto'
+      tags:
+      - Upland User
+      security:
+      - bearer: []
+  /user/join:
+    post:
+      operationId: UserController_putAssetsInEscrowContainer
+      summary: Join escrow container
+      description: Adds user's assets into the container. This action must be approved by the Upland user inside the Upland Application.
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserJoinContainerRequestDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JoinContainerResponseDto'
+      tags:
+      - Upland User
+      security:
+      - bearer: []
+  /user/profile:
+    get:
+      operationId: UserController_getUserProfile
+      summary: Get user's profile
+      description: Retrieves user's profile information.
+      parameters: []
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfileResponseDto'
+      tags:
+      - Upland User
+      security:
+      - bearer: []
+  /user/travels:
+    get:
+      operationId: UserController_getTravels
+      summary: List user's travels
+      description: Retrieves a paginated list of user's travels.
+      parameters:
+      - name: currentPage
+        required: true
+        in: query
+        schema:
+          type: number
+      - name: pageSize
+        required: true
+        in: query
+        schema:
+          type: number
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserTravelsListResponseDto'
+      tags:
+      - Upland User
+      security:
+      - bearer: []
+components:
+  schemas:
+    UserTravelsListResponseDto:
+      type: object
+      properties:
+        currentPage:
+          type: number
+          description: Current page
+          example: 1
+          title: Current page
+        pageSize:
+          type: number
+          description: Total results per page
+          example: 10
+          title: Page size
+        totalResults:
+          type: number
+          description: (Optional) Total of results
+          example: 200
+          title: Total results
+        results:
+          description: List of user's travels
+          title: Results
+          type: array
+          items:
+            $ref: '#/components/schemas/UserTravelResponseDto'
+      required:
+      - currentPage
+      - pageSize
+      - results
+    UserProfileResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: User's ID
+          example: 2da598ba-0abb-44f9-bb30-86416af16a20
+          title: ID
+        eosId:
+          type: string
+          description: User's EOS ID
+          example: emhwlbbifea5
+          title: EOS ID
+        username:
+          type: string
+          description: User's username
+          example: my_username
+          title: Username
+        networth:
+          type: number
+          description: User's networth
+          default: 0
+          title: Networth
+        level:
+          type: string
+          description: User's Level
+          enum:
+          - Visitor
+          - Uplander
+          - Pro
+          - Director
+          - Executive
+          - Chief Executive
+          example: Pro
+          title: Level
+        avatarUrl:
+          type: string
+          description: User's avatar URL
+          example: https://static.upland.me/my-avatar.jpg
+          title: Avatar URL
+        initialCity:
+          type: string
+          description: User's initial city
+          example: San Francisco
+          title: Initial city
+        currentCity:
+          type: string
+          description: User's current city
+          example: San Francisco
+          title: Current city
+        isInJail:
+          type: boolean
+          description: Indicates if the user is in jail
+          example: false
+          title: Is in jail
+        rp3dAvatarUrl:
+          type: string
+          description: (Optional) User's Ready Player 3D Avatar URL
+          example: https://api.readyplayer.me/v1/avatars/58a311f1236205163b333df2.glb
+          title: RP 3D Avatar URL
+        kycStatus:
+          type: string
+          description: (Optional) User's KYC Status
+          enum:
+          - unknown
+          - rejected
+          - pending
+          - blocked
+          - success
+          example: success
+          title: KYC Status
+        homeAddress:
+          description: (Optional) Property's Home Address information
+          title: Home Address
+          allOf:
+          - $ref: '#/components/schemas/HomeAddressResponseDto'
+      required:
+      - id
+      - eosId
+      - username
+      - networth
+      - level
+      - avatarUrl
+      - initialCity
+      - currentCity
+      - isInJail
+      - homeAddress
+    HomeAddressResponseDto:
+      type: object
+      properties:
+        propertyId:
+          type: number
+          description: Property's ID
+          example: 55334346
+          title: Property ID
+        fullAddress:
+          type: string
+          description: Property's Full Address
+          example: 1467 28TH AVE
+          title: Full Address
+      required:
+      - propertyId
+      - fullAddress
+    UserPropertiesListResponseDto:
+      type: object
+      properties:
+        currentPage:
+          type: number
+          description: Current page
+          example: 1
+          title: Current page
+        pageSize:
+          type: number
+          description: Total results per page
+          example: 10
+          title: Page size
+        totalResults:
+          type: number
+          description: (Optional) Total of results
+          example: 200
+          title: Total results
+        results:
+          description: List of properties
+          title: Results
+          type: array
+          items:
+            $ref: '#/components/schemas/UserPropertyResponseDto'
+      required:
+      - currentPage
+      - pageSize
+      - results
+    CityResponseDto:
+      type: object
+      properties:
+        id:
+          type: number
+          description: City ID
+          default: 1
+          title: ID
+        name:
+          type: string
+          description: City name
+          example: Manhattan
+          title: Name
+      required:
+      - id
+      - name
+    UserNftResponseDto:
+      type: object
+      properties:
+        id:
+          type: number
+          description: NFT ID
+          example: 1
+          title: ID
+        category:
+          type: string
+          description: NFT category
+          examples:
+          - structure
+          - blkexplorer
+          - essential
+          - memento
+          - structornmt
+          - landvehicle
+          - spirithlwn
+          - outdoordecor
+          - jacktsai
+          title: Category
+        name:
+          type: string
+          description: NFT name
+          default: townhouse
+        displayName:
+          type: string
+          description: (Optional) NFT display name
+          example: Micro House - Eldritch  Zombie
+          title: Display name
+        rarityLevel:
+          type: string
+          description: (Optional) NFT rarity level
+          example: townhouse
+          title: Rarity level
+        thumbnail:
+          type: string
+          description: NFT thumbnail URL
+          example: https://any-url.upland.me
+          title: Thumbnail
+        mintNumber:
+          type: number
+          description: NFT mint number
+          example: 1
+          title: Mint number
+        modelUrl:
+          type: string
+          description: (Optional) Model URL - applies only to cars
+          example: https://image.upland.me/3d-models/cars/56/225/233/lods/0/model.gltf
+          title: Model URL
+        metadata:
+          description: (Optional) Metadata object with specific information for each category
+          oneOf:
+          - $ref: '#/components/schemas/LandVehicleMetadataResponseDto'
+          title: Metadata
+      required:
+      - id
+      - category
+      - name
+      - thumbnail
+      - mintNumber
+    LandVehicleAttributeResponseDto:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Vehicle Property Name (Weight, Horsepower, Speed Rating, Acceleration, Braking, Handling, Energy Efficiency Rating, Reliability Rating, Durability Rating, Offroad Rating)
+          example: Horsepower
+          title: Vehicle Property Name
+        value:
+          type: number
+          description: Property Value
+          example: 10
+          title: Value
+        unit:
+          type: string
+          description: (Optional) Property Unit
+          example: hp
+          title: Unit
+      required:
+      - name
+      - value
+    LandVehicleLODResponseDto:
+      type: object
+      properties:
+        level:
+          type: number
+          description: Level of Detail (0, 1, or 2)
+          example: 1
+          title: Level
+        modelUrl:
+          type: string
+          description: Vehicle model URL
+          example: https://image.upland.me/3d-models/cars/56/225/233/lods/0/model.gltf
+          title: Model URL
+        textureUrl:
+          type: string
+          description: Vehicle texture URL
+          example: https://image.upland.me/3d-models/cars/66/41/21/4/lods/0/texture.jpg
+          title: Texture URL
+      required:
+      - level
+      - modelUrl
+      - textureUrl
+    UserNftsListResponseDto:
+      type: object
+      properties:
+        currentPage:
+          type: number
+          description: Current page
+          example: 1
+          title: Current page
+        pageSize:
+          type: number
+          description: Total results per page
+          example: 10
+          title: Page size
+        totalResults:
+          type: number
+          description: (Optional) Total of results
+          example: 200
+          title: Total results
+        results:
+          description: List of User's NFTs
+          title: Results
+          type: array
+          items:
+            $ref: '#/components/schemas/UserNftResponseDto'
+      required:
+      - currentPage
+      - pageSize
+      - results
+    UserTravelResponseDto:
+      type: object
+      properties:
+        startDate:
+          format: date-time
+          type: string
+          description: Travel start date
+          example: '2026-09-02T19:03:02.788Z'
+          title: Start date
+        endDate:
+          format: date-time
+          type: string
+          description: Travel end date
+          example: '2026-09-02T19:03:02.788Z'
+          title: End date
+        from:
+          description: Travel origin coordinates [lat, lng]
+          example:
+          - -122.39619255065918
+          - 37.79594930209237
+          title: From
+          type: array
+          items:
+            type: number
+        to:
+          description: Travel destination coordinates [lat, lng]
+          example:
+          - -122.39619255065918
+          - 37.79594930209237
+          title: To
+          type: array
+          items:
+            type: number
+        type:
+          type: string
+          description: Travel type
+          example: train
+          title: Type
+      required:
+      - startDate
+      - endDate
+      - from
+      - to
+      - type
+    LandVehicleMetadataResponseDto:
+      type: object
+      properties:
+        textureUrl:
+          type: string
+          deprecated: true
+          description: Vehicle texture URL (This field will be removed on the future versions. You can use the lods property to get more detailed information)
+          example: https://image.upland.me/3d-models/cars/66/41/21/4/lods/0/texture.jpg
+          title: Texture URL
+        lods:
+          description: List of Car's LODs
+          title: LODs
+          type: array
+          items:
+            $ref: '#/components/schemas/LandVehicleLODResponseDto'
+        attributes:
+          description: List of Car's Attributes
+          title: Attributes
+          type: array
+          items:
+            $ref: '#/components/schemas/LandVehicleAttributeResponseDto'
+      required:
+      - textureUrl
+      - lods
+      - attributes
+    CollectionResponseDto:
+      type: object
+      properties:
+        id:
+          type: number
+          description: Collection ID
+          example: 1
+          title: ID
+        name:
+          type: string
+          description: Collection name
+          example: Newbie
+          title: Name
+      required:
+      - id
+      - name
+    JoinContainerResponseDto:
+      type: object
+      properties:
+        transactionId:
+          type: string
+          example: ac60eb8a-9c32-4f78-b407-1c0396a645e2
+          title: Transaction ID
+        containerReachedUsersLimit:
+          type: boolean
+          description: (Optional) We send it if you provide some value to userLimitByContainer property on container creation endpoint
+          example: true
+          title: Container reached users limit
+      required:
+      - transactionId
+    UserPropertyResponseDto:
+      type: object
+      properties:
+        id:
+          type: number
+          description: Property ID
+          example: 1
+          title: ID
+        address:
+          type: string
+          description: Property address
+          example: 1467 28TH AVE
+          title: Address
+        city:
+          description: Property city
+          title: City
+          allOf:
+          - $ref: '#/components/schemas/CityResponseDto'
+        neighborhood:
+          description: Property neighborhood
+          title: Neighborhoord
+          allOf:
+          - $ref: '#/components/schemas/NeighborhoodResponseDto'
+        status:
+          type: string
+          description: Property status
+          enum:
+          - For sale
+          - Initial Offer
+          - Locked
+          - Owned
+          - Unlocked
+          example: For sale
+          title: Status
+        mintPrice:
+          type: number
+          description: Property mint price
+          example: 3500
+          title: Mint price
+        collection:
+          description: (Optional) Property collection
+          title: Collection
+          allOf:
+          - $ref: '#/components/schemas/CollectionResponseDto'
+      required:
+      - id
+      - address
+      - city
+      - neighborhood
+      - status
+      - mintPrice
+    NftRequestDto:
+      type: object
+      properties:
+        id:
+          type: number
+          description: NFT ID
+          example: 1
+          title: ID
+        category:
+          type: string
+          description: NFT category
+          examples:
+          - spirithlwn
+          - jacktsai
+          - blkexplorer
+          - essential
+          - memento
+          title: Category
+      required:
+      - id
+      - category
+    NeighborhoodResponseDto:
+      type: object
+      properties:
+        id:
+          type: number
+          description: Neighborhood ID
+          example: 1
+          title: ID
+        name:
+          type: string
+          description: Neighborhood name
+          example: ALAMO SQUARE
+          title: Name
+      required:
+      - id
+      - name
+    UserJoinContainerRequestDto:
+      type: object
+      properties:
+        upxAmount:
+          type: number
+          description: (Optional) Amount of UPX to be added into the escrow container
+          example: 10000
+          title: UPX amount
+        assets:
+          description: List of assets to be added into the escrow container
+          title: Assets
+          type: array
+          items:
+            $ref: '#/components/schemas/NftRequestDto'
+        containerId:
+          type: number
+          description: The ID of the container that the user is joining into
+          example: 1
+          title: Container ID
+      required:
+      - containerId
+    UserBalancesResponseDto:
+      type: object
+      properties:
+        availableUpx:
+          type: number
+          description: Amount of available UPX
+          example: 0
+          title: Available UPX
+        availableSpark:
+          type: number
+          description: Amount of available SPARK
+          example: 0
+          title: Available SPARK
+        stakedSpark:
+          type: number
+          description: Amount of staked SPARK
+          example: 0
+          title: Staked SPARK
+        availableSends:
+          type: number
+          description: Amount of available Sends
+          default: 0
+          title: Available sends
+      required:
+      - availableUpx
+      - availableSpark
+      - stakedSpark
+      - availableSends
+  securitySchemes:
+    basic:
+      type: http
+      scheme: basic
+      description: 'Basic access authentication is a method to provide a username and password when making a request. In basic HTTP authentication, a request contains a header field in the form of (Authorization: Basic [credential]), where credentials is the Base64 encoding of ID and password joined by a single colon :. For our case, you must consider Username as app ID and password as secret key (this information can be generated in endpoint to create application).'
+    bearer:
+      type: http
+      scheme: bearer
+      description: You must provide a Code to your users generated across the endpoint /auth/opt/init. When Upland User grants access for the developer App, a webhook will be sent with a valid access token.

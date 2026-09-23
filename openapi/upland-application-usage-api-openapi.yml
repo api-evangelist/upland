@@ -1,0 +1,203 @@
+openapi: 3.2.0
+info:
+  title: Upland Developers Application Usage API
+  description: You can use the developer API to map user IDs, read information, and manage your app escrow container.
+  version: 1.0.0
+  contact: {}
+servers:
+- url: https://api.sandbox.upland.me/developers-api
+tags:
+- name: Application Usage
+paths:
+  /app-usage/webhook-calls:
+    get:
+      operationId: AppUsageController_findWebhookCalls
+      summary: App Webhook calls
+      description: Retrieves app webhook calls history. Available for data from the last three months of use.
+      parameters:
+      - name: startDate
+        required: true
+        in: query
+        description: Start date to filter the history
+        example: '2023-05-10'
+        schema:
+          title: Start date
+          format: date-time
+          type: string
+      - name: endDate
+        required: true
+        in: query
+        description: End date to filter the history
+        example: '2023-05-10'
+        schema:
+          title: End date
+          format: date-time
+          type: string
+      - name: notificationType
+        required: false
+        in: query
+        description: (Optional) Available notification type
+        example: TransactionFromEscrowFailure
+        schema:
+          title: Notification type
+          enum:
+          - AuthenticationSuccess
+          - AuthenticationFailure
+          - ContainerExpired
+          - RumbleTournamentNewParticipantAdded
+          - RumbleTournamentParticipantStatusUpdated
+          - RumbleTournamentClosed
+          - RumbleTournamentCanceled
+          - RumbleTournamentStatusUpdated
+          - TransactionToEscrowCreated
+          - TransactionToEscrowExpired
+          - TransactionToEscrowSigned
+          - TransactionToEscrowRejected
+          - TransactionToEscrowFinal
+          - TransactionToEscrowFailure
+          - TransactionFromEscrowCreated
+          - TransactionFromEscrowFinal
+          - TransactionFromEscrowFailure
+          - UserDisconnectedApplication
+          type: string
+      - name: isSuccess
+        required: false
+        in: query
+        description: (Optional) Usage in case of the attempted was succeeded
+        example: true
+        schema:
+          title: Is Success
+          type: boolean
+      - name: containerId
+        required: false
+        in: query
+        description: (Optional) Applied only for notification types associated to container actions
+        example: 12
+        schema:
+          title: Container Id
+          type: number
+      - name: currentPage
+        required: true
+        in: query
+        schema:
+          type: number
+      - name: pageSize
+        required: true
+        in: query
+        schema:
+          type: number
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppWebhookCallsResponseDto'
+      tags:
+      - Application Usage
+      security:
+      - basic: []
+components:
+  schemas:
+    AppWebhookCallsResponseDto:
+      type: object
+      properties:
+        currentPage:
+          type: number
+          description: Current page
+          example: 1
+          title: Current page
+        pageSize:
+          type: number
+          description: Total results per page
+          example: 10
+          title: Page size
+        totalResults:
+          type: number
+          description: (Optional) Total of results
+          example: 200
+          title: Total results
+        results:
+          description: List of app webhook calls
+          title: Results
+          type: array
+          items:
+            $ref: '#/components/schemas/AppWebhookCallDto'
+      required:
+      - currentPage
+      - pageSize
+      - results
+    AppWebhookCallDto:
+      type: object
+      properties:
+        notificationType:
+          type: string
+          description: Available notification type
+          example: TransactionFromEscrowFailure
+          title: Notification type
+          enum:
+          - AuthenticationSuccess
+          - AuthenticationFailure
+          - ContainerExpired
+          - RumbleTournamentNewParticipantAdded
+          - RumbleTournamentParticipantStatusUpdated
+          - RumbleTournamentClosed
+          - RumbleTournamentCanceled
+          - RumbleTournamentStatusUpdated
+          - TransactionToEscrowCreated
+          - TransactionToEscrowExpired
+          - TransactionToEscrowSigned
+          - TransactionToEscrowRejected
+          - TransactionToEscrowFinal
+          - TransactionToEscrowFailure
+          - TransactionFromEscrowCreated
+          - TransactionFromEscrowFinal
+          - TransactionFromEscrowFailure
+          - UserDisconnectedApplication
+        attemptNumber:
+          type: number
+          description: Number of attempts where the webhook was called
+          example: 2
+          title: Attempted number
+        attemptedAt:
+          format: date-time
+          type: string
+          description: Attempt date where the webhook was called
+          example: '2023-08-02 21:28:33.112'
+          title: Attempted at
+        isSuccess:
+          type: boolean
+          description: Returns true in case of the attempted was succeeded
+          example: true
+          title: Is Success
+        request:
+          type: object
+          description: Request payload sent to the webhook. It is specific for each notification type. Read more in our webhook spec.
+          example: true
+          title: Request payload
+        response:
+          type: object
+          description: Response payload for succeeded and failed calls
+          example: true
+          title: Response payload
+        containerId:
+          type: number
+          description: (Optional) Applied only for notification types associated to container actions
+          example: 12
+          title: Container Id
+      required:
+      - notificationType
+      - attemptNumber
+      - attemptedAt
+      - isSuccess
+      - request
+      - response
+  securitySchemes:
+    basic:
+      type: http
+      scheme: basic
+      description: 'Basic access authentication is a method to provide a username and password when making a request. In basic HTTP authentication, a request contains a header field in the form of (Authorization: Basic [credential]), where credentials is the Base64 encoding of ID and password joined by a single colon :. For our case, you must consider Username as app ID and password as secret key (this information can be generated in endpoint to create application).'
+    bearer:
+      type: http
+      scheme: bearer
+      description: You must provide a Code to your users generated across the endpoint /auth/opt/init. When Upland User grants access for the developer App, a webhook will be sent with a valid access token.

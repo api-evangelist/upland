@@ -1,0 +1,939 @@
+openapi: 3.2.0
+info:
+  title: Upland Developers Generic API
+  description: You can use the developer API to map user IDs, read information, and manage your app escrow container.
+  version: 1.0.0
+  contact: {}
+servers:
+- url: https://api.sandbox.upland.me/developers-api
+tags:
+- name: Generic
+paths:
+  /tracks:
+    get:
+      operationId: TracksController_getTracks
+      summary: List tracks
+      description: Retrieves a list of all available race tracks.
+      parameters:
+      - name: cityName
+        required: false
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TracksListResponseDto'
+        '404':
+          description: Tracks not found.
+      tags:
+      - Generic
+      security:
+      - basic: []
+  /tracks/{id}:
+    get:
+      operationId: TracksController_getTrackById
+      summary: Get track
+      description: Retrieves the full track information.
+      parameters:
+      - name: id
+        required: true
+        in: path
+        schema:
+          type: number
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TrackWithDetailsResponseDto'
+        '400':
+          description: Bad request or invalid query parameters
+        '404':
+          description: Track not found.
+      tags:
+      - Generic
+      security:
+      - basic: []
+  /tracks/{id}/buildings:
+    get:
+      operationId: TracksController_getTrackBuildingsById
+      summary: Get track buildings
+      description: Retrieves all the buildings along the track.
+      parameters:
+      - name: id
+        required: true
+        in: path
+        schema:
+          type: number
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BuildingsListResponseDto'
+        '404':
+          description: Buildings not found.
+      tags:
+      - Generic
+      security:
+      - basic: []
+  /buildings:
+    post:
+      operationId: BuildingsController_getBuildingsByBoundaries
+      summary: Search for buildings
+      description: Retrieves a list of completed buildings based on a given location (polygon bondaries).
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BuildingsRequestDto'
+      responses:
+        '200':
+          description: Buildings List
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BuildingsListResponseDto'
+      tags:
+      - Generic
+      security:
+      - basic: []
+  /cities:
+    get:
+      operationId: CitiesController_getCities
+      summary: List available cities
+      description: Retrieves a list of all the Upland metaverse available cities.
+      parameters: []
+      responses:
+        '200':
+          description: Cities list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CitiesListResponseDto'
+      tags:
+      - Generic
+      security:
+      - basic: []
+  /properties:
+    get:
+      operationId: PropertiesController_getProperties
+      summary: List properties (Deprecated)
+      description: Retrieves a list of properties by filtering query params.
+      deprecated: true
+      parameters:
+      - name: cityId
+        required: true
+        in: query
+        schema:
+          type: number
+      - name: textSearch
+        required: false
+        in: query
+        schema:
+          type: string
+      - name: currentPage
+        required: true
+        in: query
+        schema:
+          type: number
+      - name: pageSize
+        required: true
+        in: query
+        schema:
+          type: number
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PropertiesListResponseDto'
+      tags:
+      - Generic
+      security:
+      - basic: []
+  /v2/properties:
+    get:
+      operationId: PropertiesController_getPropertiesWithNextPagePagination
+      summary: List properties
+      description: Retrieves a list of properties by filtering query params using next page token pagination.
+      parameters:
+      - name: cityId
+        required: true
+        in: query
+        schema:
+          type: number
+      - name: textSearch
+        required: false
+        in: query
+        schema:
+          type: string
+      - name: pageSize
+        required: true
+        in: query
+        example: 10
+        schema:
+          type: number
+      - name: nextPageToken
+        required: false
+        in: query
+        example: Nzg4NDAwOTkyMDAwMzg=
+        description: Token provided after the initial request to fetch subsequent pages
+        schema:
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PropertiesListWithNextPagePaginationResponseDto'
+      tags:
+      - Generic
+      security:
+      - basic: []
+  /properties/{propertyId}:
+    get:
+      operationId: PropertiesController_getPropertyById
+      summary: Get property
+      description: Retrieves the property information.
+      parameters:
+      - name: propertyId
+        required: true
+        in: path
+        schema:
+          type: number
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PropertyResponseDto'
+      tags:
+      - Generic
+      security:
+      - basic: []
+  /neighborhoods:
+    get:
+      operationId: NeighborhoodsController_getNeighborhoods
+      summary: List neighborhoods
+      description: Retrieves a list of neighborhoods by filtering query params.
+      parameters:
+      - name: cityId
+        required: false
+        in: query
+        description: (Optional) Filter by City ID
+        example: 1
+        schema:
+          title: City ID
+          type: number
+      - name: textSearch
+        required: false
+        in: query
+        description: (Optional) Text search on neighborhood name
+        example: South
+        schema:
+          title: Text Search
+          type: string
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NeighborhoodsListResponseDto'
+      tags:
+      - Generic
+      security:
+      - basic: []
+  /collections:
+    get:
+      operationId: CollectionsController_getCollections
+      summary: List collections
+      description: Retrieves a list of all the Upland available asset collections.
+      parameters: []
+      responses:
+        '200':
+          description: Collections List
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CollectionsListResponseDto'
+      tags:
+      - Generic
+      security:
+      - basic: []
+  /treasures-history:
+    get:
+      operationId: TreasuresController_getTreasuresHistory
+      summary: List treasures history
+      description: Retrieves a paginated list of treasures history.
+      parameters:
+      - name: currentPage
+        required: true
+        in: query
+        schema:
+          type: number
+      - name: pageSize
+        required: true
+        in: query
+        schema:
+          type: number
+      - name: cityId
+        required: false
+        in: query
+        description: Filter by city ID
+        example: 1
+        schema:
+          title: City ID
+          type: number
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TreasuresHistoryListResponseDto'
+      tags:
+      - Generic
+      security:
+      - basic: []
+  /sends:
+    get:
+      operationId: SendsController_getSends
+      summary: List sends
+      description: Retrieves a list of sends by city.
+      parameters:
+      - name: currentPage
+        required: true
+        in: query
+        schema:
+          type: number
+      - name: pageSize
+        required: true
+        in: query
+        schema:
+          type: number
+      - name: cityId
+        required: true
+        in: query
+        description: Filter by city ID
+        example: 1
+        schema:
+          title: City ID
+          type: number
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendsListResponseDto'
+      tags:
+      - Generic
+      security:
+      - basic: []
+components:
+  schemas:
+    SendResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Send ID
+          example: 033163ed-936e-4eeb-b8af-e0a62dbbe02a
+          title: ID
+        propertyId:
+          type: number
+          description: Send property ID
+          example: 1
+          title: Property ID
+        coordinates:
+          description: Send coordinates [lat, lng]
+          example:
+          - -122.416534424
+          - 37.811207961
+          title: Coordinates
+          type: array
+          items:
+            type: number
+      required:
+      - id
+      - propertyId
+      - coordinates
+    PropertiesListWithNextPagePaginationResponseDto:
+      type: object
+      properties:
+        results:
+          description: List of properties
+          title: Results
+          type: array
+          items:
+            $ref: '#/components/schemas/PropertyResponseDto'
+        nextPageToken:
+          type: string
+          description: (Optional) Generated token to navigate between page results
+          example: Nzg4NDAwOTkyMDAwMzg=
+          title: Next Page Token
+      required:
+      - results
+    BuildingsRequestDto:
+      type: object
+      properties:
+        boundaries:
+          description: Polygon boundary coordinates
+          example:
+          - - - -122.416534424
+              - 37.811207961
+            - - -122.414474487
+              - 37.803341668
+            - - -122.398166656
+              - 37.78706392
+            - - -122.395420074
+              - 37.775803046
+            - - -122.377910614
+              - 37.779602086
+            - - -122.385377884
+              - 37.797102289
+            - - -122.402801514
+              - 37.811411389
+            - - -122.416534424
+              - 37.811207961
+          title: Boundaries
+          items:
+            type: array
+          type: array
+      required:
+      - boundaries
+    NeighborhoodResponseDto:
+      type: object
+      properties:
+        id:
+          type: number
+          description: Neighborhood ID
+          example: 1
+          title: ID
+        name:
+          type: string
+          description: Neighborhood name
+          example: ALAMO SQUARE
+          title: Name
+      required:
+      - id
+      - name
+    PropertyResponseDto:
+      type: object
+      properties:
+        id:
+          type: number
+          description: Property ID
+          example: 1
+          title: ID
+        address:
+          type: string
+          description: Property address
+          example: 1467 28TH AVE
+          title: Address
+        neighborhood:
+          description: Property neighborhood
+          title: Neighborhood
+          allOf:
+          - $ref: '#/components/schemas/NeighborhoodResponseDto'
+        city:
+          description: Property city
+          title: City
+          allOf:
+          - $ref: '#/components/schemas/CityResponseDto'
+        status:
+          type: string
+          description: Property status
+          enum:
+          - For sale
+          - Initial Offer
+          - Locked
+          - Owned
+          - Unlocked
+          example: For sale
+          title: Status
+        mintPrice:
+          type: number
+          description: Property mint price
+          example: 3500
+          title: Mint price
+        collection:
+          description: (Optional) Property collection
+          title: Collection
+          allOf:
+          - $ref: '#/components/schemas/CollectionResponseDto'
+      required:
+      - id
+      - address
+      - neighborhood
+      - city
+      - status
+      - mintPrice
+    TrackResponseDto:
+      type: object
+      properties:
+        id:
+          type: number
+          description: Track ID
+          example: 1
+          title: ID
+        name:
+          type: string
+          description: Track Name
+          example: The San Francisco Track
+          title: Name
+        city:
+          description: Track city
+          title: City
+          allOf:
+          - $ref: '#/components/schemas/CityResponseDto'
+        thumbnailUrl:
+          type: string
+          description: Track thumbnail URL in SVG format
+          title: Thumbnail
+        distance:
+          type: number
+          description: Track distance in meters
+          example: 3132.3
+          title: Distance
+        surface:
+          type: string
+          description: Track Surface
+          enum:
+          - ASPHALT
+          example: ASPHALT
+          title: Surface
+        weather:
+          type: string
+          description: Track weather
+          enum:
+          - SUNNY
+          example: SUNNY
+          title: Weather
+        laps:
+          type: number
+          description: Number of laps
+          example: 3
+          title: Laps
+        allowedVehicleClasses:
+          type: string
+          description: Track allowed vehicle classes
+          enum:
+          - ALL
+          example: ALL
+          title: Allowed vehicle classes
+      required:
+      - id
+      - name
+      - city
+      - thumbnailUrl
+      - distance
+      - surface
+      - weather
+      - laps
+      - allowedVehicleClasses
+    CitiesListResponseDto:
+      type: object
+      properties:
+        cities:
+          description: List of cities
+          title: Cities
+          type: array
+          items:
+            $ref: '#/components/schemas/CityResponseDto'
+      required:
+      - cities
+    BuildingResponseDto:
+      type: object
+      properties:
+        id:
+          type: number
+          description: Building ID
+          example: 3394
+          title: ID
+        name:
+          type: string
+          description: Building name
+          example: Landmark Solari
+          title: Name
+        modelId:
+          type: number
+          description: Building Model ID
+          example: 60
+          title: Model ID
+        model:
+          type: string
+          description: Building model GLTF URL
+          example: apartment/Apartment_baked.gltf
+          title: Model
+        lat:
+          type: number
+          description: Building center point latitude
+          example: '37.793213744148574'
+          title: Lat
+        lng:
+          type: number
+          description: Building center point longitude
+          example: '-122.39704303645604'
+          title: Lng
+        rotate:
+          description: Building rotate (x, y, z)
+          example:
+          - 1.5707963267948966
+          - 0
+          - 0
+          title: Rotate
+          items:
+            type: array
+          type: array
+        scale:
+          type: number
+          description: Building scale
+          example: 3.7
+          title: Scale
+        propertyId:
+          type: number
+          description: Upland property ID
+          example: 5566
+          title: Property ID
+        meshes:
+          type: object
+          description: Building meshes colors
+          additionalProperties:
+            type: string
+          example:
+            primary: '#FFF5DC'
+            secondary: '#7E9E85'
+            detail: '#94553A'
+          title: Meshes
+      required:
+      - id
+      - name
+      - modelId
+      - model
+      - lat
+      - lng
+      - rotate
+      - scale
+      - propertyId
+      - meshes
+    PropertiesListResponseDto:
+      type: object
+      properties:
+        currentPage:
+          type: number
+          description: Current page
+          example: 1
+          title: Current page
+        pageSize:
+          type: number
+          description: Total results per page
+          example: 10
+          title: Page size
+        totalResults:
+          type: number
+          description: (Optional) Total of results
+          example: 200
+          title: Total results
+        results:
+          description: List of properties
+          title: Results
+          type: array
+          items:
+            $ref: '#/components/schemas/PropertyResponseDto'
+      required:
+      - currentPage
+      - pageSize
+      - results
+    TrackWithDetailsResponseDto:
+      type: object
+      properties:
+        id:
+          type: number
+          description: Track ID
+          example: 1
+          title: ID
+        name:
+          type: string
+          description: Track Name
+          example: The San Francisco Track
+          title: Name
+        city:
+          description: Track city
+          title: City
+          allOf:
+          - $ref: '#/components/schemas/CityResponseDto'
+        thumbnailUrl:
+          type: string
+          description: Track thumbnail URL in SVG format
+          title: Thumbnail
+        distance:
+          type: number
+          description: Track distance in meters
+          example: 3132.3
+          title: Distance
+        surface:
+          type: string
+          description: Track Surface
+          enum:
+          - ASPHALT
+          example: ASPHALT
+          title: Surface
+        weather:
+          type: string
+          description: Track weather
+          enum:
+          - SUNNY
+          example: SUNNY
+          title: Weather
+        laps:
+          type: number
+          description: Number of laps
+          example: 3
+          title: Laps
+        allowedVehicleClasses:
+          type: string
+          description: Track allowed vehicle classes
+          enum:
+          - ALL
+          example: ALL
+          title: Allowed vehicle classes
+        path:
+          description: Track path coordinates
+          example:
+          - - -122.406599522
+            - 37.806952808
+          - - -122.404625416
+            - 37.80591865
+          - - -122.402157784
+            - 37.8041046
+          title: Path
+          items:
+            type: array
+          type: array
+        center:
+          description: Track center point coordinates [lat, lng]
+          example:
+          - -122.39619255065918
+          - 37.79594930209237
+          title: Center
+          type: array
+          items:
+            type: number
+        boundaries:
+          description: Track polygon boundary coordinates
+          example:
+          - - - -122.416534424
+              - 37.811207961
+            - - -122.414474487
+              - 37.803341668
+            - - -122.398166656
+              - 37.78706392
+            - - -122.395420074
+              - 37.775803046
+            - - -122.377910614
+              - 37.779602086
+            - - -122.385377884
+              - 37.797102289
+            - - -122.402801514
+              - 37.811411389
+            - - -122.416534424
+              - 37.811207961
+          title: Boundaries
+          items:
+            type: array
+          type: array
+      required:
+      - id
+      - name
+      - city
+      - thumbnailUrl
+      - distance
+      - surface
+      - weather
+      - laps
+      - allowedVehicleClasses
+      - path
+      - center
+      - boundaries
+    SendsListResponseDto:
+      type: object
+      properties:
+        currentPage:
+          type: number
+          description: Current page
+          example: 1
+          title: Current page
+        pageSize:
+          type: number
+          description: Total results per page
+          example: 10
+          title: Page size
+        totalResults:
+          type: number
+          description: (Optional) Total of results
+          example: 200
+          title: Total results
+        results:
+          description: List of sends
+          title: Results
+          type: array
+          items:
+            $ref: '#/components/schemas/SendResponseDto'
+      required:
+      - currentPage
+      - pageSize
+      - results
+    TreasuresHistoryListResponseDto:
+      type: object
+      properties:
+        results:
+          description: List of treasures history
+          title: Results
+          type: array
+          items:
+            $ref: '#/components/schemas/TreasureHistoryResponseDto'
+      required:
+      - results
+    CollectionsListResponseDto:
+      type: object
+      properties:
+        results:
+          description: List of collections
+          title: Results
+          type: array
+          items:
+            $ref: '#/components/schemas/CollectionResponseDto'
+      required:
+      - results
+    BuildingsListResponseDto:
+      type: object
+      properties:
+        buildings:
+          description: List of buildings
+          title: Buildings
+          type: array
+          items:
+            $ref: '#/components/schemas/BuildingResponseDto'
+      required:
+      - buildings
+    NeighborhoodsListResponseDto:
+      type: object
+      properties:
+        results:
+          description: List of neighborhoods
+          title: Results
+          type: array
+          items:
+            $ref: '#/components/schemas/NeighborhoodResponseDto'
+      required:
+      - results
+    CityResponseDto:
+      type: object
+      properties:
+        id:
+          type: number
+          description: City ID
+          default: 1
+          title: ID
+        name:
+          type: string
+          description: City name
+          example: Manhattan
+          title: Name
+      required:
+      - id
+      - name
+    TracksListResponseDto:
+      type: object
+      properties:
+        tracks:
+          description: List of tracks
+          title: Tracks
+          type: array
+          items:
+            $ref: '#/components/schemas/TrackResponseDto'
+      required:
+      - tracks
+    CollectionResponseDto:
+      type: object
+      properties:
+        id:
+          type: number
+          description: Collection ID
+          example: 1
+          title: ID
+        name:
+          type: string
+          description: Collection name
+          example: Newbie
+          title: Name
+      required:
+      - id
+      - name
+    TreasureHistoryResponseDto:
+      type: object
+      properties:
+        userName:
+          type: string
+          example: John Doe
+          title: User name
+        reward:
+          type: number
+          description: Treasure reward
+          example: 120
+          title: Reward
+        lockedAt:
+          format: date-time
+          type: string
+          description: Treasure lock date
+          example: '2026-09-02T19:03:10.722Z'
+          title: Locked at
+        spawnAt:
+          format: date-time
+          type: string
+          description: Treasure spawn date
+          example: '2026-09-02T19:03:10.722Z'
+          title: Spawn at
+        fullAddress:
+          type: string
+          description: Treasure spawn location address
+          example: 1467 28TH AVE
+          title: Full address
+        treasureType:
+          type: string
+          description: Treasure Type
+          enum:
+          - box
+          - pinata
+          example: box
+          title: Treasure type
+      required:
+      - userName
+      - reward
+      - lockedAt
+      - spawnAt
+      - fullAddress
+      - treasureType
+  securitySchemes:
+    basic:
+      type: http
+      scheme: basic
+      description: 'Basic access authentication is a method to provide a username and password when making a request. In basic HTTP authentication, a request contains a header field in the form of (Authorization: Basic [credential]), where credentials is the Base64 encoding of ID and password joined by a single colon :. For our case, you must consider Username as app ID and password as secret key (this information can be generated in endpoint to create application).'
+    bearer:
+      type: http
+      scheme: bearer
+      description: You must provide a Code to your users generated across the endpoint /auth/opt/init. When Upland User grants access for the developer App, a webhook will be sent with a valid access token.

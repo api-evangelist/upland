@@ -1,0 +1,949 @@
+openapi: 3.2.0
+info:
+  title: Hyperion API for UPLAND Chain History API
+  description: '### Scalable Full History API Solution for EOSIO based blockchains
+
+    *Made with ♥️ by EOS Rio*
+
+    ***
+
+    #### Current Chain: UPLAND Chain
+
+    #### Provided by UPLAND
+
+    #### Health API: https://10.0.3.200:7000/v2/health'
+  version: 3.3.10
+servers:
+- url: https://chain-history.upland.me
+tags:
+- name: History
+paths:
+  /v2/history/check_transaction:
+    get:
+      summary: check if a transaction was included in a block
+      tags:
+      - History
+      parameters:
+      - description: transaction id
+        required: true
+        in: query
+        name: id
+        schema:
+          type: string
+          maxLength: 64
+          minLength: 64
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  query_time_ms:
+                    type: number
+                  cached:
+                    type: boolean
+                  hot_only:
+                    type: boolean
+                  lib:
+                    type: number
+                  last_indexed_block:
+                    type: number
+                  last_indexed_block_time:
+                    type: string
+                  total:
+                    type: object
+                    properties:
+                      value:
+                        type: number
+                      relation:
+                        type: string
+                  id:
+                    type: string
+                  status:
+                    type: string
+                  block_num:
+                    type: number
+                  root_action:
+                    type: object
+                    properties:
+                      account:
+                        type: string
+                      name:
+                        type: string
+                      authorization:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            actor:
+                              type: string
+                            permission:
+                              type: string
+                      data:
+                        type: string
+                  signatures:
+                    type: array
+                    items:
+                      type: string
+      operationId: getV2HistoryCheckTransaction
+      x-operation-id-source: derived
+  /v2/history/get_abi_snapshot:
+    get:
+      summary: fetch abi at specific block
+      description: fetch contract abi at specific block
+      tags:
+      - History
+      parameters:
+      - description: contract account
+        required: true
+        in: query
+        name: contract
+        schema:
+          type: string
+          maxLength: 12
+          minLength: 1
+      - description: target block
+        required: false
+        in: query
+        name: block
+        schema:
+          type: integer
+          minimum: 1
+      - description: should fetch the ABI
+        required: false
+        in: query
+        name: fetch
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: Default Response
+      operationId: getV2HistoryGetAbiSnapshot
+      x-operation-id-source: derived
+  /v2/history/get_actions:
+    get:
+      summary: get root actions
+      description: get actions based on notified account. this endpoint also accepts generic filters based on indexed fields (e.g. act.authorization.actor=eosio or act.name=delegatebw), if included they will be combined with a AND operator
+      tags:
+      - History
+      parameters:
+      - description: limit of [n] results per page
+        required: false
+        in: query
+        name: limit
+        schema:
+          type: integer
+          minimum: 1
+      - description: skip [n] results
+        required: false
+        in: query
+        name: skip
+        schema:
+          type: integer
+          minimum: 0
+      - description: notified account
+        required: false
+        in: query
+        name: account
+        schema:
+          type: string
+          maxLength: 12
+          minLength: 1
+      - description: total results to track (count) [number or true]
+        required: false
+        in: query
+        name: track
+        schema:
+          type: string
+      - description: code:name filter
+        required: false
+        in: query
+        name: filter
+        schema:
+          type: string
+          minLength: 3
+      - description: sort direction
+        required: false
+        in: query
+        name: sort
+        schema:
+          type: string
+          enum:
+          - desc
+          - asc
+          - '1'
+          - '-1'
+      - description: filter after specified date (ISO8601)
+        required: false
+        in: query
+        name: after
+        schema:
+          type: string
+      - description: filter before specified date (ISO8601)
+        required: false
+        in: query
+        name: before
+        schema:
+          type: string
+      - description: simplified output mode
+        required: false
+        in: query
+        name: simple
+        schema:
+          type: boolean
+      - description: search only the latest hot index
+        required: false
+        in: query
+        name: hot_only
+        schema:
+          type: boolean
+      - description: exclude large binary data
+        required: false
+        in: query
+        name: noBinary
+        schema:
+          type: boolean
+      - description: perform reversibility check
+        required: false
+        in: query
+        name: checkLib
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  query_time_ms:
+                    type: number
+                  cached:
+                    type: boolean
+                  hot_only:
+                    type: boolean
+                  lib:
+                    type: number
+                  last_indexed_block:
+                    type: number
+                  last_indexed_block_time:
+                    type: string
+                  total:
+                    type: object
+                    properties:
+                      value:
+                        type: number
+                      relation:
+                        type: string
+                  simple_actions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        block:
+                          type: number
+                        timestamp:
+                          type: string
+                        irreversible:
+                          type: boolean
+                        contract:
+                          type: string
+                        action:
+                          type: string
+                        actors:
+                          type: string
+                        notified:
+                          type: string
+                        transaction_id:
+                          type: string
+                        data:
+                          additionalProperties: true
+                          type: object
+                  actions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        '@timestamp':
+                          type: string
+                        timestamp:
+                          type: string
+                        block_num:
+                          type: number
+                        block_id:
+                          type: string
+                        trx_id:
+                          type: string
+                        act:
+                          type: object
+                          properties:
+                            account:
+                              type: string
+                            name:
+                              type: string
+                            authorization:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  actor:
+                                    type: string
+                                  permission:
+                                    type: string
+                          additionalProperties: true
+                        receipts:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              receiver:
+                                type: string
+                              global_sequence:
+                                type: number
+                              recv_sequence:
+                                type: number
+                              auth_sequence:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    account:
+                                      type: string
+                                    sequence:
+                                      type: number
+                        cpu_usage_us:
+                          type: number
+                        net_usage_words:
+                          type: number
+                        account_ram_deltas:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              account:
+                                type: string
+                              delta:
+                                type: number
+                            additionalProperties: true
+                        global_sequence:
+                          type: number
+                        producer:
+                          type: string
+                        parent:
+                          type: number
+                        action_ordinal:
+                          type: number
+                        creator_action_ordinal:
+                          type: number
+                        signatures:
+                          type: array
+                          items:
+                            type: string
+      operationId: getV2HistoryGetActions
+      x-operation-id-source: derived
+  /v2/history/export_actions:
+    get:
+      summary: request large action data export
+      tags:
+      - History
+      responses:
+        '200':
+          description: Default Response
+      operationId: getV2HistoryExportActions
+      x-operation-id-source: derived
+  /v2/history/get_deltas:
+    get:
+      summary: get state deltas
+      tags:
+      - History
+      parameters:
+      - description: limit of [n] results per page
+        required: false
+        in: query
+        name: limit
+        schema:
+          type: integer
+          minimum: 1
+      - description: skip [n] results
+        required: false
+        in: query
+        name: skip
+        schema:
+          type: integer
+          minimum: 0
+      - description: contract account
+        required: false
+        in: query
+        name: code
+        schema:
+          type: string
+      - description: table scope
+        required: false
+        in: query
+        name: scope
+        schema:
+          type: string
+      - description: table name
+        required: false
+        in: query
+        name: table
+        schema:
+          type: string
+      - description: payer account
+        required: false
+        in: query
+        name: payer
+        schema:
+          type: string
+      - description: filter after specified date (ISO8601)
+        required: false
+        in: query
+        name: after
+        schema:
+          type: string
+      - description: filter before specified date (ISO8601)
+        required: false
+        in: query
+        name: before
+        schema:
+          type: string
+      - description: delta present flag
+        required: false
+        in: query
+        name: present
+        schema:
+          type: number
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  query_time_ms:
+                    type: number
+                  cached:
+                    type: boolean
+                  hot_only:
+                    type: boolean
+                  lib:
+                    type: number
+                  last_indexed_block:
+                    type: number
+                  last_indexed_block_time:
+                    type: string
+                  total:
+                    type: object
+                    properties:
+                      value:
+                        type: number
+                      relation:
+                        type: string
+                  deltas:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        timestamp:
+                          type: string
+                        present:
+                          type: number
+                        code:
+                          type: string
+                        scope:
+                          type: string
+                        table:
+                          type: string
+                        primary_key:
+                          type: string
+                        payer:
+                          type: string
+                        block_num:
+                          type: number
+                        block_id:
+                          type: string
+                        data:
+                          type: object
+                          additionalProperties: true
+                      additionalProperties: true
+      operationId: getV2HistoryGetDeltas
+      x-operation-id-source: derived
+  /v2/history/get_schedule:
+    get:
+      summary: get producer schedule by version
+      tags:
+      - History
+      parameters:
+      - description: search by producer
+        required: false
+        in: query
+        name: producer
+        schema:
+          type: string
+      - description: search by signing key
+        required: false
+        in: query
+        name: key
+        schema:
+          type: string
+      - description: filter after specified date (ISO8601)
+        required: false
+        in: query
+        name: after
+        schema:
+          type: string
+      - description: filter before specified date (ISO8601)
+        required: false
+        in: query
+        name: before
+        schema:
+          type: string
+      - description: search mode (activated or proposed)
+        required: false
+        in: query
+        name: mode
+        schema:
+          type: string
+      - description: schedule version
+        required: false
+        in: query
+        name: version
+        schema:
+          type: integer
+          minimum: 1
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  query_time_ms:
+                    type: number
+                  cached:
+                    type: boolean
+                  hot_only:
+                    type: boolean
+                  lib:
+                    type: number
+                  last_indexed_block:
+                    type: number
+                  last_indexed_block_time:
+                    type: string
+                  total:
+                    type: object
+                    properties:
+                      value:
+                        type: number
+                      relation:
+                        type: string
+                  timestamp:
+                    type: string
+                  block_num:
+                    type: number
+                  proposed_block_num:
+                    type: number
+                  version:
+                    type: number
+                  producers:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        producer_name:
+                          type: string
+                        name:
+                          type: string
+                        block_signing_key:
+                          type: string
+                        legacy_key:
+                          type: string
+                        keys:
+                          type: array
+                          items:
+                            type: string
+      operationId: getV2HistoryGetSchedule
+      x-operation-id-source: derived
+  /v2/history/get_table_state:
+    get:
+      summary: get table state at a specific block height
+      tags:
+      - History
+      parameters:
+      - description: search by contract
+        required: true
+        in: query
+        name: code
+        schema:
+          type: string
+      - description: search by key
+        required: true
+        in: query
+        name: table
+        schema:
+          type: string
+      - description: target block
+        required: false
+        in: query
+        name: block_num
+        schema:
+          type: integer
+          minimum: 1
+      - description: last key for pagination
+        required: false
+        in: query
+        name: after_key
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  query_time_ms:
+                    type: number
+                  cached:
+                    type: boolean
+                  hot_only:
+                    type: boolean
+                  lib:
+                    type: number
+                  last_indexed_block:
+                    type: number
+                  last_indexed_block_time:
+                    type: string
+                  total:
+                    type: object
+                    properties:
+                      value:
+                        type: number
+                      relation:
+                        type: string
+                  code:
+                    type: string
+                  table:
+                    type: string
+                  block_num:
+                    type: number
+                  after_key:
+                    type: string
+                  next_key:
+                    type: string
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        scope:
+                          type: string
+                        primary_key:
+                          type: string
+                        payer:
+                          type: string
+                        timestamp:
+                          type: string
+                        block_num:
+                          type: number
+                        block_id:
+                          type: string
+                        present:
+                          type: number
+                        data:
+                          type: object
+                          additionalProperties: true
+                      additionalProperties: true
+      operationId: getV2HistoryGetTableState
+      x-operation-id-source: derived
+  /v2/history/get_transaction:
+    get:
+      summary: get transaction by id
+      description: get all actions belonging to the same transaction
+      tags:
+      - History
+      parameters:
+      - description: transaction id
+        required: true
+        in: query
+        name: id
+        schema:
+          type: string
+      - description: block hint to speed up tx recovery
+        required: false
+        in: query
+        name: block_hint
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Default Response
+      operationId: getV2HistoryGetTransaction
+      x-operation-id-source: derived
+  /v2/history/get_transaction_legacy:
+    get:
+      summary: get transaction by id
+      description: get all actions belonging to the same transaction
+      tags:
+      - History
+      parameters:
+      - description: transaction id
+        required: true
+        in: query
+        name: id
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Default Response
+      operationId: getV2HistoryGetTransactionLegacy
+      x-operation-id-source: derived
+  /v1/history/get_actions:
+    post:
+      summary: get actions
+      description: legacy get actions query
+      tags:
+      - History
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  query_time:
+                    type: number
+                  last_irreversible_block:
+                    type: number
+                  actions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        account_action_seq:
+                          type: number
+                        global_action_seq:
+                          type: number
+                        block_num:
+                          type: number
+                        block_time:
+                          type: string
+                        action_trace:
+                          type: object
+                          properties:
+                            action_ordinal:
+                              type: number
+                            creator_action_ordinal:
+                              type: number
+                            receipt:
+                              type: object
+                              properties:
+                                receiver:
+                                  type: string
+                                global_sequence:
+                                  type: number
+                                recv_sequence:
+                                  type: number
+                                auth_sequence:
+                                  type: array
+                                  items:
+                                    type: object
+                                    properties:
+                                      account:
+                                        type: string
+                                      sequence:
+                                        type: number
+                            receiver:
+                              type: string
+                            act:
+                              type: object
+                              properties:
+                                account:
+                                  type: string
+                                name:
+                                  type: string
+                                authorization:
+                                  type: array
+                                  items:
+                                    type: object
+                                    additionalProperties: true
+                                data:
+                                  type: object
+                                  additionalProperties: true
+                                hex_data:
+                                  type: string
+                            trx_id:
+                              type: string
+                            block_num:
+                              type: number
+                            block_time:
+                              type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type:
+              - object
+              - string
+              properties:
+                account_name:
+                  description: notified account
+                  type: string
+                  minLength: 1
+                  maxLength: 12
+                pos:
+                  description: action position (pagination)
+                  type: integer
+                offset:
+                  description: limit of [n] actions per page
+                  type: integer
+                filter:
+                  description: code:name filter
+                  type: string
+                  minLength: 3
+                sort:
+                  description: sort direction
+                  enum:
+                  - desc
+                  - asc
+                  - '1'
+                  - '-1'
+                  type: string
+                after:
+                  description: filter after specified date (ISO8601)
+                  type: string
+                  format: date-time
+                before:
+                  description: filter before specified date (ISO8601)
+                  type: string
+                  format: date-time
+                parent:
+                  description: filter by parent global sequence
+                  type: integer
+                  minimum: 0
+      operationId: postV1HistoryGetActions
+      x-operation-id-source: derived
+  /v1/history/get_transaction:
+    post:
+      summary: get transaction by id
+      description: get all actions belonging to the same transaction
+      tags:
+      - History
+      responses:
+        '200':
+          description: Default Response
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type:
+              - object
+              - string
+              properties:
+                id:
+                  description: transaction id
+                  type: string
+                block_num_hint:
+                  description: block number hint
+                  type: integer
+              required:
+              - id
+      operationId: postV1HistoryGetTransaction
+      x-operation-id-source: derived
+  /v1/trace_api/get_block:
+    post:
+      summary: get block traces
+      tags:
+      - History
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  query_time_ms:
+                    type: number
+                  cached:
+                    type: boolean
+                  hot_only:
+                    type: boolean
+                  lib:
+                    type: number
+                  last_indexed_block:
+                    type: number
+                  last_indexed_block_time:
+                    type: string
+                  total:
+                    type: object
+                    properties:
+                      value:
+                        type: number
+                      relation:
+                        type: string
+                  id:
+                    type: string
+                  number:
+                    type: integer
+                  previous_id:
+                    type: string
+                  status:
+                    type: string
+                  timestamp:
+                    type: string
+                  producer:
+                    type: string
+                  transactions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: string
+                        actions:
+                          type: array
+                          items:
+                            type: object
+                            properties:
+                              receiver:
+                                type: string
+                              account:
+                                type: string
+                              action:
+                                type: string
+                              authorization:
+                                type: array
+                                items:
+                                  type: object
+                                  properties:
+                                    account:
+                                      type: string
+                                    permission:
+                                      type: string
+                              data:
+                                additionalProperties: true
+                                type: object
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type:
+              - object
+              - string
+              properties:
+                block_num:
+                  description: block number
+                  type: integer
+                block_id:
+                  description: block id
+                  type: string
+      operationId: postV1TraceApiGetBlock
+      x-operation-id-source: derived

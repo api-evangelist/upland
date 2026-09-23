@@ -1,0 +1,501 @@
+openapi: 3.2.0
+info:
+  title: Upland Developers Escrow Containers API
+  description: You can use the developer API to map user IDs, read information, and manage your app escrow container.
+  version: 1.0.0
+  contact: {}
+servers:
+- url: https://api.sandbox.upland.me/developers-api
+tags:
+- name: Escrow Containers
+paths:
+  /containers:
+    post:
+      operationId: EscrowController_create
+      summary: Create escrow container
+      description: Creates a new escrow container to manage the Upland asset transfers in the application context. The application settings will be used to determine the container expiration time and Webhook URL for the container transaction status notifications. In case a dev shop ID is provided, users will be required to be at that specific dev shop in order to transfer their assets to the container; otherwise, they can be at any of the app's dev shops.
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateContainerRequestDto'
+      responses:
+        '201':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContainerResponseDto'
+      tags:
+      - Escrow Containers
+      security:
+      - basic: []
+  /containers/{containerId}:
+    get:
+      operationId: EscrowController_getContainer
+      summary: Get escrow container
+      description: Retrieves the escrow container information.
+      parameters:
+      - name: containerId
+        required: true
+        in: path
+        schema:
+          type: number
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContainerWithAssetsResponseDto'
+      tags:
+      - Escrow Containers
+      security:
+      - basic: []
+  /containers/{containerId}/join:
+    post:
+      operationId: EscrowController_putAssetsInEscrowContainerWithPermissionDelegation
+      summary: Join escrow container (permission delegation required)
+      description: Adds developer Upland account assets into the container (no signature required). It is required to activate the permission delegation feature.
+      parameters:
+      - name: containerId
+        required: true
+        in: path
+        schema:
+          type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JoinContainerRequestDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JoinContainerResponseDto'
+      tags:
+      - Escrow Containers
+      security:
+      - basic: []
+  /containers/{containerId}/lock:
+    post:
+      operationId: EscrowController_lockContainer
+      summary: Lock escrow container
+      description: Locks the escrow container blocking new users from joining it. This action is optional in the escrow container management flow.
+      parameters:
+      - name: containerId
+        required: true
+        in: path
+        schema:
+          type: number
+      responses:
+        '204':
+          description: ''
+      tags:
+      - Escrow Containers
+      security:
+      - basic: []
+  /containers/{containerId}/unlock:
+    post:
+      operationId: EscrowController_unlockContainer
+      summary: Unlock escrow container
+      description: Unlocks the escrow container allowing new users from joining it. This action is optional in the escrow container management flow.
+      parameters:
+      - name: containerId
+        required: true
+        in: path
+        schema:
+          type: number
+      responses:
+        '204':
+          description: ''
+      tags:
+      - Escrow Containers
+      security:
+      - basic: []
+  /containers/{containerId}/refresh-expiration-time:
+    post:
+      operationId: EscrowController_refresh
+      summary: Refresh escrow container expiration time
+      description: Refreshes the container expiration using the application settings. This action can only be performed once.
+      parameters:
+      - name: containerId
+        required: true
+        in: path
+        schema:
+          type: number
+      responses:
+        '204':
+          description: ''
+      tags:
+      - Escrow Containers
+      security:
+      - basic: []
+  /containers/{containerId}/refund:
+    post:
+      operationId: EscrowController_refund
+      summary: Refund escrow container
+      description: Refunds all the assets inside the container to the original owners (no fees) and resolves the container.
+      parameters:
+      - name: containerId
+        required: true
+        in: path
+        schema:
+          type: number
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContainerResolutionResponseDto'
+      tags:
+      - Escrow Containers
+      security:
+      - basic: []
+  /containers/{containerId}/resolve:
+    post:
+      operationId: EscrowController_resolve
+      summary: Resolve escrow container
+      description: Resolves the escrow container transfering the assets according to the provided actions (request body). All container assets must be included.
+      parameters:
+      - name: containerId
+        required: true
+        in: path
+        schema:
+          type: number
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContainerResolutionRequestDto'
+      responses:
+        '200':
+          description: ''
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContainerResolutionResponseDto'
+      tags:
+      - Escrow Containers
+      security:
+      - basic: []
+  /containers/{containerId}/transactions/{transactionId}:
+    delete:
+      operationId: EscrowController_removeTransaction
+      summary: Remove escrow container transaction
+      description: Removes the transaction that has not been signed from escrow container.
+      parameters:
+      - name: containerId
+        required: true
+        in: path
+        schema:
+          type: number
+      - name: transactionId
+        required: true
+        in: path
+        schema:
+          type: string
+      responses:
+        '204':
+          description: ''
+      tags:
+      - Escrow Containers
+      security:
+      - basic: []
+components:
+  schemas:
+    ContainerResolutionTransferRequestDto:
+      type: object
+      properties:
+        assetId:
+          type: number
+          description: (Optional) Container resolution transfer asset ID - applies only to NFT transfers
+          example: 1
+          title: Asset ID
+        amount:
+          type: number
+          description: (Optional) Container resolution transfer amount - applies only to UPX transfers
+          example: 100
+          title: Amount
+        category:
+          type: string
+          description: Container resolution transfer category
+          examples:
+          - spirithlwn
+          - jacktsai
+          - blkexplorer
+          - essential
+          - memento
+          - upx
+          title: Category
+        targetEosId:
+          type: string
+          description: Container resolution transfer target EOS ID
+          example: emhwlbbifea5
+          title: Target EOS ID
+        isRefund:
+          type: boolean
+          description: (Optional) Indicates if the action is a refund operation
+          example: false
+          title: Is refund
+      required:
+      - category
+      - targetEosId
+    ContainerResponseDto:
+      type: object
+      properties:
+        id:
+          type: number
+          description: Container ID
+          example: 1
+          title: ID
+        appId:
+          type: number
+          description: Application ID
+          example: 1
+          title: App ID
+        expirationDate:
+          format: date-time
+          type: string
+          description: Container expiration date
+          example: '2026-09-02T19:03:02.192Z'
+          title: Expiration Date
+        status:
+          type: string
+          description: Container status
+          enum:
+          - created
+          - locked
+          - resolving
+          - resolved
+          - expired
+          example: created
+          title: Status
+        devShopId:
+          type: string
+          description: (Optional) Dev Shop ID
+          example: edadafdf-c213-462b-910a-179c18d3a7cd
+          title: Dev Shop ID
+        userLimitByContainer:
+          type: number
+          description: (Optional) Specifies a user limit by container. When the container reaches this limit, it will be automatically locked.
+          example: 2
+          title: User limit by container
+      required:
+      - id
+      - appId
+      - expirationDate
+      - status
+    JoinContainerRequestDto:
+      type: object
+      properties:
+        upxAmount:
+          type: number
+          description: (Optional) Amount of UPX to be added into the escrow container
+          example: 10000
+          title: UPX amount
+        assets:
+          description: List of assets to be added into the escrow container
+          title: Assets
+          type: array
+          items:
+            $ref: '#/components/schemas/NftRequestDto'
+    ContainerResolutionResponseDto:
+      type: object
+      properties:
+        transactionId:
+          type: string
+          description: Container resolution transaction ID
+          example: e5e0df15-16d8-4dd4-9ecf-669dee4a80e3
+          title: Transaction ID
+      required:
+      - transactionId
+    JoinContainerResponseDto:
+      type: object
+      properties:
+        transactionId:
+          type: string
+          example: ac60eb8a-9c32-4f78-b407-1c0396a645e2
+          title: Transaction ID
+        containerReachedUsersLimit:
+          type: boolean
+          description: (Optional) We send it if you provide some value to userLimitByContainer property on container creation endpoint
+          example: true
+          title: Container reached users limit
+      required:
+      - transactionId
+    CreateContainerRequestDto:
+      type: object
+      properties:
+        devShopId:
+          type: string
+          description: (Optional) Specifies the dev shop where the user needs to be in order to transfer assets to the container. If none, the user can be at any of the app's dev shops to do so.
+          example: edadafdf-c213-462b-910a-179c18d3a7cd
+          title: Dev Shop ID
+        userLimitByContainer:
+          type: number
+          description: (Optional) Specifies a user limit by container. When the container reaches this limit, it will be automatically locked.
+          example: 2
+          title: User limit by container
+    NftRequestDto:
+      type: object
+      properties:
+        id:
+          type: number
+          description: NFT ID
+          example: 1
+          title: ID
+        category:
+          type: string
+          description: NFT category
+          examples:
+          - spirithlwn
+          - jacktsai
+          - blkexplorer
+          - essential
+          - memento
+          title: Category
+      required:
+      - id
+      - category
+    AssetTransferRequestResponseDto:
+      type: object
+      properties:
+        id:
+          type: number
+          description: Asset transfer request ID
+          example: 1
+          title: ID
+        transactionId:
+          type: string
+          description: Asset transfer request transaction ID
+          example: e5e0df15-16d8-4dd4-9ecf-669dee4a80e3
+          title: Transaction ID
+        amount:
+          type: number
+          description: (Optional) Asset transfer request amount - applies only to UPX transfers
+          example: 0
+          title: Amount
+        assetId:
+          type: number
+          description: (Optional) Asset transfer request asset ID - applies only to NFT transfers
+          example: 1
+          title: Asset ID
+        category:
+          type: string
+          description: Asset transfer request category
+          examples:
+          - spirithlwn
+          - jacktsai
+          - blkexplorer
+          - essential
+          - memento
+          - upx
+          title: Category
+        ownerEosId:
+          type: string
+          description: Asset owner EOS ID
+          example: emhwlbbifea5
+          title: Owner EOS ID
+        status:
+          type: string
+          description: Asset transfer request status
+          enum:
+          - initiated
+          - user_signature_requested
+          - changing_ownership
+          - in_escrow
+          - failed
+          example: in_escrow
+          title: Status
+      required:
+      - id
+      - transactionId
+      - category
+      - ownerEosId
+      - status
+    ContainerWithAssetsResponseDto:
+      type: object
+      properties:
+        id:
+          type: number
+          description: Container ID
+          example: 1
+          title: ID
+        appId:
+          type: number
+          description: Application ID
+          example: 1
+          title: App ID
+        expirationDate:
+          format: date-time
+          type: string
+          description: Container expiration date
+          example: '2026-09-02T19:03:02.192Z'
+          title: Expiration Date
+        status:
+          type: string
+          description: Container status
+          enum:
+          - created
+          - locked
+          - resolving
+          - resolved
+          - expired
+          example: created
+          title: Status
+        devShopId:
+          type: string
+          description: (Optional) Dev Shop ID
+          example: edadafdf-c213-462b-910a-179c18d3a7cd
+          title: Dev Shop ID
+        userLimitByContainer:
+          type: number
+          description: (Optional) Specifies a user limit by container. When the container reaches this limit, it will be automatically locked.
+          example: 2
+          title: User limit by container
+        upx:
+          type: number
+          description: Current container UPX balance (final transactions only)
+          example: 0
+          title: UPX
+        assets:
+          description: List of asset transfer requests
+          title: Assets
+          type: array
+          items:
+            $ref: '#/components/schemas/AssetTransferRequestResponseDto'
+      required:
+      - id
+      - appId
+      - expirationDate
+      - status
+      - upx
+      - assets
+    ContainerResolutionRequestDto:
+      type: object
+      properties:
+        actions:
+          description: List of container resolution transfers
+          title: Actions
+          type: array
+          items:
+            $ref: '#/components/schemas/ContainerResolutionTransferRequestDto'
+      required:
+      - actions
+  securitySchemes:
+    basic:
+      type: http
+      scheme: basic
+      description: 'Basic access authentication is a method to provide a username and password when making a request. In basic HTTP authentication, a request contains a header field in the form of (Authorization: Basic [credential]), where credentials is the Base64 encoding of ID and password joined by a single colon :. For our case, you must consider Username as app ID and password as secret key (this information can be generated in endpoint to create application).'
+    bearer:
+      type: http
+      scheme: bearer
+      description: You must provide a Code to your users generated across the endpoint /auth/opt/init. When Upland User grants access for the developer App, a webhook will be sent with a valid access token.

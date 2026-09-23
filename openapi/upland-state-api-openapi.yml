@@ -1,0 +1,50 @@
+openapi: 3.2.0
+info:
+  title: Hyperion History API for UPLAND Chain State API
+  description: '### Scalable Full History API Solution for EOSIO based blockchains
+
+    *Made with ♥️ by EOS Rio*
+
+    ***
+
+    #### Current Chain: UPLAND Chain
+
+    #### Provided by UPLAND
+
+    #### Health API: https://10.0.3.200:7000/v2/health'
+  version: 3.3.10
+servers:
+- url: https://chain-history.upland.me
+tags:
+- name: State
+paths:
+  /v2/state/get_key_accounts:
+    post:
+      summary: get accounts by public key
+      tags:
+      - State
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  account_names:
+                    type: array
+                    items:
+                      type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                public_key:
+                  description: public key
+                  type: string
+              required:
+              - public_key
+      operationId: postV2StateGetKeyAccounts
+      x-operation-id-source: derived

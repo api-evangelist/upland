@@ -1,0 +1,194 @@
+openapi: 3.2.0
+info:
+  title: Hyperion History API for UPLAND Chain Stats API
+  description: '### Scalable Full History API Solution for EOSIO based blockchains
+
+    *Made with ♥️ by EOS Rio*
+
+    ***
+
+    #### Current Chain: UPLAND Chain
+
+    #### Provided by UPLAND
+
+    #### Health API: https://10.0.3.200:7000/v2/health'
+  version: 3.3.10
+servers:
+- url: https://chain-history.upland.me
+tags:
+- name: Stats
+paths:
+  /v2/stats/get_action_usage:
+    get:
+      summary: get action and transaction stats for a given period
+      tags:
+      - Stats
+      parameters:
+      - description: analysis period
+        required: true
+        in: query
+        name: period
+        schema:
+          type: string
+      - description: final date
+        required: false
+        in: query
+        name: end_date
+        schema:
+          type: string
+      - description: compute unique actors
+        required: false
+        in: query
+        name: unique_actors
+        schema:
+          type: boolean
+      responses:
+        '200':
+          description: Default Response
+      operationId: getV2StatsGetActionUsage
+      x-operation-id-source: derived
+  /v2/stats/get_api_usage:
+    get:
+      summary: get hyperion api usage statistics
+      tags:
+      - Stats
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  query_time_ms:
+                    type: number
+                  cached:
+                    type: boolean
+                  hot_only:
+                    type: boolean
+                  lib:
+                    type: number
+                  last_indexed_block:
+                    type: number
+                  last_indexed_block_time:
+                    type: string
+                  total:
+                    type: object
+                    properties:
+                      responses:
+                        additionalProperties: true
+                        type: object
+                  buckets:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        timestamp:
+                          type: string
+                        responses:
+                          additionalProperties: true
+                          type: object
+      operationId: getV2StatsGetApiUsage
+      x-operation-id-source: derived
+  /v2/stats/get_missed_blocks:
+    get:
+      summary: get missed blocks
+      tags:
+      - Stats
+      parameters:
+      - description: filter by producer
+        required: false
+        in: query
+        name: producer
+        schema:
+          type: string
+      - description: filter after specified date (ISO8601)
+        required: false
+        in: query
+        name: after
+        schema:
+          type: string
+      - description: filter before specified date (ISO8601)
+        required: false
+        in: query
+        name: before
+        schema:
+          type: string
+      - description: min. blocks threshold
+        required: false
+        in: query
+        name: min_blocks
+        schema:
+          type: integer
+          minimum: 1
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  query_time_ms:
+                    type: number
+                  cached:
+                    type: boolean
+                  hot_only:
+                    type: boolean
+                  lib:
+                    type: number
+                  last_indexed_block:
+                    type: number
+                  last_indexed_block_time:
+                    type: string
+                  total:
+                    type: object
+                    properties:
+                      value:
+                        type: number
+                      relation:
+                        type: string
+                  stats:
+                    type: object
+                    properties:
+                      by_producer: {}
+                  events:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        '@timestamp':
+                          type: string
+                        last_block:
+                          type: number
+                        schedule_version:
+                          type: number
+                        size:
+                          type: number
+                        producer:
+                          type: string
+      operationId: getV2StatsGetMissedBlocks
+      x-operation-id-source: derived
+  /v2/stats/get_resource_usage:
+    get:
+      summary: get resource usage stats for a specific action
+      tags:
+      - Stats
+      parameters:
+      - description: contract
+        required: true
+        in: query
+        name: code
+        schema:
+          type: string
+      - description: action name
+        required: true
+        in: query
+        name: action
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Default Response
+      operationId: getV2StatsGetResourceUsage
+      x-operation-id-source: derived

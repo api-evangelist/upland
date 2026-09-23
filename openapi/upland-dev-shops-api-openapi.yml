@@ -1,0 +1,203 @@
+openapi: 3.2.0
+info:
+  title: Upland Developers Dev Shops API
+  description: You can use the developer API to map user IDs, read information, and manage your app escrow container.
+  version: 1.0.0
+  contact: {}
+servers:
+- url: https://api.sandbox.upland.me/developers-api
+tags:
+- name: Dev Shops
+paths:
+  /devshops:
+    get:
+      operationId: DevShopsController_getDevShopsByApplication
+      summary: List dev shops
+      description: Retrieves a list of all the authenticated app dev shops.
+      parameters: []
+      responses:
+        '200':
+          description: Dev Shops List
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DevShopsListResponseDto'
+      tags:
+      - Dev Shops
+      security:
+      - basic: []
+  /devshops/{devShopId}/check-user-intersection/{userId}:
+    get:
+      operationId: DevShopsController_getUserDevshopIntersectionChecking
+      summary: Check user and dev shop intersection
+      description: Checks if the user is in the dev shop range.
+      parameters:
+      - name: devShopId
+        required: true
+        in: path
+        schema:
+          type: string
+      - name: userId
+        required: true
+        in: path
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Check user dev shop intersection
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDevShopIntersectionCheckResponseDto'
+      tags:
+      - Dev Shops
+      security:
+      - basic: []
+components:
+  schemas:
+    DevShopResponseDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Dev Shop ID
+          example: edadafdf-c213-462b-910a-179c18d3a7cd
+          title: ID
+        name:
+          type: string
+          description: Dev shop name
+          example: My dev shop
+          title: Name
+        appUrl:
+          type: string
+          description: Application external URL
+          example: https://my-app.com/external-url
+          title: App URL
+        description:
+          type: string
+          description: Dev shop description
+          example: This is my dev shop
+          title: Description
+        location:
+          description: Dev shop location
+          title: Location
+          allOf:
+          - $ref: '#/components/schemas/DevShopLocationResponseDto'
+      required:
+      - id
+      - name
+      - appUrl
+      - description
+      - location
+    DevShopLocationResponseDto:
+      type: object
+      properties:
+        id:
+          type: number
+          description: Upland Property ID
+          example: 55334346
+          title: ID
+        address:
+          type: string
+          description: Dev shop address
+          example: 1467 28TH AVE
+          title: Address
+        city:
+          description: Dev shop city
+          title: City
+          allOf:
+          - $ref: '#/components/schemas/CityResponseDto'
+        coordinates:
+          description: Dev shop coordinates
+          title: Coordinates
+          allOf:
+          - $ref: '#/components/schemas/CoordinatesResponseDto'
+        neighborhood:
+          description: Dev shop neighborhood
+          title: Neighborhood
+          allOf:
+          - $ref: '#/components/schemas/NeighborhoodResponseDto'
+      required:
+      - id
+      - address
+      - city
+      - coordinates
+      - neighborhood
+    CityResponseDto:
+      type: object
+      properties:
+        id:
+          type: number
+          description: City ID
+          default: 1
+          title: ID
+        name:
+          type: string
+          description: City name
+          example: Manhattan
+          title: Name
+      required:
+      - id
+      - name
+    UserDevShopIntersectionCheckResponseDto:
+      type: object
+      properties:
+        isInRange:
+          type: boolean
+          description: Returns true if the user is in the devshop range
+          example: false
+          title: Is in range
+      required:
+      - isInRange
+    CoordinatesResponseDto:
+      type: object
+      properties:
+        latitude:
+          type: number
+          description: Coordinate latitude
+          example: 36.740230444221055
+          title: Latitude
+        longitude:
+          type: number
+          description: Coordinate longitude
+          example: -119.78203638209527
+          title: Longitude
+      required:
+      - latitude
+      - longitude
+    NeighborhoodResponseDto:
+      type: object
+      properties:
+        id:
+          type: number
+          description: Neighborhood ID
+          example: 1
+          title: ID
+        name:
+          type: string
+          description: Neighborhood name
+          example: ALAMO SQUARE
+          title: Name
+      required:
+      - id
+      - name
+    DevShopsListResponseDto:
+      type: object
+      properties:
+        results:
+          description: List of Dev Shops
+          title: Results
+          type: array
+          items:
+            $ref: '#/components/schemas/DevShopResponseDto'
+      required:
+      - results
+  securitySchemes:
+    basic:
+      type: http
+      scheme: basic
+      description: 'Basic access authentication is a method to provide a username and password when making a request. In basic HTTP authentication, a request contains a header field in the form of (Authorization: Basic [credential]), where credentials is the Base64 encoding of ID and password joined by a single colon :. For our case, you must consider Username as app ID and password as secret key (this information can be generated in endpoint to create application).'
+    bearer:
+      type: http
+      scheme: bearer
+      description: You must provide a Code to your users generated across the endpoint /auth/opt/init. When Upland User grants access for the developer App, a webhook will be sent with a valid access token.

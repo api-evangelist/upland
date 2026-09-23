@@ -1,0 +1,158 @@
+openapi: 3.2.0
+info:
+  title: Hyperion History API for UPLAND Chain System API
+  description: '### Scalable Full History API Solution for EOSIO based blockchains
+
+    *Made with ♥️ by EOS Rio*
+
+    ***
+
+    #### Current Chain: UPLAND Chain
+
+    #### Provided by UPLAND
+
+    #### Health API: https://10.0.3.200:7000/v2/health'
+  version: 3.3.10
+servers:
+- url: https://chain-history.upland.me
+tags:
+- name: System
+paths:
+  /v2/state/get_proposals:
+    get:
+      summary: get proposals
+      tags:
+      - System
+      parameters:
+      - description: filter by proposer
+        required: false
+        in: query
+        name: proposer
+        schema:
+          type: string
+      - description: filter by proposal name
+        required: false
+        in: query
+        name: proposal
+        schema:
+          type: string
+      - description: filter by either requested or provided account
+        required: false
+        in: query
+        name: account
+        schema:
+          type: string
+      - description: filter by requested account
+        required: false
+        in: query
+        name: requested
+        schema:
+          type: string
+      - description: filter by provided account
+        required: false
+        in: query
+        name: provided
+        schema:
+          type: string
+      - description: filter by execution status
+        required: false
+        in: query
+        name: executed
+        schema:
+          type: boolean
+      - description: total results to track (count) [number or true]
+        required: false
+        in: query
+        name: track
+        schema:
+          type: string
+      - description: skip [n] actions (pagination)
+        required: false
+        in: query
+        name: skip
+        schema:
+          type: integer
+          minimum: 0
+      - description: limit of [n] actions per page
+        required: false
+        in: query
+        name: limit
+        schema:
+          type: integer
+          minimum: 1
+      responses:
+        '200':
+          description: Default Response
+      operationId: getV2StateGetProposals
+      x-operation-id-source: derived
+  /v2/state/get_voters:
+    get:
+      summary: get voters
+      tags:
+      - System
+      parameters:
+      - description: limit of [n] results per page
+        required: false
+        in: query
+        name: limit
+        schema:
+          type: integer
+          minimum: 1
+      - description: skip [n] results
+        required: false
+        in: query
+        name: skip
+        schema:
+          type: integer
+          minimum: 0
+      - description: filter by voted producer (comma separated)
+        required: false
+        in: query
+        name: producer
+        schema:
+          type: string
+          maxLength: 12
+          minLength: 1
+      responses:
+        '200':
+          description: Default Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  query_time_ms:
+                    type: number
+                  cached:
+                    type: boolean
+                  hot_only:
+                    type: boolean
+                  lib:
+                    type: number
+                  last_indexed_block:
+                    type: number
+                  last_indexed_block_time:
+                    type: string
+                  total:
+                    type: object
+                    properties:
+                      value:
+                        type: number
+                      relation:
+                        type: string
+                  voters:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        account:
+                          type: string
+                        weight:
+                          type: number
+                        last_vote:
+                          type: number
+                        data:
+                          additionalProperties: true
+                          type: object
+      operationId: getV2StateGetVoters
+      x-operation-id-source: derived
