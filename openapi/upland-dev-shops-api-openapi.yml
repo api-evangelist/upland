@@ -123,22 +123,6 @@ components:
       - city
       - coordinates
       - neighborhood
-    CityResponseDto:
-      type: object
-      properties:
-        id:
-          type: number
-          description: City ID
-          default: 1
-          title: ID
-        name:
-          type: string
-          description: City name
-          example: Manhattan
-          title: Name
-      required:
-      - id
-      - name
     UserDevShopIntersectionCheckResponseDto:
       type: object
       properties:
@@ -177,6 +161,22 @@ components:
           type: string
           description: Neighborhood name
           example: ALAMO SQUARE
+          title: Name
+      required:
+      - id
+      - name
+    CityResponseDto:
+      type: object
+      properties:
+        id:
+          type: number
+          description: City ID
+          default: 1
+          title: ID
+        name:
+          type: string
+          description: City name
+          example: Manhattan
           title: Name
       required:
       - id

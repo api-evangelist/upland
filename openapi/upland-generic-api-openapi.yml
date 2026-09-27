@@ -345,206 +345,6 @@ paths:
       - basic: []
 components:
   schemas:
-    SendResponseDto:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Send ID
-          example: 033163ed-936e-4eeb-b8af-e0a62dbbe02a
-          title: ID
-        propertyId:
-          type: number
-          description: Send property ID
-          example: 1
-          title: Property ID
-        coordinates:
-          description: Send coordinates [lat, lng]
-          example:
-          - -122.416534424
-          - 37.811207961
-          title: Coordinates
-          type: array
-          items:
-            type: number
-      required:
-      - id
-      - propertyId
-      - coordinates
-    PropertiesListWithNextPagePaginationResponseDto:
-      type: object
-      properties:
-        results:
-          description: List of properties
-          title: Results
-          type: array
-          items:
-            $ref: '#/components/schemas/PropertyResponseDto'
-        nextPageToken:
-          type: string
-          description: (Optional) Generated token to navigate between page results
-          example: Nzg4NDAwOTkyMDAwMzg=
-          title: Next Page Token
-      required:
-      - results
-    BuildingsRequestDto:
-      type: object
-      properties:
-        boundaries:
-          description: Polygon boundary coordinates
-          example:
-          - - - -122.416534424
-              - 37.811207961
-            - - -122.414474487
-              - 37.803341668
-            - - -122.398166656
-              - 37.78706392
-            - - -122.395420074
-              - 37.775803046
-            - - -122.377910614
-              - 37.779602086
-            - - -122.385377884
-              - 37.797102289
-            - - -122.402801514
-              - 37.811411389
-            - - -122.416534424
-              - 37.811207961
-          title: Boundaries
-          items:
-            type: array
-          type: array
-      required:
-      - boundaries
-    NeighborhoodResponseDto:
-      type: object
-      properties:
-        id:
-          type: number
-          description: Neighborhood ID
-          example: 1
-          title: ID
-        name:
-          type: string
-          description: Neighborhood name
-          example: ALAMO SQUARE
-          title: Name
-      required:
-      - id
-      - name
-    PropertyResponseDto:
-      type: object
-      properties:
-        id:
-          type: number
-          description: Property ID
-          example: 1
-          title: ID
-        address:
-          type: string
-          description: Property address
-          example: 1467 28TH AVE
-          title: Address
-        neighborhood:
-          description: Property neighborhood
-          title: Neighborhood
-          allOf:
-          - $ref: '#/components/schemas/NeighborhoodResponseDto'
-        city:
-          description: Property city
-          title: City
-          allOf:
-          - $ref: '#/components/schemas/CityResponseDto'
-        status:
-          type: string
-          description: Property status
-          enum:
-          - For sale
-          - Initial Offer
-          - Locked
-          - Owned
-          - Unlocked
-          example: For sale
-          title: Status
-        mintPrice:
-          type: number
-          description: Property mint price
-          example: 3500
-          title: Mint price
-        collection:
-          description: (Optional) Property collection
-          title: Collection
-          allOf:
-          - $ref: '#/components/schemas/CollectionResponseDto'
-      required:
-      - id
-      - address
-      - neighborhood
-      - city
-      - status
-      - mintPrice
-    TrackResponseDto:
-      type: object
-      properties:
-        id:
-          type: number
-          description: Track ID
-          example: 1
-          title: ID
-        name:
-          type: string
-          description: Track Name
-          example: The San Francisco Track
-          title: Name
-        city:
-          description: Track city
-          title: City
-          allOf:
-          - $ref: '#/components/schemas/CityResponseDto'
-        thumbnailUrl:
-          type: string
-          description: Track thumbnail URL in SVG format
-          title: Thumbnail
-        distance:
-          type: number
-          description: Track distance in meters
-          example: 3132.3
-          title: Distance
-        surface:
-          type: string
-          description: Track Surface
-          enum:
-          - ASPHALT
-          example: ASPHALT
-          title: Surface
-        weather:
-          type: string
-          description: Track weather
-          enum:
-          - SUNNY
-          example: SUNNY
-          title: Weather
-        laps:
-          type: number
-          description: Number of laps
-          example: 3
-          title: Laps
-        allowedVehicleClasses:
-          type: string
-          description: Track allowed vehicle classes
-          enum:
-          - ALL
-          example: ALL
-          title: Allowed vehicle classes
-      required:
-      - id
-      - name
-      - city
-      - thumbnailUrl
-      - distance
-      - surface
-      - weather
-      - laps
-      - allowedVehicleClasses
     CitiesListResponseDto:
       type: object
       properties:
@@ -630,34 +430,99 @@ components:
       - scale
       - propertyId
       - meshes
-    PropertiesListResponseDto:
+    SendResponseDto:
       type: object
       properties:
-        currentPage:
+        id:
+          type: string
+          description: Send ID
+          example: 033163ed-936e-4eeb-b8af-e0a62dbbe02a
+          title: ID
+        propertyId:
           type: number
-          description: Current page
+          description: Send property ID
           example: 1
-          title: Current page
-        pageSize:
-          type: number
-          description: Total results per page
-          example: 10
-          title: Page size
-        totalResults:
-          type: number
-          description: (Optional) Total of results
-          example: 200
-          title: Total results
-        results:
-          description: List of properties
-          title: Results
+          title: Property ID
+        coordinates:
+          description: Send coordinates [lat, lng]
+          example:
+          - -122.416534424
+          - 37.811207961
+          title: Coordinates
           type: array
           items:
-            $ref: '#/components/schemas/PropertyResponseDto'
+            type: number
       required:
-      - currentPage
-      - pageSize
-      - results
+      - id
+      - propertyId
+      - coordinates
+    CityResponseDto:
+      type: object
+      properties:
+        id:
+          type: number
+          description: City ID
+          default: 1
+          title: ID
+        name:
+          type: string
+          description: City name
+          example: Manhattan
+          title: Name
+      required:
+      - id
+      - name
+    PropertyResponseDto:
+      type: object
+      properties:
+        id:
+          type: number
+          description: Property ID
+          example: 1
+          title: ID
+        address:
+          type: string
+          description: Property address
+          example: 1467 28TH AVE
+          title: Address
+        neighborhood:
+          description: Property neighborhood
+          title: Neighborhood
+          allOf:
+          - $ref: '#/components/schemas/NeighborhoodResponseDto'
+        city:
+          description: Property city
+          title: City
+          allOf:
+          - $ref: '#/components/schemas/CityResponseDto'
+        status:
+          type: string
+          description: Property status
+          enum:
+          - For sale
+          - Initial Offer
+          - Locked
+          - Owned
+          - Unlocked
+          example: For sale
+          title: Status
+        mintPrice:
+          type: number
+          description: Property mint price
+          example: 3500
+          title: Mint price
+        collection:
+          description: (Optional) Property collection
+          title: Collection
+          allOf:
+          - $ref: '#/components/schemas/CollectionResponseDto'
+      required:
+      - id
+      - address
+      - neighborhood
+      - city
+      - status
+      - mintPrice
     TrackWithDetailsResponseDto:
       type: object
       properties:
@@ -769,6 +634,147 @@ components:
       - path
       - center
       - boundaries
+    PropertiesListResponseDto:
+      type: object
+      properties:
+        currentPage:
+          type: number
+          description: Current page
+          example: 1
+          title: Current page
+        pageSize:
+          type: number
+          description: Total results per page
+          example: 10
+          title: Page size
+        totalResults:
+          type: number
+          description: (Optional) Total of results
+          example: 200
+          title: Total results
+        results:
+          description: List of properties
+          title: Results
+          type: array
+          items:
+            $ref: '#/components/schemas/PropertyResponseDto'
+      required:
+      - currentPage
+      - pageSize
+      - results
+    BuildingsListResponseDto:
+      type: object
+      properties:
+        buildings:
+          description: List of buildings
+          title: Buildings
+          type: array
+          items:
+            $ref: '#/components/schemas/BuildingResponseDto'
+      required:
+      - buildings
+    CollectionsListResponseDto:
+      type: object
+      properties:
+        results:
+          description: List of collections
+          title: Results
+          type: array
+          items:
+            $ref: '#/components/schemas/CollectionResponseDto'
+      required:
+      - results
+    TrackResponseDto:
+      type: object
+      properties:
+        id:
+          type: number
+          description: Track ID
+          example: 1
+          title: ID
+        name:
+          type: string
+          description: Track Name
+          example: The San Francisco Track
+          title: Name
+        city:
+          description: Track city
+          title: City
+          allOf:
+          - $ref: '#/components/schemas/CityResponseDto'
+        thumbnailUrl:
+          type: string
+          description: Track thumbnail URL in SVG format
+          title: Thumbnail
+        distance:
+          type: number
+          description: Track distance in meters
+          example: 3132.3
+          title: Distance
+        surface:
+          type: string
+          description: Track Surface
+          enum:
+          - ASPHALT
+          example: ASPHALT
+          title: Surface
+        weather:
+          type: string
+          description: Track weather
+          enum:
+          - SUNNY
+          example: SUNNY
+          title: Weather
+        laps:
+          type: number
+          description: Number of laps
+          example: 3
+          title: Laps
+        allowedVehicleClasses:
+          type: string
+          description: Track allowed vehicle classes
+          enum:
+          - ALL
+          example: ALL
+          title: Allowed vehicle classes
+      required:
+      - id
+      - name
+      - city
+      - thumbnailUrl
+      - distance
+      - surface
+      - weather
+      - laps
+      - allowedVehicleClasses
+    BuildingsRequestDto:
+      type: object
+      properties:
+        boundaries:
+          description: Polygon boundary coordinates
+          example:
+          - - - -122.416534424
+              - 37.811207961
+            - - -122.414474487
+              - 37.803341668
+            - - -122.398166656
+              - 37.78706392
+            - - -122.395420074
+              - 37.775803046
+            - - -122.377910614
+              - 37.779602086
+            - - -122.385377884
+              - 37.797102289
+            - - -122.402801514
+              - 37.811411389
+            - - -122.416534424
+              - 37.811207961
+          title: Boundaries
+          items:
+            type: array
+          type: array
+      required:
+      - boundaries
     SendsListResponseDto:
       type: object
       properties:
@@ -797,39 +803,6 @@ components:
       - currentPage
       - pageSize
       - results
-    TreasuresHistoryListResponseDto:
-      type: object
-      properties:
-        results:
-          description: List of treasures history
-          title: Results
-          type: array
-          items:
-            $ref: '#/components/schemas/TreasureHistoryResponseDto'
-      required:
-      - results
-    CollectionsListResponseDto:
-      type: object
-      properties:
-        results:
-          description: List of collections
-          title: Results
-          type: array
-          items:
-            $ref: '#/components/schemas/CollectionResponseDto'
-      required:
-      - results
-    BuildingsListResponseDto:
-      type: object
-      properties:
-        buildings:
-          description: List of buildings
-          title: Buildings
-          type: array
-          items:
-            $ref: '#/components/schemas/BuildingResponseDto'
-      required:
-      - buildings
     NeighborhoodsListResponseDto:
       type: object
       properties:
@@ -841,49 +814,22 @@ components:
             $ref: '#/components/schemas/NeighborhoodResponseDto'
       required:
       - results
-    CityResponseDto:
+    PropertiesListWithNextPagePaginationResponseDto:
       type: object
       properties:
-        id:
-          type: number
-          description: City ID
-          default: 1
-          title: ID
-        name:
-          type: string
-          description: City name
-          example: Manhattan
-          title: Name
-      required:
-      - id
-      - name
-    TracksListResponseDto:
-      type: object
-      properties:
-        tracks:
-          description: List of tracks
-          title: Tracks
+        results:
+          description: List of properties
+          title: Results
           type: array
           items:
-            $ref: '#/components/schemas/TrackResponseDto'
-      required:
-      - tracks
-    CollectionResponseDto:
-      type: object
-      properties:
-        id:
-          type: number
-          description: Collection ID
-          example: 1
-          title: ID
-        name:
+            $ref: '#/components/schemas/PropertyResponseDto'
+        nextPageToken:
           type: string
-          description: Collection name
-          example: Newbie
-          title: Name
+          description: (Optional) Generated token to navigate between page results
+          example: Nzg4NDAwOTkyMDAwMzg=
+          title: Next Page Token
       required:
-      - id
-      - name
+      - results
     TreasureHistoryResponseDto:
       type: object
       properties:
@@ -928,6 +874,60 @@ components:
       - spawnAt
       - fullAddress
       - treasureType
+    TracksListResponseDto:
+      type: object
+      properties:
+        tracks:
+          description: List of tracks
+          title: Tracks
+          type: array
+          items:
+            $ref: '#/components/schemas/TrackResponseDto'
+      required:
+      - tracks
+    CollectionResponseDto:
+      type: object
+      properties:
+        id:
+          type: number
+          description: Collection ID
+          example: 1
+          title: ID
+        name:
+          type: string
+          description: Collection name
+          example: Newbie
+          title: Name
+      required:
+      - id
+      - name
+    NeighborhoodResponseDto:
+      type: object
+      properties:
+        id:
+          type: number
+          description: Neighborhood ID
+          example: 1
+          title: ID
+        name:
+          type: string
+          description: Neighborhood name
+          example: ALAMO SQUARE
+          title: Name
+      required:
+      - id
+      - name
+    TreasuresHistoryListResponseDto:
+      type: object
+      properties:
+        results:
+          description: List of treasures history
+          title: Results
+          type: array
+          items:
+            $ref: '#/components/schemas/TreasureHistoryResponseDto'
+      required:
+      - results
   securitySchemes:
     basic:
       type: http

@@ -211,88 +211,6 @@ paths:
       - basic: []
 components:
   schemas:
-    ContainerResolutionTransferRequestDto:
-      type: object
-      properties:
-        assetId:
-          type: number
-          description: (Optional) Container resolution transfer asset ID - applies only to NFT transfers
-          example: 1
-          title: Asset ID
-        amount:
-          type: number
-          description: (Optional) Container resolution transfer amount - applies only to UPX transfers
-          example: 100
-          title: Amount
-        category:
-          type: string
-          description: Container resolution transfer category
-          examples:
-          - spirithlwn
-          - jacktsai
-          - blkexplorer
-          - essential
-          - memento
-          - upx
-          title: Category
-        targetEosId:
-          type: string
-          description: Container resolution transfer target EOS ID
-          example: emhwlbbifea5
-          title: Target EOS ID
-        isRefund:
-          type: boolean
-          description: (Optional) Indicates if the action is a refund operation
-          example: false
-          title: Is refund
-      required:
-      - category
-      - targetEosId
-    ContainerResponseDto:
-      type: object
-      properties:
-        id:
-          type: number
-          description: Container ID
-          example: 1
-          title: ID
-        appId:
-          type: number
-          description: Application ID
-          example: 1
-          title: App ID
-        expirationDate:
-          format: date-time
-          type: string
-          description: Container expiration date
-          example: '2026-09-02T19:03:02.192Z'
-          title: Expiration Date
-        status:
-          type: string
-          description: Container status
-          enum:
-          - created
-          - locked
-          - resolving
-          - resolved
-          - expired
-          example: created
-          title: Status
-        devShopId:
-          type: string
-          description: (Optional) Dev Shop ID
-          example: edadafdf-c213-462b-910a-179c18d3a7cd
-          title: Dev Shop ID
-        userLimitByContainer:
-          type: number
-          description: (Optional) Specifies a user limit by container. When the container reaches this limit, it will be automatically locked.
-          example: 2
-          title: User limit by container
-      required:
-      - id
-      - appId
-      - expirationDate
-      - status
     JoinContainerRequestDto:
       type: object
       properties:
@@ -307,120 +225,17 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/NftRequestDto'
-    ContainerResolutionResponseDto:
+    ContainerResolutionRequestDto:
       type: object
       properties:
-        transactionId:
-          type: string
-          description: Container resolution transaction ID
-          example: e5e0df15-16d8-4dd4-9ecf-669dee4a80e3
-          title: Transaction ID
+        actions:
+          description: List of container resolution transfers
+          title: Actions
+          type: array
+          items:
+            $ref: '#/components/schemas/ContainerResolutionTransferRequestDto'
       required:
-      - transactionId
-    JoinContainerResponseDto:
-      type: object
-      properties:
-        transactionId:
-          type: string
-          example: ac60eb8a-9c32-4f78-b407-1c0396a645e2
-          title: Transaction ID
-        containerReachedUsersLimit:
-          type: boolean
-          description: (Optional) We send it if you provide some value to userLimitByContainer property on container creation endpoint
-          example: true
-          title: Container reached users limit
-      required:
-      - transactionId
-    CreateContainerRequestDto:
-      type: object
-      properties:
-        devShopId:
-          type: string
-          description: (Optional) Specifies the dev shop where the user needs to be in order to transfer assets to the container. If none, the user can be at any of the app's dev shops to do so.
-          example: edadafdf-c213-462b-910a-179c18d3a7cd
-          title: Dev Shop ID
-        userLimitByContainer:
-          type: number
-          description: (Optional) Specifies a user limit by container. When the container reaches this limit, it will be automatically locked.
-          example: 2
-          title: User limit by container
-    NftRequestDto:
-      type: object
-      properties:
-        id:
-          type: number
-          description: NFT ID
-          example: 1
-          title: ID
-        category:
-          type: string
-          description: NFT category
-          examples:
-          - spirithlwn
-          - jacktsai
-          - blkexplorer
-          - essential
-          - memento
-          title: Category
-      required:
-      - id
-      - category
-    AssetTransferRequestResponseDto:
-      type: object
-      properties:
-        id:
-          type: number
-          description: Asset transfer request ID
-          example: 1
-          title: ID
-        transactionId:
-          type: string
-          description: Asset transfer request transaction ID
-          example: e5e0df15-16d8-4dd4-9ecf-669dee4a80e3
-          title: Transaction ID
-        amount:
-          type: number
-          description: (Optional) Asset transfer request amount - applies only to UPX transfers
-          example: 0
-          title: Amount
-        assetId:
-          type: number
-          description: (Optional) Asset transfer request asset ID - applies only to NFT transfers
-          example: 1
-          title: Asset ID
-        category:
-          type: string
-          description: Asset transfer request category
-          examples:
-          - spirithlwn
-          - jacktsai
-          - blkexplorer
-          - essential
-          - memento
-          - upx
-          title: Category
-        ownerEosId:
-          type: string
-          description: Asset owner EOS ID
-          example: emhwlbbifea5
-          title: Owner EOS ID
-        status:
-          type: string
-          description: Asset transfer request status
-          enum:
-          - initiated
-          - user_signature_requested
-          - changing_ownership
-          - in_escrow
-          - failed
-          example: in_escrow
-          title: Status
-      required:
-      - id
-      - transactionId
-      - category
-      - ownerEosId
-      - status
+      - actions
     ContainerWithAssetsResponseDto:
       type: object
       properties:
@@ -479,17 +294,202 @@ components:
       - status
       - upx
       - assets
-    ContainerResolutionRequestDto:
+    ContainerResponseDto:
       type: object
       properties:
-        actions:
-          description: List of container resolution transfers
-          title: Actions
-          type: array
-          items:
-            $ref: '#/components/schemas/ContainerResolutionTransferRequestDto'
+        id:
+          type: number
+          description: Container ID
+          example: 1
+          title: ID
+        appId:
+          type: number
+          description: Application ID
+          example: 1
+          title: App ID
+        expirationDate:
+          format: date-time
+          type: string
+          description: Container expiration date
+          example: '2026-09-02T19:03:02.192Z'
+          title: Expiration Date
+        status:
+          type: string
+          description: Container status
+          enum:
+          - created
+          - locked
+          - resolving
+          - resolved
+          - expired
+          example: created
+          title: Status
+        devShopId:
+          type: string
+          description: (Optional) Dev Shop ID
+          example: edadafdf-c213-462b-910a-179c18d3a7cd
+          title: Dev Shop ID
+        userLimitByContainer:
+          type: number
+          description: (Optional) Specifies a user limit by container. When the container reaches this limit, it will be automatically locked.
+          example: 2
+          title: User limit by container
       required:
-      - actions
+      - id
+      - appId
+      - expirationDate
+      - status
+    ContainerResolutionResponseDto:
+      type: object
+      properties:
+        transactionId:
+          type: string
+          description: Container resolution transaction ID
+          example: e5e0df15-16d8-4dd4-9ecf-669dee4a80e3
+          title: Transaction ID
+      required:
+      - transactionId
+    JoinContainerResponseDto:
+      type: object
+      properties:
+        transactionId:
+          type: string
+          example: ac60eb8a-9c32-4f78-b407-1c0396a645e2
+          title: Transaction ID
+        containerReachedUsersLimit:
+          type: boolean
+          description: (Optional) We send it if you provide some value to userLimitByContainer property on container creation endpoint
+          example: true
+          title: Container reached users limit
+      required:
+      - transactionId
+    NftRequestDto:
+      type: object
+      properties:
+        id:
+          type: number
+          description: NFT ID
+          example: 1
+          title: ID
+        category:
+          type: string
+          description: NFT category
+          examples:
+          - spirithlwn
+          - jacktsai
+          - blkexplorer
+          - essential
+          - memento
+          title: Category
+      required:
+      - id
+      - category
+    ContainerResolutionTransferRequestDto:
+      type: object
+      properties:
+        assetId:
+          type: number
+          description: (Optional) Container resolution transfer asset ID - applies only to NFT transfers
+          example: 1
+          title: Asset ID
+        amount:
+          type: number
+          description: (Optional) Container resolution transfer amount - applies only to UPX transfers
+          example: 100
+          title: Amount
+        category:
+          type: string
+          description: Container resolution transfer category
+          examples:
+          - spirithlwn
+          - jacktsai
+          - blkexplorer
+          - essential
+          - memento
+          - upx
+          title: Category
+        targetEosId:
+          type: string
+          description: Container resolution transfer target EOS ID
+          example: emhwlbbifea5
+          title: Target EOS ID
+        isRefund:
+          type: boolean
+          description: (Optional) Indicates if the action is a refund operation
+          example: false
+          title: Is refund
+      required:
+      - category
+      - targetEosId
+    AssetTransferRequestResponseDto:
+      type: object
+      properties:
+        id:
+          type: number
+          description: Asset transfer request ID
+          example: 1
+          title: ID
+        transactionId:
+          type: string
+          description: Asset transfer request transaction ID
+          example: e5e0df15-16d8-4dd4-9ecf-669dee4a80e3
+          title: Transaction ID
+        amount:
+          type: number
+          description: (Optional) Asset transfer request amount - applies only to UPX transfers
+          example: 0
+          title: Amount
+        assetId:
+          type: number
+          description: (Optional) Asset transfer request asset ID - applies only to NFT transfers
+          example: 1
+          title: Asset ID
+        category:
+          type: string
+          description: Asset transfer request category
+          examples:
+          - spirithlwn
+          - jacktsai
+          - blkexplorer
+          - essential
+          - memento
+          - upx
+          title: Category
+        ownerEosId:
+          type: string
+          description: Asset owner EOS ID
+          example: emhwlbbifea5
+          title: Owner EOS ID
+        status:
+          type: string
+          description: Asset transfer request status
+          enum:
+          - initiated
+          - user_signature_requested
+          - changing_ownership
+          - in_escrow
+          - failed
+          example: in_escrow
+          title: Status
+      required:
+      - id
+      - transactionId
+      - category
+      - ownerEosId
+      - status
+    CreateContainerRequestDto:
+      type: object
+      properties:
+        devShopId:
+          type: string
+          description: (Optional) Specifies the dev shop where the user needs to be in order to transfer assets to the container. If none, the user can be at any of the app's dev shops to do so.
+          example: edadafdf-c213-462b-910a-179c18d3a7cd
+          title: Dev Shop ID
+        userLimitByContainer:
+          type: number
+          description: (Optional) Specifies a user limit by container. When the container reaches this limit, it will be automatically locked.
+          example: 2
+          title: User limit by container
   securitySchemes:
     basic:
       type: http
