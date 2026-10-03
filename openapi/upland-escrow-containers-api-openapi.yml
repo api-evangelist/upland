@@ -211,89 +211,6 @@ paths:
       - basic: []
 components:
   schemas:
-    JoinContainerRequestDto:
-      type: object
-      properties:
-        upxAmount:
-          type: number
-          description: (Optional) Amount of UPX to be added into the escrow container
-          example: 10000
-          title: UPX amount
-        assets:
-          description: List of assets to be added into the escrow container
-          title: Assets
-          type: array
-          items:
-            $ref: '#/components/schemas/NftRequestDto'
-    ContainerResolutionRequestDto:
-      type: object
-      properties:
-        actions:
-          description: List of container resolution transfers
-          title: Actions
-          type: array
-          items:
-            $ref: '#/components/schemas/ContainerResolutionTransferRequestDto'
-      required:
-      - actions
-    ContainerWithAssetsResponseDto:
-      type: object
-      properties:
-        id:
-          type: number
-          description: Container ID
-          example: 1
-          title: ID
-        appId:
-          type: number
-          description: Application ID
-          example: 1
-          title: App ID
-        expirationDate:
-          format: date-time
-          type: string
-          description: Container expiration date
-          example: '2026-09-02T19:03:02.192Z'
-          title: Expiration Date
-        status:
-          type: string
-          description: Container status
-          enum:
-          - created
-          - locked
-          - resolving
-          - resolved
-          - expired
-          example: created
-          title: Status
-        devShopId:
-          type: string
-          description: (Optional) Dev Shop ID
-          example: edadafdf-c213-462b-910a-179c18d3a7cd
-          title: Dev Shop ID
-        userLimitByContainer:
-          type: number
-          description: (Optional) Specifies a user limit by container. When the container reaches this limit, it will be automatically locked.
-          example: 2
-          title: User limit by container
-        upx:
-          type: number
-          description: Current container UPX balance (final transactions only)
-          example: 0
-          title: UPX
-        assets:
-          description: List of asset transfer requests
-          title: Assets
-          type: array
-          items:
-            $ref: '#/components/schemas/AssetTransferRequestResponseDto'
-      required:
-      - id
-      - appId
-      - expirationDate
-      - status
-      - upx
-      - assets
     ContainerResponseDto:
       type: object
       properties:
@@ -363,27 +280,17 @@ components:
           title: Container reached users limit
       required:
       - transactionId
-    NftRequestDto:
+    ContainerResolutionRequestDto:
       type: object
       properties:
-        id:
-          type: number
-          description: NFT ID
-          example: 1
-          title: ID
-        category:
-          type: string
-          description: NFT category
-          examples:
-          - spirithlwn
-          - jacktsai
-          - blkexplorer
-          - essential
-          - memento
-          title: Category
+        actions:
+          description: List of container resolution transfers
+          title: Actions
+          type: array
+          items:
+            $ref: '#/components/schemas/ContainerResolutionTransferRequestDto'
       required:
-      - id
-      - category
+      - actions
     ContainerResolutionTransferRequestDto:
       type: object
       properties:
@@ -477,6 +384,99 @@ components:
       - category
       - ownerEosId
       - status
+    ContainerWithAssetsResponseDto:
+      type: object
+      properties:
+        id:
+          type: number
+          description: Container ID
+          example: 1
+          title: ID
+        appId:
+          type: number
+          description: Application ID
+          example: 1
+          title: App ID
+        expirationDate:
+          format: date-time
+          type: string
+          description: Container expiration date
+          example: '2026-09-02T19:03:02.192Z'
+          title: Expiration Date
+        status:
+          type: string
+          description: Container status
+          enum:
+          - created
+          - locked
+          - resolving
+          - resolved
+          - expired
+          example: created
+          title: Status
+        devShopId:
+          type: string
+          description: (Optional) Dev Shop ID
+          example: edadafdf-c213-462b-910a-179c18d3a7cd
+          title: Dev Shop ID
+        userLimitByContainer:
+          type: number
+          description: (Optional) Specifies a user limit by container. When the container reaches this limit, it will be automatically locked.
+          example: 2
+          title: User limit by container
+        upx:
+          type: number
+          description: Current container UPX balance (final transactions only)
+          example: 0
+          title: UPX
+        assets:
+          description: List of asset transfer requests
+          title: Assets
+          type: array
+          items:
+            $ref: '#/components/schemas/AssetTransferRequestResponseDto'
+      required:
+      - id
+      - appId
+      - expirationDate
+      - status
+      - upx
+      - assets
+    NftRequestDto:
+      type: object
+      properties:
+        id:
+          type: number
+          description: NFT ID
+          example: 1
+          title: ID
+        category:
+          type: string
+          description: NFT category
+          examples:
+          - spirithlwn
+          - jacktsai
+          - blkexplorer
+          - essential
+          - memento
+          title: Category
+      required:
+      - id
+      - category
+    JoinContainerRequestDto:
+      type: object
+      properties:
+        upxAmount:
+          type: number
+          description: (Optional) Amount of UPX to be added into the escrow container
+          example: 10000
+          title: UPX amount
+        assets:
+          description: List of assets to be added into the escrow container
+          title: Assets
+          type: array
+          items:
+            $ref: '#/components/schemas/NftRequestDto'
     CreateContainerRequestDto:
       type: object
       properties:

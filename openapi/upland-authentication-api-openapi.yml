@@ -34,6 +34,23 @@ paths:
       - basic: []
 components:
   schemas:
+    OtpInitResposeDto:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Connection code
+          example: 8JGXBU9G87
+          title: Code
+        expireAt:
+          format: date-time
+          type: string
+          description: Code expiration date
+          example: '2023-06-14T13:41:22.364Z'
+          title: Expire At
+      required:
+      - code
+      - expireAt
     HttpErrorDto:
       type: object
       properties:
@@ -52,23 +69,6 @@ components:
       required:
       - message
       - statusCode
-    OtpInitResposeDto:
-      type: object
-      properties:
-        code:
-          type: string
-          description: Connection code
-          example: 8JGXBU9G87
-          title: Code
-        expireAt:
-          format: date-time
-          type: string
-          description: Code expiration date
-          example: '2023-06-14T13:41:22.364Z'
-          title: Expire At
-      required:
-      - code
-      - expireAt
   securitySchemes:
     basic:
       type: http

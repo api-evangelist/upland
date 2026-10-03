@@ -55,6 +55,48 @@ paths:
       - basic: []
 components:
   schemas:
+    CoordinatesResponseDto:
+      type: object
+      properties:
+        latitude:
+          type: number
+          description: Coordinate latitude
+          example: 36.740230444221055
+          title: Latitude
+        longitude:
+          type: number
+          description: Coordinate longitude
+          example: -119.78203638209527
+          title: Longitude
+      required:
+      - latitude
+      - longitude
+    NeighborhoodResponseDto:
+      type: object
+      properties:
+        id:
+          type: number
+          description: Neighborhood ID
+          example: 1
+          title: ID
+        name:
+          type: string
+          description: Neighborhood name
+          example: ALAMO SQUARE
+          title: Name
+      required:
+      - id
+      - name
+    UserDevShopIntersectionCheckResponseDto:
+      type: object
+      properties:
+        isInRange:
+          type: boolean
+          description: Returns true if the user is in the devshop range
+          example: false
+          title: Is in range
+      required:
+      - isInRange
     DevShopResponseDto:
       type: object
       properties:
@@ -89,6 +131,33 @@ components:
       - appUrl
       - description
       - location
+    CityResponseDto:
+      type: object
+      properties:
+        id:
+          type: number
+          description: City ID
+          default: 1
+          title: ID
+        name:
+          type: string
+          description: City name
+          example: Manhattan
+          title: Name
+      required:
+      - id
+      - name
+    DevShopsListResponseDto:
+      type: object
+      properties:
+        results:
+          description: List of Dev Shops
+          title: Results
+          type: array
+          items:
+            $ref: '#/components/schemas/DevShopResponseDto'
+      required:
+      - results
     DevShopLocationResponseDto:
       type: object
       properties:
@@ -123,75 +192,6 @@ components:
       - city
       - coordinates
       - neighborhood
-    UserDevShopIntersectionCheckResponseDto:
-      type: object
-      properties:
-        isInRange:
-          type: boolean
-          description: Returns true if the user is in the devshop range
-          example: false
-          title: Is in range
-      required:
-      - isInRange
-    CoordinatesResponseDto:
-      type: object
-      properties:
-        latitude:
-          type: number
-          description: Coordinate latitude
-          example: 36.740230444221055
-          title: Latitude
-        longitude:
-          type: number
-          description: Coordinate longitude
-          example: -119.78203638209527
-          title: Longitude
-      required:
-      - latitude
-      - longitude
-    NeighborhoodResponseDto:
-      type: object
-      properties:
-        id:
-          type: number
-          description: Neighborhood ID
-          example: 1
-          title: ID
-        name:
-          type: string
-          description: Neighborhood name
-          example: ALAMO SQUARE
-          title: Name
-      required:
-      - id
-      - name
-    CityResponseDto:
-      type: object
-      properties:
-        id:
-          type: number
-          description: City ID
-          default: 1
-          title: ID
-        name:
-          type: string
-          description: City name
-          example: Manhattan
-          title: Name
-      required:
-      - id
-      - name
-    DevShopsListResponseDto:
-      type: object
-      properties:
-        results:
-          description: List of Dev Shops
-          title: Results
-          type: array
-          items:
-            $ref: '#/components/schemas/DevShopResponseDto'
-      required:
-      - results
   securitySchemes:
     basic:
       type: http
