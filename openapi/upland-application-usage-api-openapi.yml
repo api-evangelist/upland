@@ -99,34 +99,6 @@ paths:
       - basic: []
 components:
   schemas:
-    AppWebhookCallsResponseDto:
-      type: object
-      properties:
-        currentPage:
-          type: number
-          description: Current page
-          example: 1
-          title: Current page
-        pageSize:
-          type: number
-          description: Total results per page
-          example: 10
-          title: Page size
-        totalResults:
-          type: number
-          description: (Optional) Total of results
-          example: 200
-          title: Total results
-        results:
-          description: List of app webhook calls
-          title: Results
-          type: array
-          items:
-            $ref: '#/components/schemas/AppWebhookCallDto'
-      required:
-      - currentPage
-      - pageSize
-      - results
     AppWebhookCallDto:
       type: object
       properties:
@@ -192,6 +164,34 @@ components:
       - isSuccess
       - request
       - response
+    AppWebhookCallsResponseDto:
+      type: object
+      properties:
+        currentPage:
+          type: number
+          description: Current page
+          example: 1
+          title: Current page
+        pageSize:
+          type: number
+          description: Total results per page
+          example: 10
+          title: Page size
+        totalResults:
+          type: number
+          description: (Optional) Total of results
+          example: 200
+          title: Total results
+        results:
+          description: List of app webhook calls
+          title: Results
+          type: array
+          items:
+            $ref: '#/components/schemas/AppWebhookCallDto'
+      required:
+      - currentPage
+      - pageSize
+      - results
   securitySchemes:
     basic:
       type: http

@@ -401,6 +401,66 @@ paths:
       - basic: []
 components:
   schemas:
+    FeeDistributionDto:
+      type: object
+      properties:
+        percentage:
+          type: number
+          description: Fee distribution percentage
+          example: 1
+          title: Percentage
+        targetEosId:
+          type: number
+          description: Fee target EOS ID
+          example: 1
+          title: Target EOS ID
+      required:
+      - percentage
+      - targetEosId
+    EditRumbleTournamentSettingsRequestDto:
+      type: object
+      properties:
+        description:
+          type: string
+          description: (Optional) Rumble tournament description
+          example: My description
+          title: Description
+        developerFeePercentage:
+          type: number
+          description: (Optional) Rumble tournament developer fee percentage
+          example: 0
+          title: Developer Fee Percentage
+        maxParticipants:
+          type: number
+          description: (Optional) Rumble tournament maximum participants amount
+          example: 6
+          title: Max Participants
+        minParticipants:
+          type: number
+          description: (Optinal) Rumble tournament minimum participants amount
+          example: 2
+          title: Min Participants
+        name:
+          type: string
+          description: (Optional) Rumble tournament name
+          example: My rumble tournament
+          title: Name
+        prizeDistributionRules:
+          description: (Optional) Rumble tournament prize distribution rules
+          title: Prize Distribution Rules
+          type: array
+          items:
+            $ref: '#/components/schemas/PrizeDistributionRuleResponseDto'
+        registrationFeeInUpx:
+          type: number
+          description: (Optional) Rumble tournament registration fee (UPX)
+          example: 100
+          title: Registration Fee in UPX
+        stakeholderFeePercentage:
+          type: number
+          description: (Optional) Rumble tournament stakeholder fee percentage
+          example: 0
+          title: Stakeholder Fee Percentage
     RumbleTournamentResponseDto:
       type: object
       properties:
@@ -474,19 +534,29 @@ components:
       - id
       - status
       - updatedAt
-    RumbleTournamentSettingsSnapshotResponseDto:
+    CreateRumbleTournamentSettingsRequestDto:
       type: object
       properties:
-        minParticipants:
-          type: number
-          description: Rumble tournament minimum participants amount
-          example: 1
-          title: Min Participants
+        description:
+          type: string
+          description: Rumble tournament description
+          example: My description
+          title: Description
         maxParticipants:
           type: number
           description: Rumble tournament maximum participants amount
           example: 1
           title: Max Participants
+        minParticipants:
+          type: number
+          description: Rumble tournament minimum participants amount
+          example: 2
+          title: Min Participants
+        name:
+          type: string
+          description: Rumble tournament name
+          example: My rumble tournament
+          title: Name
         prizeDistributionRules:
           description: Rumble tournament prize distribution rules
           title: Prize Distribution Rules
@@ -500,37 +570,78 @@ components:
           title: Registration Fee in UPX
         developerFeePercentage:
           type: number
-          description: Rumble tournament developer fee percentage
+          description: (Optional) Rumble tournament developer fee percentage
           example: 0
           title: Developer Fee Percentage
         stakeholderFeePercentage:
           type: number
-          description: Rumble tournament stakeholder fee percentage
+          description: (Optional) Rumble tournament stakeholder fee percentage
           example: 0
           title: Stakeholder Fee Percentage
       required:
-      - minParticipants
+      - description
       - maxParticipants
+      - minParticipants
+      - name
       - prizeDistributionRules
       - registrationFeeInUpx
-      - developerFeePercentage
-      - stakeholderFeePercentage
-    DistributionResponseDto:
+    PrizeDistributionByPlaceDto:
       type: object
       properties:
+        userId:
+          type: string
+          description: Upland user ID
+          example: 76d678fe-5a64-4764-8250-e594527ea0f8
+          title: User ID
+        userEosId:
+          type: string
+          description: Upland user EOS ID
+          example: emhwlbbifea5
+          title: User EOS ID
+        score:
+          type: number
+          description: Participant score
+          example: 500
+          title: Score
+        prizeInUpx:
+          type: number
+          description: Total UPX received by the winner
+          example: 500
+          title: Prize in UPX
         place:
           type: number
-          description: Place in the tournament ranking
-          example: 1
+          description: Participant's position in the tournament result.
+          example: 5
           title: Place
-        prize:
-          type: number
-          description: Calculated prize in UPX
-          example: 500
-          title: Prize
       required:
+      - userId
+      - userEosId
+      - score
+      - prizeInUpx
       - place
-      - prize
+    GetRumbleTournamentCurrentPrizeDistributionResponseDto:
+      type: object
+      properties:
+        developerFeeInUpx:
+          type: number
+          description: Developer Fee in UPX
+          example: 200
+          title: Developer Fee in UPX
+        distribution:
+          description: List of prize distribution
+          title: Distribution
+          type: array
+          items:
+            $ref: '#/components/schemas/DistributionResponseDto'
+        stakeholderFeeInUpx:
+          type: number
+          description: Stakeholder Fee in UPX
+          example: 0
+          title: Stakeholder Fee in UPX
+      required:
+      - developerFeeInUpx
+      - distribution
+      - stakeholderFeeInUpx
     RumbleTournamentParticipantResponseDto:
       type: object
       properties:
@@ -594,234 +705,22 @@ components:
       - status
       - updatedAt
       - userId
-    PrizeDistributionByPlaceDto:
+    DistributionResponseDto:
       type: object
       properties:
-        userId:
-          type: string
-          description: Upland user ID
-          example: 76d678fe-5a64-4764-8250-e594527ea0f8
-          title: User ID
-        userEosId:
-          type: string
-          description: Upland user EOS ID
-          example: emhwlbbifea5
-          title: User EOS ID
-        score:
-          type: number
-          description: Participant score
-          example: 500
-          title: Score
-        prizeInUpx:
-          type: number
-          description: Total UPX received by the winner
-          example: 500
-          title: Prize in UPX
         place:
           type: number
-          description: Participant's position in the tournament result.
-          example: 5
+          description: Place in the tournament ranking
+          example: 1
           title: Place
+        prize:
+          type: number
+          description: Calculated prize in UPX
+          example: 500
+          title: Prize
       required:
-      - userId
-      - userEosId
-      - score
-      - prizeInUpx
       - place
-    FeeDistributionDto:
-      type: object
-      properties:
-        percentage:
-          type: number
-          description: Fee distribution percentage
-          example: 1
-          title: Percentage
-        targetEosId:
-          type: number
-          description: Fee target EOS ID
-          example: 1
-          title: Target EOS ID
-      required:
-      - percentage
-      - targetEosId
-    EditRumbleTournamentSettingsRequestDto:
-      type: object
-      properties:
-        description:
-          type: string
-          description: (Optional) Rumble tournament description
-          example: My description
-          title: Description
-        developerFeePercentage:
-          type: number
-          description: (Optional) Rumble tournament developer fee percentage
-          example: 0
-          title: Developer Fee Percentage
-        maxParticipants:
-          type: number
-          description: (Optional) Rumble tournament maximum participants amount
-          example: 6
-          title: Max Participants
-        minParticipants:
-          type: number
-          description: (Optinal) Rumble tournament minimum participants amount
-          example: 2
-          title: Min Participants
-        name:
-          type: string
-          description: (Optional) Rumble tournament name
-          example: My rumble tournament
-          title: Name
-        prizeDistributionRules:
-          description: (Optional) Rumble tournament prize distribution rules
-          title: Prize Distribution Rules
-          type: array
-          items:
-            $ref: '#/components/schemas/PrizeDistributionRuleResponseDto'
-        registrationFeeInUpx:
-          type: number
-          description: (Optional) Rumble tournament registration fee (UPX)
-          example: 100
-          title: Registration Fee in UPX
-        stakeholderFeePercentage:
-          type: number
-          description: (Optional) Rumble tournament stakeholder fee percentage
-          example: 0
-          title: Stakeholder Fee Percentage
-    PrizeDistributionRuleResponseDto:
-      type: object
-      properties:
-        minParticipants:
-          type: number
-          description: Prize distribution rule minimum participants amount
-          example: 1
-          title: Min Participants
-        distribution:
-          description: List of prize distribution percentage - it should always sum up to 100
-          example:
-          - 100
-          title: Distribution
-          type: array
-          items:
-            type: number
-      required:
-      - minParticipants
-      - distribution
-    CreateRumbleTournamentRequestDto:
-      type: object
-      properties:
-        settingsId:
-          type: string
-          description: Rumble tournament settings ID
-          example: 3aefaaca-4f86-4aeb-a516-d4114c36f813
-          title: Settings ID
-        registrationFeeInUpx:
-          type: number
-          description: (Optional) Rumble tournament registration fee in UPX
-          example: 200
-          title: Registration Fee in UPX
-        stakeholderEosId:
-          type: string
-          description: (Optional) Rumble tournament stakeholder EOS ID
-          example: emhwlbbifea5
-          title: Stakeholder EOS ID
-      required:
-      - settingsId
-    RegisterRumbleTournamentScoresRequestDto:
-      type: object
-      properties:
-        scores:
-          description: List of rumble tournament participant scores. The list should not be empty.
-          title: Scores
-          type: array
-          items:
-            $ref: '#/components/schemas/ScoreDto'
-      required:
-      - scores
-    GetRumbleTournamentCurrentPrizeDistributionResponseDto:
-      type: object
-      properties:
-        developerFeeInUpx:
-          type: number
-          description: Developer Fee in UPX
-          example: 200
-          title: Developer Fee in UPX
-        distribution:
-          description: List of prize distribution
-          title: Distribution
-          type: array
-          items:
-            $ref: '#/components/schemas/DistributionResponseDto'
-        stakeholderFeeInUpx:
-          type: number
-          description: Stakeholder Fee in UPX
-          example: 0
-          title: Stakeholder Fee in UPX
-      required:
-      - developerFeeInUpx
-      - distribution
-      - stakeholderFeeInUpx
-    FindRumbleTournamentSettingsListResponseDto:
-      type: object
-      properties:
-        currentPage:
-          type: number
-          description: Current page
-          example: 1
-          title: Current page
-        pageSize:
-          type: number
-          description: Total results per page
-          example: 10
-          title: Page size
-        totalResults:
-          type: number
-          description: (Optional) Total of results
-          example: 200
-          title: Total results
-        results:
-          description: List of rumble tournament participants
-          title: Results
-          type: array
-          items:
-            $ref: '#/components/schemas/RumbleTournamentSettingsResponseDto'
-      required:
-      - currentPage
-      - pageSize
-      - results
-    ScoreboardResponseDto:
-      type: object
-      properties:
-        participantsAmount:
-          type: number
-          description: Total amount of valid tournament participants
-          example: 5
-          title: Participants amount
-        developerFeeInUpx:
-          type: number
-          description: Rumble tournament developer fee in UPX
-          example: 100
-          title: Developer fee in UPX
-        totalPrizePoolInUpx:
-          type: number
-          description: Total UPX distributed to the winners
-          example: 1000
-          title: Total prize pool in UPX
-        stakeholderFeeInUpx:
-          type: number
-          description: (Optional) Rumble tournament stakeholder fee in UPX
-          example: 100
-          title: Stakeholder fee in UPX
-        prizeDistributions:
-          description: Details of prize distribution for each awarded participant
-          title: Prize distributions
-          allOf:
-          - $ref: '#/components/schemas/PrizeDistributionByPlaceDto'
-      required:
-      - participantsAmount
-      - developerFeeInUpx
-      - totalPrizePoolInUpx
-      - prizeDistributions
+      - prize
     RumbleTournamentSettingsResponseDto:
       type: object
       properties:
@@ -902,6 +801,65 @@ components:
       - registrationFeeInUpx
       - status
       - updatedAt
+    ResolveRumbleTournamentRequestDto:
+      type: object
+      properties:
+        forceResolutionWithNullScore:
+          type: boolean
+          description: (Optional) Force tournament resolution with null score participants
+          example: false
+          default: false
+          title: Force resolution with null score
+    RegisterRumbleTournamentScoresRequestDto:
+      type: object
+      properties:
+        scores:
+          description: List of rumble tournament participant scores. The list should not be empty.
+          title: Scores
+          type: array
+          items:
+            $ref: '#/components/schemas/ScoreDto'
+      required:
+      - scores
+    CreateRumbleTournamentRequestDto:
+      type: object
+      properties:
+        settingsId:
+          type: string
+          description: Rumble tournament settings ID
+          example: 3aefaaca-4f86-4aeb-a516-d4114c36f813
+          title: Settings ID
+        registrationFeeInUpx:
+          type: number
+          description: (Optional) Rumble tournament registration fee in UPX
+          example: 200
+          title: Registration Fee in UPX
+        stakeholderEosId:
+          type: string
+          description: (Optional) Rumble tournament stakeholder EOS ID
+          example: emhwlbbifea5
+          title: Stakeholder EOS ID
+      required:
+      - settingsId
+    PrizeDistributionRuleResponseDto:
+      type: object
+      properties:
+        minParticipants:
+          type: number
+          description: Prize distribution rule minimum participants amount
+          example: 1
+          title: Min Participants
+        distribution:
+          description: List of prize distribution percentage - it should always sum up to 100
+          example:
+          - 100
+          title: Distribution
+          type: array
+          items:
+            type: number
+      required:
+      - minParticipants
+      - distribution
     ScoreDto:
       type: object
       properties:
@@ -918,15 +876,108 @@ components:
       required:
       - userId
       - value
-    ResolveRumbleTournamentRequestDto:
+    RumbleTournamentSettingsSnapshotResponseDto:
       type: object
       properties:
-        forceResolutionWithNullScore:
-          type: boolean
-          description: (Optional) Force tournament resolution with null score participants
-          example: false
-          default: false
-          title: Force resolution with null score
+        minParticipants:
+          type: number
+          description: Rumble tournament minimum participants amount
+          example: 1
+          title: Min Participants
+        maxParticipants:
+          type: number
+          description: Rumble tournament maximum participants amount
+          example: 1
+          title: Max Participants
+        prizeDistributionRules:
+          description: Rumble tournament prize distribution rules
+          title: Prize Distribution Rules
+          type: array
+          items:
+            $ref: '#/components/schemas/PrizeDistributionRuleResponseDto'
+        registrationFeeInUpx:
+          type: number
+          description: Rumble tournament registration fee (UPX)
+          example: 100
+          title: Registration Fee in UPX
+        developerFeePercentage:
+          type: number
+          description: Rumble tournament developer fee percentage
+          example: 0
+          title: Developer Fee Percentage
+        stakeholderFeePercentage:
+          type: number
+          description: Rumble tournament stakeholder fee percentage
+          example: 0
+          title: Stakeholder Fee Percentage
+      required:
+      - minParticipants
+      - maxParticipants
+      - prizeDistributionRules
+      - registrationFeeInUpx
+      - developerFeePercentage
+      - stakeholderFeePercentage
+    ScoreboardResponseDto:
+      type: object
+      properties:
+        participantsAmount:
+          type: number
+          description: Total amount of valid tournament participants
+          example: 5
+          title: Participants amount
+        developerFeeInUpx:
+          type: number
+          description: Rumble tournament developer fee in UPX
+          example: 100
+          title: Developer fee in UPX
+        totalPrizePoolInUpx:
+          type: number
+          description: Total UPX distributed to the winners
+          example: 1000
+          title: Total prize pool in UPX
+        stakeholderFeeInUpx:
+          type: number
+          description: (Optional) Rumble tournament stakeholder fee in UPX
+          example: 100
+          title: Stakeholder fee in UPX
+        prizeDistributions:
+          description: Details of prize distribution for each awarded participant
+          title: Prize distributions
+          allOf:
+          - $ref: '#/components/schemas/PrizeDistributionByPlaceDto'
+      required:
+      - participantsAmount
+      - developerFeeInUpx
+      - totalPrizePoolInUpx
+      - prizeDistributions
+    FindRumbleTournamentSettingsListResponseDto:
+      type: object
+      properties:
+        currentPage:
+          type: number
+          description: Current page
+          example: 1
+          title: Current page
+        pageSize:
+          type: number
+          description: Total results per page
+          example: 10
+          title: Page size
+        totalResults:
+          type: number
+          description: (Optional) Total of results
+          example: 200
+          title: Total results
+        results:
+          description: List of rumble tournament participants
+          title: Results
+          type: array
+          items:
+            $ref: '#/components/schemas/RumbleTournamentSettingsResponseDto'
+      required:
+      - currentPage
+      - pageSize
+      - results
     FindRumbleTournamentParticipantsListResponseDto:
       type: object
       properties:
@@ -955,57 +1006,6 @@ components:
       - currentPage
       - pageSize
       - results
-    CreateRumbleTournamentSettingsRequestDto:
-      type: object
-      properties:
-        description:
-          type: string
-          description: Rumble tournament description
-          example: My description
-          title: Description
-        maxParticipants:
-          type: number
-          description: Rumble tournament maximum participants amount
-          example: 1
-          title: Max Participants
-        minParticipants:
-          type: number
-          description: Rumble tournament minimum participants amount
-          example: 2
-          title: Min Participants
-        name:
-          type: string
-          description: Rumble tournament name
-          example: My rumble tournament
-          title: Name
-        prizeDistributionRules:
-          description: Rumble tournament prize distribution rules
-          title: Prize Distribution Rules
-          type: array
-          items:
-            $ref: '#/components/schemas/PrizeDistributionRuleResponseDto'
-        registrationFeeInUpx:
-          type: number
-          description: Rumble tournament registration fee (UPX)
-          example: 100
-          title: Registration Fee in UPX
-        developerFeePercentage:
-          type: number
-          description: (Optional) Rumble tournament developer fee percentage
-          example: 0
-          title: Developer Fee Percentage
-        stakeholderFeePercentage:
-          type: number
-          description: (Optional) Rumble tournament stakeholder fee percentage
-          example: 0
-          title: Stakeholder Fee Percentage
-      required:
-      - description
-      - maxParticipants
-      - minParticipants
-      - name
-      - prizeDistributionRules
-      - registrationFeeInUpx
   securitySchemes:
     basic:
       type: http

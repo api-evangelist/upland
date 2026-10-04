@@ -1443,6 +1443,35 @@ paths:
       x-operation-id-source: derived
 components:
   schemas:
+    def-5:
+      type: array
+      items:
+        anyOf:
+        - type: integer
+        - type: string
+      title: Extension
+    def-4:
+      description: Time that transaction must be confirmed by.
+      type: string
+      pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}$
+      title: DateTime
+    def-0:
+      title: Integer
+      description: Integer or String
+      anyOf:
+      - type: string
+        pattern: ^\d+$
+      - type: integer
+    def-1:
+      type: string
+      description: A symbol composed of capital letters between 1-7.
+      pattern: ^([A-Z]{1,7})$
+      title: Symbol
+    def-2:
+      type: string
+      description: String representation of an EOSIO compatible cryptographic signature
+      pattern: ^SIG_([RK]1|WA)_[1-9A-HJ-NP-Za-km-z]+$
+      title: Signature
     def-3:
       description: String representation of an EOSIO compatible account name
       anyOf:
@@ -1463,13 +1492,6 @@ components:
         pattern: ^([a-z1-5]{1}[a-z1-5\.]{0,10}[a-z1-5]{1})([a-j]{1})?$
         title: NameCatchAll
       title: Name
-    def-0:
-      title: Integer
-      description: Integer or String
-      anyOf:
-      - type: string
-        pattern: ^\d+$
-      - type: integer
     def-6:
       type: object
       additionalProperties: false
@@ -1506,25 +1528,3 @@ components:
         hex_data:
           type: string
       title: Action
-    def-1:
-      type: string
-      description: A symbol composed of capital letters between 1-7.
-      pattern: ^([A-Z]{1,7})$
-      title: Symbol
-    def-2:
-      type: string
-      description: String representation of an EOSIO compatible cryptographic signature
-      pattern: ^SIG_([RK]1|WA)_[1-9A-HJ-NP-Za-km-z]+$
-      title: Signature
-    def-5:
-      type: array
-      items:
-        anyOf:
-        - type: integer
-        - type: string
-      title: Extension
-    def-4:
-      description: Time that transaction must be confirmed by.
-      type: string
-      pattern: ^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}$
-      title: DateTime

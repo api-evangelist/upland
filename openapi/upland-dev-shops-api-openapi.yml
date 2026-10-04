@@ -55,48 +55,6 @@ paths:
       - basic: []
 components:
   schemas:
-    CoordinatesResponseDto:
-      type: object
-      properties:
-        latitude:
-          type: number
-          description: Coordinate latitude
-          example: 36.740230444221055
-          title: Latitude
-        longitude:
-          type: number
-          description: Coordinate longitude
-          example: -119.78203638209527
-          title: Longitude
-      required:
-      - latitude
-      - longitude
-    NeighborhoodResponseDto:
-      type: object
-      properties:
-        id:
-          type: number
-          description: Neighborhood ID
-          example: 1
-          title: ID
-        name:
-          type: string
-          description: Neighborhood name
-          example: ALAMO SQUARE
-          title: Name
-      required:
-      - id
-      - name
-    UserDevShopIntersectionCheckResponseDto:
-      type: object
-      properties:
-        isInRange:
-          type: boolean
-          description: Returns true if the user is in the devshop range
-          example: false
-          title: Is in range
-      required:
-      - isInRange
     DevShopResponseDto:
       type: object
       properties:
@@ -131,22 +89,38 @@ components:
       - appUrl
       - description
       - location
-    CityResponseDto:
+    NeighborhoodResponseDto:
       type: object
       properties:
         id:
           type: number
-          description: City ID
-          default: 1
+          description: Neighborhood ID
+          example: 1
           title: ID
         name:
           type: string
-          description: City name
-          example: Manhattan
+          description: Neighborhood name
+          example: ALAMO SQUARE
           title: Name
       required:
       - id
       - name
+    CoordinatesResponseDto:
+      type: object
+      properties:
+        latitude:
+          type: number
+          description: Coordinate latitude
+          example: 36.740230444221055
+          title: Latitude
+        longitude:
+          type: number
+          description: Coordinate longitude
+          example: -119.78203638209527
+          title: Longitude
+      required:
+      - latitude
+      - longitude
     DevShopsListResponseDto:
       type: object
       properties:
@@ -158,6 +132,16 @@ components:
             $ref: '#/components/schemas/DevShopResponseDto'
       required:
       - results
+    UserDevShopIntersectionCheckResponseDto:
+      type: object
+      properties:
+        isInRange:
+          type: boolean
+          description: Returns true if the user is in the devshop range
+          example: false
+          title: Is in range
+      required:
+      - isInRange
     DevShopLocationResponseDto:
       type: object
       properties:
@@ -192,6 +176,22 @@ components:
       - city
       - coordinates
       - neighborhood
+    CityResponseDto:
+      type: object
+      properties:
+        id:
+          type: number
+          description: City ID
+          default: 1
+          title: ID
+        name:
+          type: string
+          description: City name
+          example: Manhattan
+          title: Name
+      required:
+      - id
+      - name
   securitySchemes:
     basic:
       type: http
